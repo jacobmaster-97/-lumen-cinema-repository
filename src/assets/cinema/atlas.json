@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "tile_size": [
+    64,
+    32
+  ],
+  "projection": "isometric",
+  "filter": "nearest",
+  "status": "first in-game prop pack; visual review pending",
+  "assets": [
+    {
+      "id": "seat",
+      "name": "影院座椅",
+      "file": "props-atlas.png",
+      "region": [
+        99,
+        214,
+        189,
+        238
+      ],
+      "anchor": [
+        94.5,
+        238
+      ],
+      "world_width": 40,
+      "footprint": [
+        1,
+        1
+      ],
+      "scale": 0.21164021164021163
+    },
+    {
+      "id": "ticket_kiosk",
+      "name": "自助售票機",
+      "file": "props-atlas.png",
+      "region": [
+        482,
+        88,
+        173,
+        370
+      ],
+      "anchor": [
+        86.5,
+        370
+      ],
+      "world_width": 40,
+      "footprint": [
+        1,
+        1
+      ],
+      "scale": 0.23121387283236994
+    },
+    {
+      "id": "concession_counter",
+      "name": "小食櫃枱",
+      "file": "props-atlas.png",
+      "region": [
+        808,
+        184,
+        288,
+        287
+      ],
+      "anchor": [
+        144.0,
+        287
+      ],
+      "world_width": 112,
+      "footprint": [
+        2,
+        1
+      ],
+      "scale": 0.3888888888888889
+    },
+    {
+      "id": "popcorn_machine",
+      "name": "爆谷機",
+      "file": "props-atlas.png",
+      "region": [
+        1246,
+        172,
+        198,
+        295
+      ],
+      "anchor": [
+        99.0,
+        295
+      ],
+      "world_width": 44,
+      "footprint": [
+        1,
+        1
+      ],
+      "scale": 0.2222222222222222
+    },
+    {
+      "id": "soda_dispenser",
+      "name": "汽水機",
+      "file": "props-atlas.png",
+      "region": [
+        96,
+        692,
+        195,
+        250
+      ],
+      "anchor": [
+        97.5,
+        250
+      ],
+      "world_width": 44,
+      "footprint": [
+        1,
+        1
+      ],
+      "scale": 0.22564102564102564
+    },
+    {
+      "id": "recycling_bins",
+      "name": "分類垃圾桶",
+      "file": "props-atlas.png",
+      "region": [
+        477,
+        704,
+        197,
+        244
+      ],
+      "anchor": [
+        98.5,
+        244
+      ],
+      "world_width": 48,
+      "footprint": [
+        1,
+        1
+      ],
+      "scale": 0.2436548223350254
+    },
+    {
+      "id": "cleaning_cart",
+      "name": "清潔車",
+      "file": "props-atlas.png",
+      "region": [
+        848,
+        653,
+        204,
+        298
+      ],
+      "anchor": [
+        102.0,
+        298
+      ],
+      "world_width": 48,
+      "footprint": [
+        1,
+        1
+      ],
+      "scale": 0.23529411764705882
+    },
+    {
+      "id": "plant",
+      "name": "盆栽",
+      "file": "props-atlas.png",
+      "region": [
+        1214,
+        663,
+        255,
+        282
+      ],
+      "anchor": [
+        127.5,
+        282
+      ],
+      "world_width": 52,
+      "footprint": [
+        1,
+        1
+      ],
+      "scale": 0.20392156862745098
+    },
+    {
+      "id": "ticket_counter",
+      "name": "售票櫃枱",
+      "file": "ticket-counter.png",
+      "region": [
+        480,
+        169,
+        797,
+        595
+      ],
+      "anchor": [
+        398.5,
+        595
+      ],
+      "world_width": 128,
+      "footprint": [
+        2,
+        1
+      ],
+      "scale": 0.1606022584692597
+    }
+  ]
+}

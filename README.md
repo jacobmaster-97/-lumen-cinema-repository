@@ -1,273 +1,56 @@
-<p align="center">
-  <h1 align="center">Codex Game Studio</h1>
-  <p align="center">
-    Turn a Codex session into a structured, local-first game studio.
-    <br />
-    50 agents. 90 skills. 61 workflows. One Git-reviewable studio template.
-  </p>
-</p>
+# 光影大亨 · Lumen Cinema
 
-<p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <a href=".codex/agents"><img src="https://img.shields.io/badge/agents-50-blueviolet" alt="50 Agents"></a>
-  <a href=".agents/skills"><img src="https://img.shields.io/badge/skills-90-green" alt="90 Skills"></a>
-  <a href=".codex/workflows"><img src="https://img.shields.io/badge/workflows-61-orange" alt="61 Workflows"></a>
-  <a href="package.json"><img src="https://img.shields.io/badge/node-%3E%3D24-339933.svg" alt="Node.js >=24"></a>
-  <a href="https://github.com/openai/codex"><img src="https://img.shields.io/badge/built%20for-Codex-f5f5f5" alt="Built for Codex"></a>
-</p>
+以現代香港為背景的等角像素戲院經營遊戲原型。安排電影、票價及人手，觀察戲院自動營業，遇突發事件再選擇親自救場；累積盈利後買斷物業，並管理第二間分店。
 
-<p align="center">
-  <a href="README.md">🇺🇸 English</a> |
-  <a href="docs/readmes/README.zh.md">🇨🇳 简体中文</a> |
-  <a href="docs/readmes/README.ja.md">🇯🇵 日本語</a> |
-  <a href="docs/readmes/README.ko.md">🇰🇷 한국어</a> |
-  <a href="docs/readmes/README.de.md">🇩🇪 Deutsch</a> |
-  <a href="docs/readmes/README.fr.md">🇫🇷 Français</a> |
-  <a href="docs/readmes/README.es.md">🇪🇸 Español</a> |
-  <a href="docs/readmes/README.pt.md">🇧🇷 Português</a> |
-  <a href="docs/readmes/README.ru.md">🇷🇺 Русский</a> |
-  <a href="docs/readmes/README.ar.md">🇸🇦 العربية</a> |
-  <a href="docs/readmes/README.it.md">🇮🇹 Italiano</a> |
-  <a href="docs/readmes/README.pl.md">🇵🇱 Polski</a> |
-  <a href="docs/readmes/README.tr.md">🇹🇷 Türkçe</a> |
-  <a href="docs/readmes/README.vi.md">🇻🇳 Tiếng Việt</a> |
-  <a href="docs/readmes/README.id.md">🇮🇩 Bahasa Indonesia</a> |
-  <a href="docs/readmes/README.el.md">🇬🇷 Ελληνικά</a>
-</p>
+[開啟私人試玩網站](https://lumen-cinema-hk.jameshh998.chatgpt.site) · [遊戲框架](design/gdd.md) · [開發狀態](production/session-state/active.md)
 
----
+## 已有玩法
 
-## Why This Exists
+- 影廳時間軸排片、清潔緩衝及票價設定。
+- 六類客群、戲仿電影與片商、每週新片及逐步退熱。
+- 票房分帳、小食收入與成本、員工薪金、租金及維護。
+- 員工聘請、培訓、崗位配置與自動排班。
+- 正常速度一日 180 秒，可加速但不可跳事件。
+- 售票、小食、清潔三種可選小遊戲；停映、謝票、維修等事件。
+- 區域設施升級、物業買斷、第二分店親自管理。
+- 每日報告、本機存檔與讀檔。
 
-A blank AI coding chat is flexible, but game development needs repeatable studio structure. Someone has to protect the vision, keep milestones visible, review technical choices, validate gameplay changes, check accessibility, prepare release notes, and make sure decisions are not trapped in chat history.
+本專案為可玩原型，數值與日長仍待真人試玩調整。正式角色動畫、聲音、特別格式及完整影展會後續擴充。
 
-**Codex Game Studio** gives a Codex session the shape of a game studio without turning it into a hosted project manager or game engine. You get tracked agents, skills, workflows, project state, and validation in ordinary files that humans can inspect in Git.
+## 本機啟動
 
-The template is deliberately clone-first: the visible `AGENTS.md`, `.codex/agents/*.toml`, `.codex/workflows/*.md`, and `.agents/skills/*/SKILL.md` files are the studio surface. `init` records project state; it does not regenerate or overwrite the studio template.
+瀏覽器遊戲本身沒有第三方執行依賴。需要 Node.js 24+ 作開發測試，以及 Python 3 或其他靜態 HTTP server 作本機預覽。
 
----
-
-## Table of Contents
-
-- [What's Included](#whats-included)
-- [Studio Hierarchy](#studio-hierarchy)
-- [Skills](#skills)
-- [Workflows](#workflows)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [How It Works](#how-it-works)
-- [Model Routing](#model-routing)
-- [Documentation](#documentation)
-- [Project Status](#project-status)
-- [License](#license)
-
----
-
-## What's Included
-
-| Category | Count | Description |
-|----------|-------|-------------|
-| **Agents** | 50 | Codex custom agents across production, design, programming, art, audio, narrative, QA, localization, live ops, release, and engine support |
-| **Skills** | 90 | Reusable studio actions under `.agents/skills/*/SKILL.md`, from onboarding and design through QA, release, team orchestration, and standards |
-| **Workflows** | 61 | Tracked prompt workflows for market review, specs, stories, sprints, QA, security, release, hotfixes, vertical slices, and handoffs |
-| **Engine Tracks** | 3 | Godot, Unity, and Unreal specialist context with engine references and validation checks |
-| **Templates** | 57 | Packaged document templates for GDDs, ADRs, technical designs, playtests, releases, postmortems, risk registers, pitch docs, and more |
-| **Validation** | built in | Hard-failing checks for package assets, template surfaces, project state, metadata, engine references, and future-only CLI drift |
-
-## Studio Hierarchy
-
-Agents are organized like a small game studio: directors own vision and technical coherence, leads own domain direction, and specialists handle focused execution.
-
-```text
-Tier 1 — Direction
-  creative-director       technical-director      producer
-  studio-orchestrator
-
-Tier 2 — Department Leads
-  game-designer           senior-game-designer    senior-game-artist
-  audio-director          localization-lead       release-manager
-  market-analyst          narrative-designer
-
-Tier 3 — Specialists
-  gameplay-programmer     engine-programmer       ai-programmer
-  network-programmer      tools-programmer        ui-programmer
-  systems-designer        level-designer          economy-designer
-  game-feel-designer      technical-artist        sound-designer
-  writer                  world-builder           ui-ux-designer
-  qa-playtester           accessibility-specialist performance-analyst
-  devops-engineer         security-engineer       data-scientist
-  community-manager       live-ops-designer
+```sh
+git clone https://github.com/jacobmaster-97/lumen-cinema.git
+cd lumen-cinema
+npm ci --prefix prototypes/browser --ignore-scripts
+npm test --prefix prototypes/browser
+python3 -m http.server 8000 --directory prototypes/browser
 ```
 
-### Engine Specialists
+以瀏覽器開啟 `http://localhost:8000`。`prototypes/browser/assets` 及 `favicon.svg` 為指向專案素材的相對符號連結；Windows 使用者可將 `src/assets/cinema` 複製成 `prototypes/browser/assets`，並將 `src/assets/icon.svg` 複製成 `prototypes/browser/favicon.svg`。
 
-| Engine | Lead Agent | Focus |
-|--------|------------|-------|
-| **Godot 4** | `godot-specialist` | GDScript, scenes, nodes, resources, signals, plugins, and Godot-specific validation |
-| **Unity** | `unity-specialist` | C#, packages, scenes, prefabs, UI Toolkit, Addressables, Cinemachine, and DOTS/ECS context |
-| **Unreal Engine 5** | `unreal-specialist` | C++, Blueprints, GAS, replication, UMG/CommonUI, plugins, and Unreal project conventions |
+## 專案結構
 
-## Skills
+| 路徑 | 內容 |
+| --- | --- |
+| `prototypes/browser/` | 可玩的原生 ES modules + Canvas 瀏覽器版本 |
+| `src/assets/cinema/` | 實際透明 PNG、九個 Godot AtlasTexture、尺寸及基準點 |
+| `src/scenes/asset_preview.tscn` | Godot 貼圖放置測試場景 |
+| `tests/cinema/` | 模擬、介面整合及 Godot 資源測試 |
+| `design/` | 遊戲框架、21 項訪談決策、美術方向及技術決策 |
+| `production/` | 里程碑、驗證結果與開發狀態 |
+| `.codex/`, `.agents/` | Codex Game Studio 的角色、工作流程與技能 |
 
-Skills are tracked under `.agents/skills/*/SKILL.md`. They are the reusable studio actions Codex can apply while working inside the template.
+## 測試與素材
 
-**Onboarding & Navigation**
-`cgs-start` `cgs-help` `cgs-project-stage-detect` `cgs-setup-engine` `cgs-adopt` `cgs-onboard`
+`npm test --prefix prototypes/browser` 執行 17 項模擬測試及 1 項 DOM 整合測試。DOM 測試使用 jsdom，不等於完成視覺瀏覽器試玩。
 
-**Game Design**
-`cgs-brainstorm` `cgs-map-systems` `cgs-design-system` `cgs-quick-design` `cgs-review-all-gdds` `cgs-propagate-design-change` `cgs-balance-check`
+Godot 4.6.3 可開啟 `src/project.godot` 查看實際貼圖放置場景。瀏覽器可玩原型使用 Canvas 2D，技術邊界見 [實作決策](design/architecture-browser-prototype.md)。
 
-**Art & Assets**
-`cgs-art-bible` `cgs-asset-spec` `cgs-asset-audit`
+素材包括獨立有人售票櫃枱、自助售票機、座椅、小食櫃枱、爆谷機、汽水機、垃圾桶、清潔車及盆栽。原始 PNG 與 Godot 資源一併保留。
 
-**UX & Interface**
-`cgs-ux-design` `cgs-ux-review` `cgs-ui-ux-review`
+## Studio 來源
 
-**Architecture & Technical Planning**
-`cgs-create-architecture` `cgs-architecture-decision` `cgs-architecture-review` `cgs-create-control-manifest`
-
-**Stories & Sprints**
-`cgs-create-epics` `cgs-create-stories` `cgs-dev-story` `cgs-sprint-plan` `cgs-sprint-status` `cgs-story-readiness` `cgs-story-done` `cgs-estimate` `cgs-vertical-slice`
-
-**Reviews & Analysis**
-`cgs-design-review` `cgs-code-review` `cgs-scope-check` `cgs-perf-profile` `cgs-tech-debt` `cgs-gate-check` `cgs-consistency-check` `cgs-security-audit` `cgs-content-audit`
-
-**QA & Testing**
-`cgs-qa-plan` `cgs-smoke-check` `cgs-soak-test` `cgs-regression-suite` `cgs-test-setup` `cgs-test-helpers` `cgs-test-evidence-review` `cgs-test-flakiness` `cgs-skill-test` `cgs-skill-improve`
-
-**Production**
-`cgs-milestone-review` `cgs-retrospective` `cgs-bug-report` `cgs-bug-triage` `cgs-bugfix` `cgs-reverse-document` `cgs-playtest-report`
-
-**Release**
-`cgs-release-checklist` `cgs-launch-checklist` `cgs-changelog` `cgs-patch-notes` `cgs-hotfix` `cgs-day-one-patch`
-
-**Creative & Content**
-`cgs-prototype` `cgs-localize`
-
-**Team Orchestration**
-`cgs-team-combat` `cgs-team-narrative` `cgs-team-ui` `cgs-team-release` `cgs-team-polish` `cgs-team-audio` `cgs-team-level` `cgs-team-live-ops` `cgs-team-qa`
-
-**Path Standards**
-`cgs-standards-ai-code` `cgs-standards-data-files` `cgs-standards-design-docs` `cgs-standards-engine-code` `cgs-standards-gameplay` `cgs-standards-gameplay-code` `cgs-standards-narrative` `cgs-standards-network-code` `cgs-standards-prototype` `cgs-standards-prototype-code` `cgs-standards-shader-code` `cgs-standards-test-standards` `cgs-standards-tests` `cgs-standards-ui` `cgs-standards-ui-code`
-
-## Workflows
-
-Workflow prompts live under `.codex/workflows/*.md`. They are inspection-friendly prompt surfaces; shortcut commands render prompts and do not launch Codex unless you explicitly run a role or task.
-
-| Phase | Workflows |
-|-------|-----------|
-| **Tracked Prompts (61)** | `accessibility-doc`, `analytics-setup`, `architecture-decision`, `architecture-review`, `art-bible`, `art-direction`, `asset-audit`, `asset-spec`, `balance-check`, `brainstorm`, `bug-report`, `bugfix`, `changelog`, `code-review`, `consistency-check`, `control-manifest`, `create-architecture`, `create-epics`, `create-stories`, `design-review`, `design-review-concept`, `design-spec`, `design-system`, `engine-setup`, `entity-inventory`, `game-concept`, `game-feel-tuning`, `handoff`, `hotfix`, `implement`, `launch-checklist`, `localization-plan`, `map-systems`, `market-analysis`, `onboard`, `patch-notes`, `perf-profile`, `playtest`, `playtest-polish`, `production-milestone`, `prototype`, `qa-plan`, `regression-suite`, `release-checklist`, `retrospective`, `review`, `review-all-gdds`, `scope-check`, `security-audit`, `ship-check`, `sprint-plan`, `sprint-status`, `story-done`, `story-readiness`, `team-feature`, `team-polish`, `test-setup`, `ui-ux-review`, `ux-design`, `ux-review`, `vertical-slice` |
-
-## Getting Started
-
-### Prerequisites
-
-- [Git](https://git-scm.com/)
-- Node.js 24 or newer
-- Codex CLI on `PATH` for `run <role>` and full validation
-
-### Setup
-
-1. **Clone the template repository**:
-
-   ```sh
-   git clone git@github.com:merlinhu1/codex-game-studio.git signal-cartographer
-   cd signal-cartographer
-   ```
-
-2. **Install and build the CLI**:
-
-   ```sh
-   npm install
-   npm run build
-   ```
-
-3. **Initialize project state**:
-
-   ```sh
-   ./codex-game-studio init --name "Signal Cartographer" --engine godot --mode prototype --non-interactive \
-     --concept "A compact puzzle game about routing trains through haunted switchyards"
-   ```
-
-   `init` turns the checkout into a game workspace: it keeps the game-facing agents, workflows, skills, templates, engine references, and CLI runtime, then prunes maintainer-only template-authoring artifacts such as `eval-framework/`, OpenSpec/research/reference scratch files, TypeScript source files, and repository validation tests. Template maintainers can pass `--keep-template-authoring` when intentionally working on this repository itself.
-
-4. **Inspect and validate**:
-
-   ```sh
-   ./codex-game-studio status
-   ./codex-game-studio validate
-   ./codex-game-studio run producer \
-     "Create the initial market overview." --print-prompt
-   ```
-
-## Project Structure
-
-```text
-AGENTS.md                         # Game-facing Codex instructions
-codex-game-studio                 # Source-checkout CLI wrapper
-.codex/
-  agents/                         # 50 Codex custom agents
-  workflows/                      # 61 tracked workflow prompts
-  studio.json                     # Project state written by init
-  tasks.json                      # File-backed task state
-  runs/                           # Runtime metadata for role/task runs
-  locks/                          # Local orchestration locks
-.agents/
-  skills/                         # 90 reusable studio skills
-engine_configs/                   # Engine setup metadata
-engine_reference/                 # Godot, Unity, Unreal reference packs
-templates/                        # Document templates used by workflows
-production/                       # Timeline, milestones, session state
-docs/                             # Small user/docs support surface
-src/                              # Game engine source root; maintainer TypeScript files are pruned by init
-tests/                            # Game tests; repository validation tests are pruned by init
-```
-
-## How It Works
-
-### Template First
-
-The clone is the studio. Agents, workflows, skills, and instruction files are committed template surfaces, not hidden generated output. `init` records project state and engine choices without copying the studio back into itself.
-
-### Codex-Native Execution
-
-`run <role>` assembles a bounded prompt packet from the selected role, task, project state, tracked templates, and relevant context. Use `--dry-run` or `--print-prompt` to inspect before execution.
-
-### Reviewable State
-
-Tasks, approvals, locks, context manifests, and run metadata live under `.codex/**`. The workflow favors ordinary Git review over opaque chat memory.
-
-### Strict Validation
-
-`./codex-game-studio validate` checks package assets, template surfaces, role/workflow metadata, project state, engine references, and hidden future-only surfaces before readiness claims.
-
-## Model Routing
-
-Prompt surfaces declare concrete Codex model and reasoning-effort policy in tracked files:
-
-| Routing dimension | Policy |
-|-------------------|--------|
-| Model family | Use `gpt-5.6-sol` for difficult/high-risk architecture, security, release, or cross-system decisions; `gpt-5.6-terra` for bounded implementation, QA, docs, bugfix, and production work; `gpt-5.6-luna` for simple, repetitive, mechanical, checklist, status, and objectively verifiable work. |
-| Reasoning effort | Choose `low`, `medium`, or `high` per surface independently from the model family. A prompt may use Luna/medium, Terra/low, Terra/high, Sol/medium, or Sol/high when that case warrants it. |
-| Fallback model | Sol falls back to `gpt-5.5`, Terra to `gpt-5.4`, and Luna to `gpt-5.4-mini` while preserving the selected surface effort. |
-
-Runtime dry-runs and run metadata expose the selected model and reasoning effort. Codex execution receives both values explicitly instead of a generic tier name.
-
-## Documentation
-
-| Need | Start Here |
-|------|------------|
-| Install, commands, workflows, validation | [User Guide](docs/user-guide.md) |
-| Realistic usage scenarios | [Examples](docs/examples/README.md) |
-| Full documentation map | [Docs Index](docs/README.md) |
-| Product boundaries and non-goals | [Product Boundary](docs/architecture/product-boundary.md) |
-
-## Project Status
-
-Codex Game Studio currently supports template-repository setup, Codex role execution, workflow prompt rendering, file-backed task orchestration, and repository/project validation.
-
-It deliberately does **not** expose a planner or `next` command, telemetry, hosted orchestration, unbounded parallelism, hard output-ownership enforcement, or generated `CODEX.md` / `project_orchestrator.md` surfaces.
-
-## License
-
-Codex Game Studio is released under the MIT License. See [`LICENSE`](LICENSE).
+本專案基於 [merlinhu1/codex-game-studio](https://github.com/merlinhu1/codex-game-studio)，保留上游 Git 歷史、[MIT 授權](LICENSE) 與 [原始 Studio 說明](STUDIO_README.md)。

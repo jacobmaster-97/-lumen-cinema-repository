@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-HK">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#30242d" />
+    <meta
+      name="description"
+      content="光影大亨：現代香港像素戲院經營。排片、定價、親自救場，買斷物業並經營第二間分店。"
+    />
+    <title>光影大亨 · 戲院經營</title>
+    <link rel="icon" href="favicon.svg" />
+    <link rel="stylesheet" href="game.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="./"
+          ><span class="logo-mark">L<i>▶</i></span
+          ><span>光影大亨<small>LUMEN CINEMA</small></span></a
+        >
+        <div class="sidebar-divider"></div>
+        <span class="nav-overline">戲院管理</span>
+        <nav aria-label="遊戲選單">
+          <button class="nav-item active" data-view="overview">
+            <span>▧</span>戲院總覽<i>01</i>
+          </button>
+          <button class="nav-item" data-view="schedule">
+            <span>▤</span>排片時間表<i>02</i>
+          </button>
+          <button class="nav-item" data-view="movies">
+            <span>▥</span>電影發行庫<i>03</i>
+          </button>
+          <button class="nav-item" data-view="staff">
+            <span>♧</span>員工團隊<i>04</i>
+          </button>
+          <button class="nav-item" data-view="snacks">
+            <span>♜</span>小食與售價<i>05</i>
+          </button>
+          <button class="nav-item" data-view="investment">
+            <span>◇</span>裝修與物業<i>06</i>
+          </button>
+          <button class="nav-item" data-view="report">
+            <span>▦</span>每日營運報告<i>07</i>
+          </button>
+        </nav>
+        <div class="branch-section">
+          <div class="branch-label">
+            旗下戲院 <span id="branch-count">01 / 02</span>
+          </div>
+          <div id="branch-buttons"></div>
+          <button id="second-branch" class="add-branch">
+            ＋ 開設第二間戲院
+          </button>
+        </div>
+        <div class="sidebar-bottom">
+          <a href="art.html">↗ 貼圖工作台</a><span>香港 · 好戲正在上演</span
+          ><small>可玩原型 v0.2</small>
+        </div>
+      </aside>
+      <div class="main-shell">
+        <header class="topbar">
+          <div class="day-info">
+            <span class="day-chip" id="day-number">DAY 01</span>
+            <div>
+              <strong id="calendar">第 1 週・星期一</strong
+              ><small id="phase-label">營業前準備</small>
+            </div>
+          </div>
+          <div class="topbar-right">
+            <div class="company-cash">
+              <small>公司現金 <span>HKD</span></small
+              ><strong id="cash">$68,000</strong>
+            </div>
+            <span class="top-divider"></span
+            ><button id="save-button" class="icon-button" title="儲存進度">
+              ↓ <span>存檔</span></button
+            ><button id="load-button" class="icon-button" title="讀取本機存檔">
+              ↺ <span>讀檔</span></button
+            ><button id="help-button" class="help-button" aria-label="遊戲說明">
+              ?
+            </button>
+          </div>
+        </header>
+        <main id="main-content">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" id="page-eyebrow">YOUR CINEMA, YOUR STORY</p>
+              <h1 id="page-title">大銀幕，小生意。</h1>
+              <p id="page-description">
+                由一間戲院開始，讓每一場好戲都有人欣賞。
+              </p>
+            </div>
+            <span id="property-badge" class="property-badge">租賃物業</span>
+          </div>
+          <div id="view-content"></div>
+        </main>
+        <footer class="operation-bar">
+          <div class="clock-block">
+            <span class="clock-face">◷</span>
+            <div>
+              <b id="game-clock">11:00</b
+              ><small id="time-note">1× 營業日 3 分鐘 · 事件停頓另計</small>
+            </div>
+            <div class="day-progress"><span id="day-progress"></span></div>
+          </div>
+          <div class="operation-controls">
+            <div class="speeds" aria-label="營業速度">
+              <button data-speed="1" class="active">1×</button
+              ><button data-speed="2">2×</button
+              ><button data-speed="4">4×</button>
+            </div>
+            <button id="pause-button" class="secondary" hidden>Ⅱ 暫停</button
+            ><button id="main-action" class="primary">
+              開始第 1 日營業 <span>▶</span>
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+    <dialog id="modal"><div id="modal-content"></div></dialog>
+    <script src="game.mjs" type="module"></script>
+  </body>
+</html>

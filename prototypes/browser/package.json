@@ -1,0 +1,8 @@
+{
+  "name": "lumen-cinema-browser-prototype",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node --test ../../tests/cinema/engine.test.mjs ../../tests/cinema/ui.test.mjs"},
+  "devDependencies": {"jsdom": "26.1.0"}
+}

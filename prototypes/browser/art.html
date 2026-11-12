@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-HK"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#492535"><meta name="description" content="光影大亨的實際遊戲設施貼圖，包含售票櫃枱、座椅、小食部、售票機及清潔設備。"><title>光影大亨 · 遊戲貼圖工作室</title><link rel="icon" href="favicon.svg"><link rel="stylesheet" href="art.css"></head>
+<body>
+<header><a class="brand" href="./"><span class="brandmark">L<span>▶</span></span><span>光影大亨<small>LUMEN CINEMA</small></span></a><span class="header-note">現代香港戲院 · 等角像素貼圖</span><a class="download" href="assets/lumen-cinema-props-01.zip" download>↓ 下載遊戲資源包</a></header>
+<main>
+<div class="intro"><div><p class="eyebrow">ART WORKSHOP / ASSET PACK 01</p><h1>第一批・戲院設施<span class="status">實際遊戲資源</span></h1><p>9 件獨立設施，共用同一套材質與配色。可直接載入 Godot，亦可在下方檢查實際放置效果。</p></div><div class="version"><b>09</b><span>設施 sprites<br>透明 PNG + AtlasTexture</span></div></div>
+<section class="workspace" aria-label="貼圖測試工作台">
+<aside class="asset-list"><div class="list-title">設施目錄 <span>09</span></div><div id="asset-buttons"></div><div class="palette"><span style="--sw:#722a42"></span><span style="--sw:#2e2939"></span><span style="--sw:#e6d4c2"></span><span style="--sw:#bc9256"></span><span style="--sw:#198c98"></span><span style="--sw:#5a7444"></span></div><p class="list-note">酒紅・木色・米白<br>現代商場戲院</p></aside>
+<div class="stage"><div class="stage-toolbar"><div class="segmented"><button class="active" data-view="scene">場景放置</button><button data-view="atlas">逐件檢視</button></div><div class="stage-options"><label><input id="show-grid" type="checkbox" checked>格線</label><button id="bg-toggle" aria-pressed="false">◩ 深色背景</button></div></div><div class="canvas-wrap" id="canvas-wrap"><canvas id="stage" width="1120" height="720" aria-label="使用實際貼圖組成的戲院設施測試場景"></canvas><div class="stage-tag"><span></span> 同一批圖檔即時放置</div><span class="stage-corner">64 × 32 等角基準</span></div><div class="stage-caption"><span id="caption">售票櫃枱與自助售票機分開，供兩種售票方式使用。</span><span>靜態貼圖測試 · 玩法製作暫停</span></div></div>
+<aside class="inspector"><p class="eyebrow">SELECTED ASSET</p><h2 id="asset-name">售票櫃枱</h2><div class="asset-preview checker"><canvas id="selected" width="400" height="300" aria-label="已選貼圖透明背景預覽"></canvas></div><div class="zoom-row"><label for="zoom">放大檢查</label><input id="zoom" type="range" min="1" max="3" step="0.5" value="1"><output id="zoom-value">1×</output></div><p id="asset-description"></p><dl><div><dt>用途</dt><dd id="asset-use"></dd></div><div><dt>佔地</dt><dd id="asset-footprint"></dd></div><div><dt>裁切區域</dt><dd id="asset-size"></dd></div><div><dt>放置基準</dt><dd>底部中央</dd></div><div><dt>資源格式</dt><dd>PNG · AtlasTexture</dd></div></dl><a id="resource-link" class="resource-link" href="assets/props/ticket_counter.tres" download>↓ 下載這件 Godot 資源</a><p class="resource-note">請配合資源包內的 PNG 使用。地板及牆身僅為測試底板。</p></aside>
+</section>
+<section class="asset-strip" aria-label="全部設施縮圖" id="asset-strip"></section>
+<footer><span>光影大亨 · 首批設施貼圖 v0.1</span><span>已包含有人售票櫃枱 · 下一批再設計地板、牆身與角色動畫</span><a href="assets/README.md" download>資源使用說明 ↗</a></footer>
+</main><script src="art.js" type="module"></script>
+</body></html>

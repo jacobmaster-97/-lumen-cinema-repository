@@ -1,0 +1,29 @@
+name: Cinema prototype tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  game-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: prototypes/browser/package-lock.json
+      - name: Install test dependencies
+        run: npm ci --prefix prototypes/browser --ignore-scripts --no-audit --no-fund
+      - name: Check JavaScript modules
+        run: |
+          node --check prototypes/browser/engine.mjs
+          node --check prototypes/browser/game.mjs
+          node --check prototypes/browser/render.mjs
+      - name: Run simulation and interface tests
+        run: npm test --prefix prototypes/browser

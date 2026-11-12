@@ -3,3 +3,6 @@ dist/
 /projects/
 .hermes/
 *.tgz
+.cache/
+.godot/
+src/.godot/
