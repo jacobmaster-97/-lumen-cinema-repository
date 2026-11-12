@@ -15,3 +15,7 @@ main 推送會觸發 .github/workflows/pages.yml；先跑 18 項遊戲測試，�
 遊戲主頁及貼圖工作台都使用相對資源路徑，適用於 repository 子路徑。正式發佈會複製 PNG 與 AtlasTexture 為一般檔案，不依賴 GitHub Pages 對符號連結的支援。
 
 Sites 私人網站的原有受眾與設定不變。兩個網域的本機瀏覽器存檔互相獨立。
+
+## 首次啟用狀態
+
+GitHub 上的測試及靜態打包均已成功。首次建立 Pages site 的管理操作回覆 403，需要 repository 擁有者在 Settings → Pages → Build and deployment → Source 選 GitHub Actions。之後重跑 Publish playable game to Pages 的 failed jobs。此限制來自 GitHub App 權限，並非測試或遊戲打包失敗。

@@ -63,3 +63,11 @@ GitHub App 建立 repository 回覆 Resource not accessible by integration；共
 ## GitHub Pages 接入
 
 使用者已建立公開 jacobmaster-97/-lumen-cinema-repository 並要求 Pages。已沿用實際名稱，新增自足靜態打包與先測試再部署的 workflow；待 push 及遠端部署驗證。
+
+## GitHub 遠端驗證結果
+
+- 已將 main 推送到公開 jacobmaster-97/-lumen-cinema-repository。
+- Cinema prototype tests run 43176907651 成功，18 項測試通過。
+- Pages run 43176907722 的 build 成功，遊戲與實際貼圖 artifact 已產生。
+- deploy 在首次啟用 Pages 時被 GitHub 拒絕：403 Resource not accessible by integration。repository has_pages=false，需要擁有者在 Settings → Pages 將 Source 設為 GitHub Actions，再重試失敗的 deploy job。
+- 尚未宣稱 Pages 網站已上線；啟用後可重跑 failed jobs，無需重新要求建立 repository 或修改存取範圍。
