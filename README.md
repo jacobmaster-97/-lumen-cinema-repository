@@ -2,7 +2,7 @@
 
 以現代香港為背景的等角像素戲院經營遊戲原型。安排電影、票價及人手，觀察戲院自動營業，遇突發事件再選擇親自救場；累積盈利後買斷物業，並管理第二間分店。
 
-[開啟私人試玩網站](https://lumen-cinema-hk.jameshh998.chatgpt.site) · [遊戲框架](design/gdd.md) · [開發狀態](production/session-state/active.md)
+[開啟 Sites 私人試玩網站](https://lumen-cinema-hk.jameshh998.chatgpt.site) · [遊戲框架](design/gdd.md) · [開發狀態](production/session-state/active.md)
 
 ## 已有玩法
 
@@ -22,8 +22,8 @@
 瀏覽器遊戲本身沒有第三方執行依賴。需要 Node.js 24+ 作開發測試，以及 Python 3 或其他靜態 HTTP server 作本機預覽。
 
 ```sh
-git clone https://github.com/jacobmaster-97/lumen-cinema.git
-cd lumen-cinema
+git clone https://github.com/jacobmaster-97/-lumen-cinema-repository.git
+cd -- -lumen-cinema-repository
 npm ci --prefix prototypes/browser --ignore-scripts
 npm test --prefix prototypes/browser
 python3 -m http.server 8000 --directory prototypes/browser
@@ -54,3 +54,9 @@ Godot 4.6.3 可開啟 `src/project.godot` 查看實際貼圖放置場景。瀏�
 ## Studio 來源
 
 本專案基於 [merlinhu1/codex-game-studio](https://github.com/merlinhu1/codex-game-studio)，保留上游 Git 歷史、[MIT 授權](LICENSE) 與 [原始 Studio 說明](STUDIO_README.md)。
+
+## GitHub Pages
+
+公開版本網址：https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。首次部署完成後即可使用，無需 ChatGPT 登入。
+
+推送 main 分支後，Pages workflow 會先跑 18 項遊戲測試，再以 `node scripts/build-pages.mjs` 打包實際 PNG 與遊戲檔案並部署。打包會解析原始素材路徑，發佈內容不依賴符號連結。

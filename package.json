@@ -33,7 +33,8 @@
     "ctx:role": "tsx src/cli.ts context role",
     "ctx:workflow": "tsx src/cli.ts context workflow",
     "ctx:task": "tsx src/cli.ts context task",
-    "ctx:changed": "tsx src/cli.ts context changed"
+    "ctx:changed": "tsx src/cli.ts context changed",
+    "build:pages": "node scripts/build-pages.mjs"
   },
   "dependencies": {
     "commander": "^12.1.0",

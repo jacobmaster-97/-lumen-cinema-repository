@@ -59,3 +59,7 @@
 使用者選擇新增私有 jacobmaster-97/lumen-cinema。已整理遊戲 README、保留 STUDIO_README.md、加入 Node.js 24 的 GitHub Actions 測試設定，並改用相對 Godot 匯出路徑。移除未使用且引用不存在 main.gd 的舊場景；實際貼圖場景入口不變。
 
 GitHub App 建立 repository 回覆 Resource not accessible by integration；共享瀏覽器未登入 GitHub。尚未宣稱 repository 已建立或已 push。
+
+## GitHub Pages 接入
+
+使用者已建立公開 jacobmaster-97/-lumen-cinema-repository 並要求 Pages。已沿用實際名稱，新增自足靜態打包與先測試再部署的 workflow；待 push 及遠端部署驗證。
