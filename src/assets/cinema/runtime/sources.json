@@ -1,0 +1,30 @@
+{
+  "generator": "ImageGen",
+  "purpose": "Original Lumen Cinema pixel game art",
+  "sources": [
+    {
+      "file": "actors-v3.png",
+      "sha256": "ed097880a5d4e55879477a495377d05015cc943bd2438426277cfcd3e71199f4"
+    },
+    {
+      "file": "floors-v3.png",
+      "sha256": "633a677230a26e72db7146d35f5af634111bad34d4f242c934ce692cf540394b"
+    },
+    {
+      "file": "posters-late-v3.png",
+      "sha256": "5e8b35041230c074fec7dc28f7561810418f8d9266dd4dedab72736f9ff3cd8d"
+    },
+    {
+      "file": "posters-v3.png",
+      "sha256": "253b001f500fb8112a39dd93d1fe2efc9ff9d02c51162bd083662ccf6c465c9a"
+    },
+    {
+      "file": "props-v3.png",
+      "sha256": "8706a38aea00a97789d28ff372f4722a1908ad9827f642f42a01789993aa8cdf"
+    },
+    {
+      "file": "walls-v3.png",
+      "sha256": "d8d04e4436630b8d423389e6ca074e76a3f35271bfc9c64dc37a4a050b0ad72c"
+    }
+  ]
+}

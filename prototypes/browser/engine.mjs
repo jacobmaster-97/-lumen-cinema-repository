@@ -463,7 +463,7 @@ export const UPGRADES = {
   decor: {
     name: "大堂裝修",
     cost: 6500,
-    description: "新增休息座椅與綠化，提升觀影吸引力。",
+    description: "改善牆身、導視與綠化，提升觀影吸引力。",
     max: 3,
   },
   sound: {
@@ -481,7 +481,7 @@ export const UPGRADES = {
   seats: {
     name: "擴充影廳",
     cost: 8000,
-    description: "每個影廳增加 8 個座位。",
+    description: "每個影廳增設一列階梯座位，共增加 8 席。",
     max: 3,
   },
 };

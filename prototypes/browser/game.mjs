@@ -1,5 +1,9 @@
 import * as E from "./engine.mjs";
-import { CinemaRenderer, drawPoster } from "./render.mjs";
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.3.0";
+import { loadCinemaAssets } from "./assets.mjs";
+import { CinemaAudio } from "./audio.mjs";
+import { hallUnderRepair } from "./world.mjs";
+const audio=new CinemaAudio();
 const $ = (s) => document.querySelector(s),
   esc = (s) =>
     String(s ?? "").replace(
@@ -26,6 +30,7 @@ const clock = (n) => {
   );
 };
 const STORAGE = "lumen-cinema-v2";
+let selectedZone = null;
 let state = E.createGame(),
   view = "overview",
   filmFilter = "available",
@@ -217,9 +222,27 @@ function nowShows() {
     '<div class="empty-state" style="padding:30px 10px">尚未安排場次</div>'
   );
 }
+function zoneInfo() {
+  const venue=b(),room=atlas?.layout.rooms.find(r=>r.id===selectedZone);
+  if(!room)return `<p class="eyebrow">THE NEXT GOOD SHOW</p><h2>今日，由你話事。</h2><p>先檢查排片同票價，再為戲院開燈。日常交畀員工，突發時先決定點樣救場。</p><div class="ready-row"><span>放映安排</span><b>${venue.programme.length} 場</b></div><div class="ready-row"><span>當值團隊</span><b>${venue.staff.length} 位</b></div><div class="ready-row"><span>兩個影廳</span><b>${venue.seats[0]} + ${venue.seats[1]} 席</b></div><button class="primary" data-action="navigate" data-target="schedule">檢查今日排片 →</button><p class="zone-tip">點選地圖區域，查看營運狀態。</p>`;
+  const hall=room.id.startsWith('hall')?Number(room.id.slice(-1))-1:null;
+  let title=room.name,description='',detail='',target='investment',actionText='查看裝修';
+  if(hall!==null){
+    const shows=(planning()?venue.programme:venue.shows).filter(p=>p.hall===hall&&!p.cancelled).sort((a,b)=>a.start-b.start);
+    const current=shows.find(p=>p.booked&&state.minute>=p.start&&state.minute<p.start+E.movie(p.movie).length+p.delay),next=shows.find(p=>p.start>state.minute),show=current||next;
+    description=hallUnderRepair(venue,state,hall)?'維修期間暫停入場，其餘影廳照常營業。':'八排階梯座席，後排升高 2.1 米。';
+    detail=`<div class="ready-row"><span>可用座位</span><b>${venue.seats[hall]} 席</b></div><div class="ready-row"><span>${current?'本場入座':'今日場次'}</span><b>${current?current.served+' 人':shows.length+' 場'}</b></div>${show?`<div class="zone-film"><small>${current?'正在放映':'下一場 '+clock(show.start)}</small><strong>《${esc(E.movie(show.movie).title)}》</strong><span>票價 ${money(show.price)} · ${E.movie(show.movie).type}</span></div>`:'<p>暫時未有場次，安排一齣好戲吧。</p>'}`;
+    target='schedule';actionText='管理影廳排片';
+  }else if(room.id==='tickets'){description='有人售票與自助機分流，客人經獨立入口排隊。';detail=`<div class="ready-row"><span>售票員工</span><b>${venue.staff.filter(p=>p.role==='tickets').length} 位</b></div><div class="ready-row"><span>今日票房留成</span><b>${money(venue.ledger.gross-venue.ledger.share)}</b></div>`;target='staff';actionText='安排售票人手';
+  }else if(room.id==='snacks'){description='按售出份數自動補貨；售價、人手同出餐能力一樣重要。';detail=`<div class="ready-row"><span>小食員工</span><b>${venue.staff.filter(p=>p.role==='snacks').length} 位</b></div><div class="ready-row"><span>今日小食毛利</span><b>${money(venue.ledger.foodRevenue-venue.ledger.foodCost)}</b></div>`;target='snacks';actionText='調整小食與售價';
+  }else if(room.id==='staff'){description='清潔車、儲物櫃及用品集中在後勤室。合理分工，減少下一場的延誤。';detail=`<div class="ready-row"><span>清潔員工</span><b>${venue.staff.filter(p=>p.role==='cleaning').length} 位</b></div><div class="ready-row"><span>今日延誤</span><b>${venue.ledger.delay} 分鐘</b></div>`;target='staff';actionText='管理員工團隊';
+  }else description='獨立入口連接大堂，設施與公共通道分開，保持動線暢通。';
+  return `<p class="eyebrow">CINEMA OPERATIONS</p><h2>${title}</h2><p>${description}</p>${detail}<button class="primary" data-action="navigate" data-target="${target}">${actionText} →</button><button class="text-button" data-action="clear-zone">返回營運摘要</button>`;
+}
+function selectZone(id){selectedZone=id;if(renderer){renderer.selected=id;renderer.dirty=true;}if($('#zone-inspector'))$('#zone-inspector').innerHTML=zoneInfo();for(const el of document.querySelectorAll('[data-zone]')){el.classList.toggle('active',el.dataset.zone===id);el.setAttribute('aria-pressed',String(el.dataset.zone===id));}}
 function overview() {
-  const v = b();
-  return `<div class="metrics"><div class="metric"><label>戲院票房留成</label><i class="metric-icon">▥</i><strong id="metric-tickets">${money(v.ledger.gross - v.ledger.share)}</strong><span>總票房減去片商分帳</span></div><div class="metric"><label>小食毛利</label><i class="metric-icon">♜</i><strong id="metric-food">${money(v.ledger.foodRevenue - v.ledger.foodCost)}</strong><span>售價收入減去食品成本</span></div><div class="metric"><label>今日入場人次</label><i class="metric-icon">♧</i><strong id="metric-visitors">${v.ledger.admissions}<small style="font:10px Arial;color:#b4a18d;margin-left:7px">人</small></strong><span id="metric-seats">兩個影廳 · 共 ${v.seats.reduce((a, b) => a + b, 0)} 席</span></div><div class="metric ${estimateNet(v) >= 0 ? "positive" : "negative"}" id="net-card"><label>${state.phase === "closed" ? "今日營運淨利" : "扣除日常成本後"}</label><i class="metric-icon">↗</i><strong id="metric-net">${money(estimateNet(v))}</strong><span>已計人工、租金及例行維護</span></div></div><div class="overview-grid"><div><section class="scene-card"><div class="panel-header"><div><h2>${esc(v.name)}</h2><p>自動營運 · 你掌握每個重要決定</p></div><button data-action="navigate" data-target="investment">配置區域 ↗</button></div><div class="scene-wrap"><span class="scene-label ${state.phase === "closed" ? "closed" : ""}">${state.phase === "planning" ? "BEFORE THE SHOW" : state.phase === "closed" ? "SEE YOU TOMORROW" : "THE SHOW IS ON"}</span><canvas id="cinema" width="1120" height="760" aria-label="等角像素戲院，顯示影廳、客人、售票櫃枱、小食部及清潔員"></canvas><span class="scene-tag">${v.owned ? "自置物業" : "租賃經營"} · 2D CINEMA</span></div><div class="scene-bottom"><span>口碑 <b id="reputation">${Math.round(v.reputation)}</b> / 100 <span class="rep-bar"><i style="width:${v.reputation}%"></i></span></span><span>${v.staff.length} 位員工 · ${v.programme.length} 場放映 · ${v.district}</span></div></section><div class="goals"><div class="goal"><span class="goal-icon">⌂</span><div><b>${v.owned ? "終於，有間自己嘅戲院。" : "第一個目標・買斷物業"}</b><p>${v.owned ? "往後免租，繼續用心維護。" : `${money(E.PROPERTY_PRICE[v.id])} 買斷後，每日免租 ${money(v.rent)}`}</p></div><button class="text-button" data-action="navigate" data-target="investment">${v.owned ? "查看物業" : "查看進度"} ↗</button></div><div class="goal"><span class="goal-icon">◇</span><div><b>${state.branches.length > 1 ? "第二間戲院，另一個故事。" : "下一站・觀塘新分店"}</b><p>${state.branches.length > 1 ? "切換分店，親自安排每一場好戲。" : `${money(E.BRANCH_PRICE)} 開設，兩店由你親自管理。`}</p></div><button class="text-button" data-action="navigate" data-target="investment">查看 ↗</button></div></div></div><div class="right-stack"><section class="panel"><div class="panel-header"><h2>今日放映</h2><button data-action="navigate" data-target="schedule">排片 ↗</button></div><div id="live-show-list" class="show-list">${nowShows()}</div></section><section class="panel"><div class="panel-header"><h2>戲院小報</h2><span class="muted" style="font:8px monospace">LUMEN DAILY</span></div><div class="news" id="live-news">${newsHTML()}</div></section></div></div>`;
+  const v=b();
+  return `<div class="studio-overview"><section class="scene-card"><div class="panel-header"><div><p class="eyebrow">YOUR LITTLE PICTURE HOUSE</p><h2>${esc(v.name)}</h2><p>自動營運 · 每一場好戲，都由你安排</p></div><div class="map-controls" aria-label="地圖視角"><button data-action="zoom-out" aria-label="縮小地圖">−</button><span id="map-zoom">100%</span><button data-action="zoom-in" aria-label="放大地圖">＋</button><button data-action="map-fit">全景</button></div></div><div class="scene-wrap"><span class="scene-label">${state.phase==='planning'?'開業前準備':state.phase==='closed'?'今日好戲，圓滿散場':'好戲正在上演'}</span><canvas id="cinema" width="1440" height="1000" tabindex="0" aria-label="立體階梯像素戲院；可拖曳移動，使用加減號縮放，亦可用下方按鈕選擇區域"></canvas><span class="scene-tag">拖曳移動 · ＋／－縮放</span></div><div class="zone-tabs" aria-label="選擇戲院區域">${[['hall1','影廳 1'],['hall2','影廳 2'],['tickets','售票'],['snacks','小食'],['staff','後勤'],['toilets','洗手間']].map(([id,name])=>`<button data-action="select-zone" data-id="${id}" data-zone="${id}" aria-pressed="${selectedZone===id}" class="${selectedZone===id?'active':''}">${name}</button>`).join('')}</div><div class="scene-bottom"><span>口碑 <b id="reputation">${Math.round(v.reputation)}</b> / 100</span><span>${v.staff.length} 位員工 · ${v.programme.length} 場放映 · ${v.district}</span></div></section><aside class="operations-dock"><section class="panel zone-inspector" id="zone-inspector">${zoneInfo()}</section><section class="panel programme-card"><div class="panel-header"><h2>今日放映</h2><button data-action="navigate" data-target="schedule">完整排片 ↗</button></div><div id="live-show-list" class="show-list">${nowShows()}</div></section></aside></div><div class="metrics"><div class="metric"><label>戲院票房留成</label><strong id="metric-tickets">${money(v.ledger.gross-v.ledger.share)}</strong><span>已扣片商分帳</span></div><div class="metric"><label>小食毛利</label><strong id="metric-food">${money(v.ledger.foodRevenue-v.ledger.foodCost)}</strong><span>已扣食品成本</span></div><div class="metric"><label>今日入場人次</label><strong id="metric-visitors">${v.ledger.admissions}<small> 人</small></strong><span id="metric-seats">兩廳共 ${v.seats.reduce((a,b)=>a+b,0)} 席</span></div><div class="metric ${estimateNet(v)>=0?'positive':'negative'}" id="net-card"><label>${state.phase==='closed'?'今日營運淨利':'計入日常開支後'}</label><strong id="metric-net">${money(estimateNet(v))}</strong><span>包括人工、租金及維護</span></div></div><div class="studio-lower"><section class="panel ownership-goal"><p class="eyebrow">MAKE IT YOURS</p><h2>${v.owned?'有間自己嘅戲院。':'由租舖，到擁有。'}</h2><p>${v.owned?'往後免租，繼續用心維護，或為下一間戲院亮燈。':`儲起 ${money(E.PROPERTY_PRICE[v.id])}，買斷後每日免租 ${money(v.rent)}。`}</p><div class="ownership-progress"><span style="width:${v.owned?100:Math.min(100,Math.max(0,state.cash)/E.PROPERTY_PRICE[v.id]*100)}%"></span></div><button class="text-button" data-action="navigate" data-target="investment">裝修、物業與第二分店 →</button></section><section class="panel"><div class="panel-header"><h2>戲院小報</h2><span class="muted">LUMEN DAILY</span></div><div class="news" id="live-news">${newsHTML()}</div></section></div>`;
 }
 function newsHTML() {
   return state.news
@@ -270,7 +293,7 @@ function films() {
     )
     .join(
       "",
-    )}</div></div><div class="film-grid">${pool.map((m) => `<button class="film-card ${m.release > state.day || E.isBanned(state, m.id) ? "unavailable" : ""}" data-action="movie-detail" data-id="${m.id}"><div class="poster-wrap" style="--movie-color:${m.color}"><canvas data-movie="${m.id}" width="240" height="310" aria-label="${esc(m.title)}原創戲仿海報"></canvas><span class="film-rating">★ ${m.rating.toFixed(1)}</span>${E.isBanned(state, m.id) ? '<span class="new-tag">暫時停映</span>' : m.release > state.day ? `<span class="new-tag">第 ${m.release} 日上映</span>` : state.day - m.release < 7 ? '<span class="new-tag">本週熱映</span>' : ""}</div><div class="film-body"><b>${esc(m.title)}</b><p>${m.type} · ${m.length} 分鐘</p><div class="film-footer"><span>片商抽成 ${Math.round(m.share * 100)}%</span><em>${m.release > state.day ? "即將上映" : `熱度 ${Math.round(E.heat(m, state.day) * 100)}`}</em></div></div></button>`).join("")}</div>`;
+    )}</div></div><div class="film-grid">${pool.map((m) => `<button class="film-card ${m.release > state.day || E.isBanned(state, m.id) ? "unavailable" : ""}" data-action="movie-detail" data-id="${m.id}"><div class="poster-wrap" style="--movie-color:${m.color}"><canvas data-movie="${m.id}" width="240" height="360" aria-label="${esc(m.title)}原創戲仿海報"></canvas><span class="film-rating">★ ${m.rating.toFixed(1)}</span>${E.isBanned(state, m.id) ? '<span class="new-tag">暫時停映</span>' : m.release > state.day ? `<span class="new-tag">第 ${m.release} 日上映</span>` : state.day - m.release < 7 ? '<span class="new-tag">本週熱映</span>' : ""}</div><div class="film-body"><b>${esc(m.title)}</b><p>${m.type} · ${m.length} 分鐘</p><div class="film-footer"><span>片商抽成 ${Math.round(m.share * 100)}%</span><em>${m.release > state.day ? "即將上映" : `熱度 ${Math.round(E.heat(m, state.day) * 100)}`}</em></div></div></button>`).join("")}</div>`;
 }
 function staff() {
   const v = b();
@@ -351,6 +374,8 @@ function render() {
   for (const n of document.querySelectorAll("[data-view]"))
     n.classList.toggle("active", n.dataset.view === view);
   const animation = renderer?.animation || 0;
+  const camera = renderer?.camera;
+  renderer?.dispose?.();
   $("#view-content").innerHTML = {
     overview,
     schedule,
@@ -361,7 +386,9 @@ function render() {
     report,
   }[view]();
   if (view === "overview" && atlas) {
-    renderer = new CinemaRenderer($("#cinema"), atlas, images);
+    renderer = new CinemaRenderer($("#cinema"), atlas, images, {onSelect: selectZone, camera});
+    renderer.selected=selectedZone;
+    if($("#map-zoom"))$("#map-zoom").textContent=Math.round(renderer.camera.zoom*100)+"%";
     renderer.animation = animation;
     renderer.render(state);
   } else renderer = null;
@@ -385,6 +412,7 @@ function liveUpdate() {
     $("#live-show-list").innerHTML = nowShows();
     $("#live-news").innerHTML = newsHTML();
     $("#reputation").textContent = Math.round(b().reputation);
+    if(selectedZone)$("#zone-inspector").innerHTML=zoneInfo();
   }
 }
 function showForm(id = null, preferredMovie = null) {
@@ -418,12 +446,12 @@ function movieDetail(id) {
   if (!m) return;
   const good = E.COHORTS.filter((g) => g.pref[m.genre] >= 1.2);
   openModal(
-    `<div class="modal-body">${modalHeader("FILM DISTRIBUTION", esc(m.title))}<div class="movie-detail"><canvas width="240" height="320" data-movie="${m.id}"></canvas><div><p>${m.type} · ${m.length} 分鐘<br>口碑 ★ ${m.rating.toFixed(1)} / 10<br>片商：${esc(m.studio)}<br>票房抽成：${Math.round(m.share * 100)}%<br>${m.release > state.day ? "第 " + m.release + " 日上映" : E.isBanned(state, m.id) ? "停映至第 " + state.bans[m.id] + " 日" : "已上映 " + (state.day - m.release + 1) + " 日"}</p><p>${esc(m.tagline)}</p><div class="heat-bar"><span style="width:${Math.min(100, E.heat(m, state.day) * 50)}%"></span></div><p>目前熱度 ${Math.round(E.heat(m, state.day) * 100)} · ${m.rating >= 8.7 ? "口碑型，退熱較慢" : "上映後熱度逐步回落"}</p></div></div><div class="tag-list">${good.map((g) => `<span class="tag">${g.name}偏好</span>`).join("")}</div><p>高票房未必等於高淨利：別忘記片商分帳、人手同小食服務能力。</p><div class="modal-actions"><button class="secondary" data-action="close">返回電影庫</button><button class="primary" data-action="movie-add" data-id="${m.id}" ${!planning() || m.release > state.day || E.isBanned(state, m.id) ? "disabled" : ""}>加入排片</button></div></div>`,
+    `<div class="modal-body">${modalHeader("FILM DISTRIBUTION", esc(m.title))}<div class="movie-detail"><canvas width="240" height="360" data-movie="${m.id}"></canvas><div><p>${m.type} · ${m.length} 分鐘<br>口碑 ★ ${m.rating.toFixed(1)} / 10<br>片商：${esc(m.studio)}<br>票房抽成：${Math.round(m.share * 100)}%<br>${m.release > state.day ? "第 " + m.release + " 日上映" : E.isBanned(state, m.id) ? "停映至第 " + state.bans[m.id] + " 日" : "已上映 " + (state.day - m.release + 1) + " 日"}</p><p>${esc(m.tagline)}</p><div class="heat-bar"><span style="width:${Math.min(100, E.heat(m, state.day) * 50)}%"></span></div><p>目前熱度 ${Math.round(E.heat(m, state.day) * 100)} · ${m.rating >= 8.7 ? "口碑型，退熱較慢" : "上映後熱度逐步回落"}</p></div></div><div class="tag-list">${good.map((g) => `<span class="tag">${g.name}偏好</span>`).join("")}</div><p>高票房未必等於高淨利：別忘記片商分帳、人手同小食服務能力。</p><div class="modal-actions"><button class="secondary" data-action="close">返回電影庫</button><button class="primary" data-action="movie-add" data-id="${m.id}" ${!planning() || m.release > state.day || E.isBanned(state, m.id) ? "disabled" : ""}>加入排片</button></div></div>`,
   );
 }
 function help(welcome = false) {
   openModal(
-    `<div class="modal-body">${modalHeader("WELCOME TO LUMEN CINEMA", welcome ? "歡迎做戲院老闆。" : "好戲點樣開始？")}<p>現代香港，一間租用戲院。你負責安排營運，員工負責日常工作，突發時再決定要唔要親自救場。</p><div class="help-steps"><div class="help-step"><b>01</b><span><strong>先排片、定價同安排人手</strong>已有一套開業排片供調整；複製昨日可以減少重複操作。第二間分店需要由你親自安排。</span></div><div class="help-step"><b>02</b><span><strong>睇住戲院自己運作</strong>正常速度一日 3 分鐘，可用 2×／4× 加速，不能跳到事件。離開分頁會自動暫停。</span></div><div class="help-step"><b>03</b><span><strong>親自救場，再投資下一步</strong>一般每日每店 0–2 次事件。小遊戲可交員工；儲錢買斷免租，或開設觀塘分店。</span></div></div><p>進度儲存於本機瀏覽器。價格、日長同獎勵目前係試玩設定；正式角色動畫、特別格式同完整影展會後續擴充。</p><div class="modal-actions">${welcome && readStored() ? '<button class="secondary" data-action="resume-save">繼續已儲存進度</button>' : ""}${!welcome ? '<button class="subtle-button danger" data-action="reset-prompt">重新開局</button>' : ""}<button class="primary" data-action="close">${welcome ? "開始籌備第一日" : "明白，繼續經營"}</button></div></div>`,
+    `<div class="modal-body">${modalHeader("WELCOME TO LUMEN CINEMA", welcome ? "歡迎做戲院老闆。" : "好戲點樣開始？")}<p>現代香港，一間租用戲院。你負責安排營運，員工負責日常工作，突發時再決定要唔要親自救場。</p><div class="help-steps"><div class="help-step"><b>01</b><span><strong>先排片、定價同安排人手</strong>已有一套開業排片供調整；複製昨日可以減少重複操作。第二間分店需要由你親自安排。</span></div><div class="help-step"><b>02</b><span><strong>睇住戲院自己運作</strong>正常速度一日 3 分鐘，可用 2×／4× 加速，不能跳到事件。離開分頁會自動暫停。</span></div><div class="help-step"><b>03</b><span><strong>親自救場，再投資下一步</strong>一般每日每店 0–2 次事件。小遊戲可交員工；儲錢買斷免租，或開設觀塘分店。</span></div></div><p>進度儲存於本機瀏覽器。價格、日長同獎勵目前係試玩設定；可以拖曳及縮放地圖，點選區域查看營運狀態。</p><div class="modal-actions">${welcome && readStored() ? '<button class="secondary" data-action="resume-save">繼續已儲存進度</button>' : ""}${!welcome ? '<button class="subtle-button danger" data-action="reset-prompt">重新開局</button>' : ""}<button class="primary" data-action="close">${welcome ? "開始籌備第一日" : "明白，繼續經營"}</button></div></div>`,
   );
 }
 function showEvent() {
@@ -596,6 +624,11 @@ function confirmInvestment(kind) {
 function action(name, target) {
   const id = target?.dataset.id;
   switch (name) {
+    case "select-zone": selectZone(id); return;
+    case "clear-zone": selectZone(null); return;
+    case "zoom-in": renderer?.zoom(.2); if($("#map-zoom"))$("#map-zoom").textContent=Math.round(renderer.camera.zoom*100)+"%"; return;
+    case "zoom-out": renderer?.zoom(-.2); if($("#map-zoom"))$("#map-zoom").textContent=Math.round(renderer.camera.zoom*100)+"%"; return;
+    case "map-fit": renderer?.fit(); if($("#map-zoom"))$("#map-zoom").textContent="100%"; return;
     case "close":
       closeModal();
       return;
@@ -818,6 +851,7 @@ function mainAction() {
     view = "overview";
     persist();
     render();
+    audio.play("open");
     toast(`第 ${state.day} 日開場！${state.branches.length} 間戲院同步營業。`);
   } else if (state.phase === "closed") {
     E.nextDay(state);
@@ -836,6 +870,8 @@ $("#pause-button").onclick = () => {
 $("#save-button").onclick = () => persist(false);
 $("#load-button").onclick = loadSaved;
 $("#help-button").onclick = () => help();
+$("#sound-button").onclick=()=>{const enabled=audio.toggle();$("#sound-button").textContent=enabled?"♪":"♩";$("#sound-button").setAttribute("aria-pressed",String(enabled));$("#sound-button").title=enabled?"關閉音效":"開啟音效";};
+$("#sound-button").setAttribute("aria-pressed",String(audio.enabled));
 $("#second-branch").onclick = () => {
   view = "investment";
   render();
@@ -859,6 +895,7 @@ document.addEventListener("click", (e) => {
   const t = e.target.closest("[data-action]");
   if (t && !t.disabled) {
     try {
+      audio.play();
       action(t.dataset.action, t);
     } catch (error) {
       toast("未能完成操作：" + error.message, true);
@@ -932,22 +969,10 @@ document.addEventListener("visibilitychange", () => {
 window.addEventListener("pagehide", () => persist());
 $("#view-content").innerHTML = '<div class="loading">戲院準備中…</div>';
 try {
-  atlas = await fetch("./assets/atlas.json").then((r) => {
-    if (!r.ok) throw Error("貼圖清單未能載入");
-    return r.json();
-  });
-  const loaded = await Promise.all(
-    [...new Set(atlas.assets.map((a) => a.file))].map(async (file) => {
-      const image = new Image();
-      image.src = "./assets/" + file;
-      await image.decode();
-      return [file, image];
-    }),
-  );
-  images = Object.fromEntries(loaded);
-} catch (error) {
-  toast("部分貼圖未能載入，請重新整理。", true);
-  console.error(error);
+  const loaded=await loadCinemaAssets();atlas=loaded.manifest;images=loaded.images;setPosterAssets(images,atlas);
+} catch(error) {
+  $('#view-content').innerHTML='<section class="panel load-failure"><h2>戲院素材未能載入</h2><p>請檢查連線，再重新載入。已儲存的進度會保留。</p><button class="primary" onclick="location.reload()">重新載入</button></section>';
+  $('#main-action').disabled=true;console.error(error);throw error;
 }
 render();
 help(true);
@@ -969,8 +994,9 @@ function frame(now) {
     if (state.phase !== renderedPhase) {
       persist();
       render();
-      if (state.phase === "event") showEvent();
+      if (state.phase === "event") {audio.play("event");showEvent();}
       if (state.phase === "closed") {
+        audio.play("close");
         toast(
           `第 ${state.day} 日營業結束，營運${state.history[0].net >= 0 ? "盈利" : "虧損"} ${money(Math.abs(state.history[0].net))}。`,
         );
@@ -991,3 +1017,6 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+
+// Read-only diagnostics for repeatable browser QA. No game-state mutation API.
+window.__lumen=Object.freeze({getState:()=>JSON.parse(E.saveGame(state)).state,getDiagnostics:()=>renderer?{...renderer.stats,camera:{...renderer.camera}}:null});

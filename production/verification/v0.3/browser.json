@@ -1,0 +1,62 @@
+{
+  "url": "http://127.0.0.1:8192/",
+  "checks": [
+    "fresh start, all runtime assets and elevated world loaded",
+    "cached desktop renderer stays below 40ms CPU p95",
+    "region selection and accurate planning hall status",
+    "pointer pan, zoom and panorama reset",
+    "all twenty films have runtime poster coverage",
+    "automatic operation, admissions, customers and film projection",
+    "old release save preserves cash, ownership, both branches and upgraded seating",
+    "purchased equipment, decoration and seating are visible in the world",
+    "real schedule editing updates ticket price",
+    "tickets optional minigame resolves into real operating buff",
+    "snacks optional minigame resolves into real operating buff",
+    "cleaning optional minigame resolves into real operating buff",
+    "day close, financial report and next-day loop",
+    "loaded game controls and save/reload continue offline",
+    "touch layout and navigation 390×844",
+    "touch layout and navigation 720×1280",
+    "touch layout and navigation 1080×2400",
+    "asset load failure has an explicit retry state and blocks opening"
+  ],
+  "errors": [],
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "overflow": false
+    },
+    {
+      "width": 1080,
+      "height": 2400,
+      "overflow": false
+    }
+  ],
+  "warmRender": {
+    "coldCompileMs": 401,
+    "walkers": 4,
+    "version": "0.3.0",
+    "objects": 104,
+    "seatCounts": [
+      48,
+      40
+    ],
+    "layers": 68,
+    "cacheMiB": 58,
+    "renderP95Ms": 10.5,
+    "pathsReachable": true,
+    "camera": {
+      "zoom": 1,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "status": "passed",
+  "finishedAt": "2026-11-13T05:43:01.506Z"
+}

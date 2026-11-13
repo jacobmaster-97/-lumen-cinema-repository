@@ -1,0 +1,395 @@
+{
+  "type": "lumen-cinema-save",
+  "savedAt": 1794484800000,
+  "state": {
+    "version": 2,
+    "day": 1,
+    "cash": 66000,
+    "phase": "planning",
+    "elapsed": 0,
+    "minute": -1,
+    "speed": 1,
+    "paused": false,
+    "activeBranch": 1,
+    "branches": [
+      {
+        "id": 0,
+        "name": "旺角 · 光影戲院",
+        "district": "旺角",
+        "owned": true,
+        "rent": 1100,
+        "seats": [
+          56,
+          48
+        ],
+        "upgrades": {
+          "decor": 0,
+          "sound": 0,
+          "counter": 0,
+          "seats": 1
+        },
+        "foods": [
+          32,
+          24,
+          42
+        ],
+        "foodUnlocked": [
+          true,
+          true,
+          false
+        ],
+        "reputation": 70,
+        "staff": [
+          {
+            "id": 1,
+            "name": "嘉欣",
+            "role": "tickets",
+            "skill": 3,
+            "wage": 330,
+            "special": "tickets"
+          },
+          {
+            "id": 2,
+            "name": "俊朗",
+            "role": "tickets",
+            "skill": 2,
+            "wage": 260,
+            "special": "tickets"
+          },
+          {
+            "id": 3,
+            "name": "美琪",
+            "role": "snacks",
+            "skill": 3,
+            "wage": 330,
+            "special": "snacks"
+          },
+          {
+            "id": 4,
+            "name": "家豪",
+            "role": "cleaning",
+            "skill": 3,
+            "wage": 300,
+            "special": "cleaning"
+          }
+        ],
+        "programme": [
+          {
+            "id": "s100",
+            "hall": 0,
+            "start": 15,
+            "movie": "m0",
+            "price": 78,
+            "format": "2D"
+          },
+          {
+            "id": "s101",
+            "hall": 0,
+            "start": 195,
+            "movie": "m2",
+            "price": 88,
+            "format": "2D"
+          },
+          {
+            "id": "s102",
+            "hall": 0,
+            "start": 390,
+            "movie": "m4",
+            "price": 98,
+            "format": "2D"
+          },
+          {
+            "id": "s103",
+            "hall": 0,
+            "start": 570,
+            "movie": "m6",
+            "price": 98,
+            "format": "2D"
+          },
+          {
+            "id": "s104",
+            "hall": 1,
+            "start": 60,
+            "movie": "m1",
+            "price": 78,
+            "format": "2D"
+          },
+          {
+            "id": "s105",
+            "hall": 1,
+            "start": 255,
+            "movie": "m3",
+            "price": 88,
+            "format": "2D"
+          },
+          {
+            "id": "s106",
+            "hall": 1,
+            "start": 435,
+            "movie": "m5",
+            "price": 98,
+            "format": "2D"
+          },
+          {
+            "id": "s107",
+            "hall": 1,
+            "start": 620,
+            "movie": "m7",
+            "price": 98,
+            "format": "2D"
+          }
+        ],
+        "ledger": {
+          "gross": 0,
+          "share": 0,
+          "foodRevenue": 0,
+          "foodCost": 0,
+          "wages": 0,
+          "rent": 0,
+          "maintenance": 0,
+          "eventCost": 0,
+          "loanPayment": 0,
+          "admissions": 0,
+          "demand": 0,
+          "lost": 0,
+          "snackUnits": [
+            0,
+            0,
+            0
+          ],
+          "groups": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "delay": 0
+        },
+        "shows": [],
+        "service": [],
+        "roomReady": [
+          0,
+          0
+        ],
+        "closedUntil": [
+          0,
+          0
+        ],
+        "buffs": {
+          "tickets": 0,
+          "snacks": 0,
+          "cleaning": 0,
+          "until": 0
+        },
+        "celebrity": null
+      },
+      {
+        "id": 1,
+        "name": "觀塘 · 光影東岸",
+        "district": "觀塘",
+        "owned": false,
+        "rent": 1550,
+        "seats": [
+          48,
+          40
+        ],
+        "upgrades": {
+          "decor": 0,
+          "sound": 0,
+          "counter": 0,
+          "seats": 0
+        },
+        "foods": [
+          32,
+          24,
+          42
+        ],
+        "foodUnlocked": [
+          true,
+          true,
+          false
+        ],
+        "reputation": 70,
+        "staff": [
+          {
+            "id": 1,
+            "name": "詠詩",
+            "role": "tickets",
+            "skill": 3,
+            "wage": 330,
+            "special": "tickets"
+          },
+          {
+            "id": 2,
+            "name": "志明",
+            "role": "tickets",
+            "skill": 2,
+            "wage": 260,
+            "special": "tickets"
+          },
+          {
+            "id": 3,
+            "name": "凱晴",
+            "role": "snacks",
+            "skill": 3,
+            "wage": 330,
+            "special": "snacks"
+          },
+          {
+            "id": 4,
+            "name": "樂軒",
+            "role": "cleaning",
+            "skill": 3,
+            "wage": 300,
+            "special": "cleaning"
+          }
+        ],
+        "programme": [
+          {
+            "id": "s108",
+            "hall": 0,
+            "start": 15,
+            "movie": "m0",
+            "price": 82,
+            "format": "2D"
+          },
+          {
+            "id": "s109",
+            "hall": 0,
+            "start": 195,
+            "movie": "m2",
+            "price": 92,
+            "format": "2D"
+          },
+          {
+            "id": "s110",
+            "hall": 0,
+            "start": 390,
+            "movie": "m4",
+            "price": 102,
+            "format": "2D"
+          },
+          {
+            "id": "s111",
+            "hall": 0,
+            "start": 570,
+            "movie": "m6",
+            "price": 102,
+            "format": "2D"
+          },
+          {
+            "id": "s112",
+            "hall": 1,
+            "start": 60,
+            "movie": "m1",
+            "price": 82,
+            "format": "2D"
+          },
+          {
+            "id": "s113",
+            "hall": 1,
+            "start": 255,
+            "movie": "m3",
+            "price": 92,
+            "format": "2D"
+          },
+          {
+            "id": "s114",
+            "hall": 1,
+            "start": 435,
+            "movie": "m5",
+            "price": 102,
+            "format": "2D"
+          },
+          {
+            "id": "s115",
+            "hall": 1,
+            "start": 620,
+            "movie": "m7",
+            "price": 102,
+            "format": "2D"
+          }
+        ],
+        "ledger": {
+          "gross": 0,
+          "share": 0,
+          "foodRevenue": 0,
+          "foodCost": 0,
+          "wages": 0,
+          "rent": 0,
+          "maintenance": 0,
+          "eventCost": 0,
+          "loanPayment": 0,
+          "admissions": 0,
+          "demand": 0,
+          "lost": 0,
+          "snackUnits": [
+            0,
+            0,
+            0
+          ],
+          "groups": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "delay": 0
+        },
+        "shows": [],
+        "service": [],
+        "roomReady": [
+          0,
+          0
+        ],
+        "closedUntil": [
+          0,
+          0
+        ],
+        "buffs": {
+          "tickets": 0,
+          "snacks": 0,
+          "cleaning": 0,
+          "until": 0
+        },
+        "celebrity": null
+      }
+    ],
+    "bans": {},
+    "events": [],
+    "pending": null,
+    "history": [],
+    "news": [
+      {
+        "day": 1,
+        "minute": 0,
+        "text": "旺角 · 光影戲院 物業已買斷！免租，但仍需支付維護費。"
+      },
+      {
+        "day": 1,
+        "minute": 0,
+        "text": "觀塘分店已開業！請親自排片、定價及配置員工，兩店將同步營業。"
+      },
+      {
+        "day": 1,
+        "minute": 0,
+        "text": "旺角 · 光影戲院：擴充影廳已升至 1 級。"
+      },
+      {
+        "day": 1,
+        "minute": 0,
+        "text": "歡迎開業！先檢查排片、票價同員工，再開始第一日營業。"
+      }
+    ],
+    "investment": 134000,
+    "dayOpeningCash": 200000,
+    "loan": 0,
+    "loanDrawn": 0,
+    "seed": 20261111,
+    "nextId": 116
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "passed": true
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "passed": true
+    },
+    {
+      "width": 1080,
+      "height": 2400,
+      "passed": true
+    },
+    {
+      "assetGallery": true,
+      "passed": true
+    }
+  ]
+}

@@ -23,3 +23,9 @@ repository 擁有者已啟用 GitHub Actions 作 Pages 來源。重試 run 43176
 首次啟用時曾被 GitHub App 的 403 限制阻擋，現已由擁有者設定解決。之後更新 main 可由既有 workflow 自動測試、打包及發佈。
 
 公開 Pages 無需 ChatGPT 登入；本機存檔按網域分開，不會自動承接 Sites 網站的進度。雲端瀏覽器工具尚未完成視覺試玩，HTTP 檢查不代表全部遊戲互動均已真人驗證。
+
+## v0.3 像素重製發佈
+
+沿用現有公開 repository 與 Pages workflow。新增 world / scene / assets / audio 模組、studio.css 及 runtime PNG；Node 測試增至 27 項。scripts/build-pages.mjs 生成自足 dist/pages，並產生包含 GITHUB_SHA 的 version.json。
+
+本機真實瀏覽器驗證見 production/verification/v0.3/browser.json。發佈後需檢查遠端 workflow、公開 version.json 的 commit，以及 runtime manifest 與圖片 HTTP 狀態。必要時 revert 發佈 commit 後重新執行相同 workflow，v2 存檔格式不變。

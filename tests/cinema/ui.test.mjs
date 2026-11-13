@@ -16,7 +16,7 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
   );
   const atlas = JSON.parse(
     await readFile(
-      new URL("../../src/assets/cinema/atlas.json", import.meta.url),
+      new URL("../../src/assets/cinema/runtime/manifest.json", import.meta.url),
       "utf8",
     ),
   );
@@ -31,6 +31,9 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
     draws = 0;
   const ctx = new Proxy(
     {
+      createImageData(width,height){return {data:new Uint8ClampedArray(width*height*4),width,height};},
+      getImageData(x,y,width,height){return {data:new Uint8ClampedArray(width*height*4),width,height};},
+      measureText(text){return {width:text.length*9};},
       drawImage() {
         draws++;
       },
@@ -54,6 +57,8 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
     localStorage: w.localStorage,
     FormData: w.FormData,
     Image: class {
+      width=1254;
+      height=1254;
       async decode() {}
     },
     fetch: async () => ({ ok: true, json: async () => atlas }),
