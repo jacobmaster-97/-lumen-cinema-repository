@@ -6,8 +6,8 @@
 
 ## Current Phase
 
-- Phase: playable rebuild → release
-- Status: 已安裝專案本地 gamestudio（guangyuspace/codex-gamestudio-skill，42838f2a4df97f77104a4c7a9561a4f6c9160621），已完成本機可玩實裝與驗證，正在發佈。
+- Phase: release → player playtest
+- Status: 已安裝專案本地 gamestudio（guangyuspace/codex-gamestudio-skill，42838f2a4df97f77104a4c7a9561a4f6c9160621）；v0.3.0 已部署現有 Pages，公開版本與實際營業驗證通過。
 - 使用者本輪已明確授權重製美術、地圖及發佈，不再沿用先前只設計待確認的交付邊界。
 
 ## Scope / Ownership
@@ -29,15 +29,17 @@
 
 - Repository: jacobmaster-97/-lumen-cinema-repository；main 起點 c6511c2cd4d24e7bc9b6ca3117dbea5155c8d9f1。
 - GitHub Pages: https://jacobmaster-97.github.io/-lumen-cinema-repository/
+- Released code: 9a55adcf4ab1b4316ecf615668ac23aba1556307；測試 run 43375605633、Pages run 43375605632 均成功，公開 version.json 與該 commit 一致。
 - 使用原 Pages workflow。保留舊存檔；失敗時可回退本輪 release commit，由相同 workflow 重新部署。
 
 ## Known Risks / Next Safest Task
 
-27 項自動測試及 18 項真實 Chromium 流程通過。下一步推送並驗證既有 Pages 工作流程及公開版本。手機實機與長期經濟節奏仍待真人試玩。DEBUG_HANDOFF.md 未建立：沒有經兩次修正仍未解的遊戲缺陷。
+27 項自動測試及 18 項真實 Chromium 流程通過。公開網站的六張 runtime 圖片均 HTTP 200，實際營業有觀眾入場，48/40 席、樓層點選及導航正常，無瀏覽器程式錯誤。下一步由使用者試玩並調整日長與經濟節奏；手機實機仍待驗證。DEBUG_HANDOFF.md 未建立：沒有經兩次修正仍未解的遊戲缺陷。
 
 ## Verification Evidence
 
 - npm test --prefix prototypes/browser: 27/27.
 - node scripts/verify-cinema-browser.cjs: 18 player paths, no browser errors.
 - production/verification/v0.3/browser.json: 1440×1000 desktop; 390/720/1080 touch layouts; old save, all minigames, day close, offline controls.
+- production/verification/v0.3/deployment.json / public.json: 成功的遠端 workflow 與公開網站實測。公開瀏覽器透過平台 CA 驗證的 HTTPS APIRequestContext 載入遠端回應，保留 TLS 驗證，避開雲端 Chromium 獨立憑證庫的代理 CA 限制；未替換成本機遊戲檔案。
 - Source map/art are in src/assets/cinema/runtime; world/scene/render own geometry, cache and animation.

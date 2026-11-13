@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "transport": "Live public HTTPS via platform-CA-verified Playwright APIRequestContext and browser routing; TLS verification enabled",
+  "version": {
+    "version": "0.3.0",
+    "commit": "9a55adcf4ab1b4316ecf615668ac23aba1556307",
+    "builtAt": "2026-11-13T05:59:50.033Z"
+  },
+  "assets": [
+    {
+      "file": "props-v3.png",
+      "status": 200
+    },
+    {
+      "file": "floors-v3.png",
+      "status": 200
+    },
+    {
+      "file": "walls-v3.png",
+      "status": 200
+    },
+    {
+      "file": "actors-v3.png",
+      "status": 200
+    },
+    {
+      "file": "posters-v3.png",
+      "status": 200
+    },
+    {
+      "file": "posters-late-v3.png",
+      "status": 200
+    }
+  ],
+  "admissions": 33,
+  "diagnostics": {
+    "coldCompileMs": 0,
+    "walkers": 73,
+    "version": "0.3.0",
+    "objects": 104,
+    "seatCounts": [
+      48,
+      40
+    ],
+    "layers": 68,
+    "cacheMiB": 58,
+    "renderP95Ms": 12.1,
+    "pathsReachable": true,
+    "camera": {
+      "zoom": 1,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "raisedFloorPick": true,
+  "errors": [],
+  "verifiedAt": "2026-11-13T06:09:47.363Z"
+}
