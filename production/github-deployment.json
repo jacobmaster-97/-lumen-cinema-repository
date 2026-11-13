@@ -6,6 +6,9 @@
   "tests_conclusion": "success",
   "pages_run": 43176907722,
   "build_conclusion": "success",
-  "deploy_conclusion": "blocked: initial Pages enablement requires repository owner",
-  "pages_live": false
+  "deploy_conclusion": "success",
+  "pages_live": true,
+  "pages_url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "http_verification": "200 for game HTML, three JS modules, atlas JSON, both PNGs, and art workbench",
+  "visual_browser_qa": "not completed: cloud browser could not read requirements and native launch produced no Chrome window"
 }

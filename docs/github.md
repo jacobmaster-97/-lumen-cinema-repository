@@ -16,6 +16,10 @@ main 推送會觸發 .github/workflows/pages.yml；先跑 18 項遊戲測試，�
 
 Sites 私人網站的原有受眾與設定不變。兩個網域的本機瀏覽器存檔互相獨立。
 
-## 首次啟用狀態
+## 發佈狀態
 
-GitHub 上的測試及靜態打包均已成功。首次建立 Pages site 的管理操作回覆 403，需要 repository 擁有者在 Settings → Pages → Build and deployment → Source 選 GitHub Actions。之後重跑 Publish playable game to Pages 的 failed jobs。此限制來自 GitHub App 權限，並非測試或遊戲打包失敗。
+repository 擁有者已啟用 GitHub Actions 作 Pages 來源。重試 run 43176907722 後，build 與 deploy 均成功，公開遊戲入口、程式模組、貼圖清單、兩張 PNG 與 art.html 均回傳 HTTP 200。
+
+首次啟用時曾被 GitHub App 的 403 限制阻擋，現已由擁有者設定解決。之後更新 main 可由既有 workflow 自動測試、打包及發佈。
+
+公開 Pages 無需 ChatGPT 登入；本機存檔按網域分開，不會自動承接 Sites 網站的進度。雲端瀏覽器工具尚未完成視覺試玩，HTTP 檢查不代表全部遊戲互動均已真人驗證。

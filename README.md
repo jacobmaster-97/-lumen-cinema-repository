@@ -2,7 +2,7 @@
 
 以現代香港為背景的等角像素戲院經營遊戲原型。安排電影、票價及人手，觀察戲院自動營業，遇突發事件再選擇親自救場；累積盈利後買斷物業，並管理第二間分店。
 
-[開啟 Sites 私人試玩網站](https://lumen-cinema-hk.jameshh998.chatgpt.site) · [遊戲框架](design/gdd.md) · [開發狀態](production/session-state/active.md)
+[立即試玩・GitHub Pages](https://jacobmaster-97.github.io/-lumen-cinema-repository/) · [遊戲框架](design/gdd.md) · [開發狀態](production/session-state/active.md)
 
 ## 已有玩法
 
@@ -57,6 +57,6 @@ Godot 4.6.3 可開啟 `src/project.godot` 查看實際貼圖放置場景。瀏�
 
 ## GitHub Pages
 
-公開版本網址：https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。首次部署完成後即可使用，無需 ChatGPT 登入。
+公開版本網址：https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。已部署成功，無需 ChatGPT 登入。
 
 推送 main 分支後，Pages workflow 會先跑 18 項遊戲測試，再以 `node scripts/build-pages.mjs` 打包實際 PNG 與遊戲檔案並部署。打包會解析原始素材路徑，發佈內容不依賴符號連結。
