@@ -1,7 +1,8 @@
 import * as E from "./engine.mjs";
 import * as C from "./construction.mjs";
 import {constructionSummary,constructionPanel,roomConstruction} from "./construction-ui.mjs";
-import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.4.0";
+import {operationsPanel,forecastPanel,draftForecast} from './operations-ui.mjs';
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.5.0";
 import { loadCinemaAssets } from "./assets.mjs";
 import { CinemaAudio } from "./audio.mjs";
 import { hallUnderRepair } from "./world.mjs";
@@ -391,7 +392,11 @@ function render() {
     investment,
     report,
   }[view]();
-  if(view==="overview")$("#view-content").insertAdjacentHTML("beforeend",constructionPanel(state,b()));
+  if(view==="overview"){
+    $('.studio-overview').insertAdjacentHTML('afterend',operationsPanel(state,b()));
+    $("#view-content").insertAdjacentHTML("beforeend",constructionPanel(state,b()));
+  }
+  if(view==='schedule'&&planning())$('#view-content').insertAdjacentHTML('beforeend',forecastPanel(state,b()));
   if (view === "overview" && atlas) {
     renderer = new CinemaRenderer($("#cinema"), atlas, images, {onSelect: selectZone, camera});
     renderer.selected=selectedZone;
@@ -420,6 +425,7 @@ function liveUpdate() {
     $("#live-news").innerHTML = newsHTML();
     $("#reputation").textContent = Math.round(b().reputation);
     if(selectedZone)$("#zone-inspector").innerHTML=zoneInfo();
+    if($('#live-operations'))$('#live-operations').outerHTML=operationsPanel(state,b());
   }
 }
 function showForm(id = null, preferredMovie = null) {
@@ -447,9 +453,21 @@ function showForm(id = null, preferredMovie = null) {
       )
       .join(
         "",
-      )}</select></label><label>影廳<select name="hall">${[0,1].filter(h=>C.hasRoom(b(),`hall${h+1}`)).map(h=>`<option value="${h}" ${p.hall===h?"selected":""}>${h+1} 號廳 · ${b().seats[h]} 席</option>`).join("")}</select></label><label>開場時間<input name="time" type="time" min="11:00" max="23:00" step="300" value="${clock(p.start)}" required></label><label>票價（HKD）<input name="price" type="number" min="20" max="300" step="1" value="${p.price}" required></label><label>放映格式<select name="format"><option value="2D">普通 2D</option></select></label></div><div id="form-error"></div><div class="modal-actions">${existing ? `<button type="button" class="subtle-button danger" data-action="delete-show" data-id="${esc(p.id)}">刪除場次</button>` : ""}<button type="button" class="secondary" data-action="close">取消</button><button class="primary" type="submit">儲存場次</button></div></form></div>`,
+      )}</select></label><label>影廳<select name="hall">${[0,1].filter(h=>C.hasRoom(b(),`hall${h+1}`)).map(h=>`<option value="${h}" ${p.hall===h?"selected":""}>${h+1} 號廳 · ${b().seats[h]} 席</option>`).join("")}</select></label><label>開場時間<input name="time" type="time" min="11:00" max="23:00" step="300" value="${clock(p.start)}" required></label><label>票價（HKD）<input name="price" type="number" min="20" max="300" step="1" value="${p.price}" required></label><label>放映格式<select name="format"><option value="2D">普通 2D</option></select></label></div><div id="programme-preview" aria-live="polite"></div><div id="form-error"></div><div class="modal-actions">${existing ? `<button type="button" class="subtle-button danger" data-action="delete-show" data-id="${esc(p.id)}">刪除場次</button>` : ""}<button type="button" class="secondary" data-action="close">取消</button><button class="primary" type="submit">儲存場次</button></div></form></div>`,
   );
+  refreshProgrammePreview();
 }
+let previewTimer=null;
+function refreshProgrammePreview(){
+ const form=$('#programme-form');if(!form)return;
+ const f=new FormData(form),id=form.dataset.id||'preview-draft',time=String(f.get('time')).split(':').map(Number);
+ const candidate={id,hall:Number(f.get('hall')),start:time[0]*60+time[1]-E.OPEN_MINUTE,movie:f.get('movie'),price:Number(f.get('price')),format:'2D'};
+ const programme=b().programme.filter(p=>p.id!==form.dataset.id).concat(candidate);
+ $('#programme-preview').innerHTML=draftForecast(state,b(),programme,id);
+}
+document.addEventListener('input',e=>{if(!e.target.closest('#programme-form'))return;clearTimeout(previewTimer);previewTimer=setTimeout(refreshProgrammePreview,200)});
+document.addEventListener('change',e=>{if(e.target.closest('#programme-form')){clearTimeout(previewTimer);refreshProgrammePreview()}});
+
 function movieDetail(id) {
   const m = E.movie(id);
   if (!m) return;
@@ -841,6 +859,7 @@ function loadSaved() {
     const legacy=JSON.parse(raw)?.state?.branches?.some(b=>!b.map);
     const loaded=E.loadGame(raw);
     if(legacy)try{if(!localStorage.getItem(STORAGE+"-before-map-v1"))localStorage.setItem(STORAGE+"-before-map-v1",raw);}catch{}
+    if(loaded.branches.every(b=>!b.flow))try{if(!localStorage.getItem(STORAGE+'-before-flow-v1'))localStorage.setItem(STORAGE+'-before-flow-v1',raw)}catch{}
     state=loaded;selectedZone=null;selectedBlock=null;
     mini = null;
     view = "overview";
@@ -859,6 +878,7 @@ function loadSaved() {
 function mainAction() {
   if (state.phase === "planning") {
     if(!state.branches.some(C.operational)){view="overview";selectedZone=null;selectedBlock=null;action("construction-next",{dataset:{}});return;}
+    try{if(!localStorage.getItem(STORAGE+'-before-flow-v1'))localStorage.setItem(STORAGE+'-before-flow-v1',E.saveGame(state))}catch{}
     const error = E.startDay(state);
     if (error) {
       toast(error, true);

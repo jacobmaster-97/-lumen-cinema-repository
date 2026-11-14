@@ -10,7 +10,7 @@
 
 網址：https://jacobmaster-97.github.io/-lumen-cinema-repository/
 
-main 推送會觸發 .github/workflows/pages.yml；先跑 41 項遊戲測試，再由 scripts/build-pages.mjs 產生 dist/pages 並部署。build job 只有 contents:read，部署 job 使用 pages:write 與 id-token:write。
+main 推送會觸發 .github/workflows/pages.yml；先跑 55 項遊戲測試，再由 scripts/build-pages.mjs 產生 dist/pages 並部署。build job 只有 contents:read，部署 job 使用 pages:write 與 id-token:write。
 
 遊戲主頁及貼圖工作台都使用相對資源路徑，適用於 repository 子路徑。正式發佈會複製 PNG 與 AtlasTexture 為一般檔案，不依賴 GitHub Pages 對符號連結的支援。
 
@@ -55,3 +55,11 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 `map-data.mjs`同步已確認配置，洗手間向右；新局單格起步、施工後開業。三張整區PNG與地圖幾何／門／座位／導航在遊戲中實際使用，詳細規則見 design/rebuild-v0.4.md。舊v2存檔保留進度轉為已建完整地圖，並備份原始舊檔。
 
 本輪驗證在 production/verification/v0.4：打包後真實Chromium測試、遠端workflow及公開HTTPS版本。version.json為0.4.0並記錄來源SHA；全部相對模組匯入附0.4版號。來源76b65bb2af7ff56f1b3b1efddd8db46f3fd5b4bf；測試run43541664436、Pages run43541664482均success，公開version.json同SHA。公開6條流程通過，errors及failedRequests為空。公開瀏覽器以平台CA驗證的HTTPS回應轉交Chromium，沒有停用TLS檢查或用本機檔案替代。回退revert功能提交重跑相同工作流程；後續[skip ci]交接提交不改公開來源。
+
+## v0.5 營運與預測
+
+正式遊戲加入逐分鐘服務、隊伍／散場／清潔，以及同規則副本預測。新增operations／operations-world／operations-ui模組及0.5.0快取版號。55項Node測試；瀏覽器與部署證據放在production/verification/v0.5。新營業日使用flow.version1；舊v2營業中存檔沿用舊結算到日終，不重算已結算票房。
+
+使用者要求第三項「確認後才實裝」，因此/upgrade-art/只提供獨立素材確認及下載。12項裁切由兩張原始ImageGen PNG提供，沒有新增runtime檔案引用，也沒有替換現有房間／座椅素材。確認之後才能拆分前景、校準錨點、驗證腳托佔地及接入升級顯示。
+
+本輪完成後記錄公開SHA／workflow；回退revert功能提交重新部署，先保留玩家v2存檔備份。公開瀏覽器使用平台CA驗證的即時HTTPS回應轉交Chromium，保留TLS驗證，處理雲端Chromium獨立憑證庫限制。

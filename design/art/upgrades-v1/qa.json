@@ -1,0 +1,218 @@
+{
+  "status": "review-ready-not-runtime-integrated",
+  "runtimeIntegrated": false,
+  "sources": {
+    "rooms": {
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "959d4cd625e1ca960c2b115c44414d5a92677326986b19585d08206b84f2a70f",
+      "bytes": 2397687
+    },
+    "seats": {
+      "size": [
+        2172,
+        724
+      ],
+      "sha256": "654ba329c590acbf8008dc14d74bc5dcd274bbf3285e0d5ef560f3cdf669776b",
+      "bytes": 1365162
+    }
+  },
+  "assets": [
+    {
+      "id": "tickets-1",
+      "region": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        17,
+        55,
+        399,
+        405
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "tickets-2",
+      "region": [
+        418,
+        0,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        18,
+        55,
+        400,
+        405
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "tickets-3",
+      "region": [
+        836,
+        0,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        18,
+        55,
+        400,
+        405
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "snacks-1",
+      "region": [
+        0,
+        418,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        17,
+        47,
+        399,
+        399
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "snacks-2",
+      "region": [
+        418,
+        418,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        18,
+        47,
+        399,
+        399
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "snacks-3",
+      "region": [
+        836,
+        418,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        18,
+        47,
+        400,
+        399
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "hall-style-1",
+      "region": [
+        0,
+        836,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        18,
+        49,
+        399,
+        378
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "hall-style-2",
+      "region": [
+        418,
+        836,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        18,
+        49,
+        399,
+        378
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "hall-style-3",
+      "region": [
+        836,
+        836,
+        418,
+        418
+      ],
+      "foregroundBounds": [
+        18,
+        49,
+        399,
+        378
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "seat-1",
+      "region": [
+        0,
+        0,
+        724,
+        724
+      ],
+      "foregroundBounds": [
+        104,
+        92,
+        622,
+        669
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "seat-2",
+      "region": [
+        724,
+        0,
+        724,
+        724
+      ],
+      "foregroundBounds": [
+        73,
+        92,
+        644,
+        676
+      ],
+      "touchesCellEdge": false
+    },
+    {
+      "id": "seat-3",
+      "region": [
+        1448,
+        0,
+        724,
+        724
+      ],
+      "foregroundBounds": [
+        79,
+        62,
+        677,
+        675
+      ],
+      "touchesCellEdge": false
+    }
+  ],
+  "runtimeFileMappingUnchanged": true,
+  "runtimePNGDifference": ""
+}

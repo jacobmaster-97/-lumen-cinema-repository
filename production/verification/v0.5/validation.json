@@ -1,0 +1,24 @@
+{
+  "nodeTests": {
+    "command": "npm test --prefix prototypes/browser",
+    "passed": 55,
+    "failed": 0
+  },
+  "studioValidation": {
+    "command": "./codex-game-studio validate",
+    "passed": 1207,
+    "failed": 0
+  },
+  "documentationImpact": {
+    "base": "46d0533",
+    "evidence": [
+      "PASS project.documentation_impact.document.design/operations-v0.5.md: Documentation Impact document changed: design/operations-v0.5.md (/workspace/codex-game-studio/design/operations-v0.5.md)",
+      "PASS project.documentation_impact.document.design/gdd.md: Documentation Impact document changed: design/gdd.md (/workspace/codex-game-studio/design/gdd.md)",
+      "PASS project.documentation_impact.document.docs/github.md: Documentation Impact document changed: docs/github.md (/workspace/codex-game-studio/docs/github.md)",
+      "PASS project.documentation_impact.document.production/timeline.md: Documentation Impact document changed: production/timeline.md (/workspace/codex-game-studio/production/timeline.md)",
+      "PASS project.documentation_impact.document.production/session-state/active.md: Documentation Impact document changed: production/session-state/active.md (/workspace/codex-game-studio/production/session-state/active.md)",
+      "PASS project.documentation_impact: functional changes have updated documentation evidence (/workspace/codex-game-studio/production/session-state/active.md)"
+    ]
+  },
+  "artBoundary": "Runtime PNG bytes and manifest.files unchanged; separate /upgrade-art/ only, awaiting user approval."
+}

@@ -1,0 +1,50 @@
+{
+  "url": "http://127.0.0.1:8260/pages/",
+  "checks": [
+    "approved map and 15-step construction remain playable",
+    "unchanged draft has zero delta; unsaved price updates forecast without changing money or timetable",
+    "saving proposed ticket price commits only the chosen timetable change",
+    "live customers use authoritative stages and reachable paths within render budget",
+    "natural first day, event stop/staff response and accounts match the no-event forecast",
+    "actual queue, departure and cleaning snapshots have matching map actors, panel counts and work progress",
+    "live queues and cleaning persist exactly and load paused",
+    "loaded flow saves and resumes offline",
+    "pending upgrade artwork is absent from playable runtime requests",
+    "legacy cash, ownership and both branches retained",
+    "touch forecast, modal and no horizontal overflow 390",
+    "touch forecast, modal and no horizontal overflow 720",
+    "touch forecast, modal and no horizontal overflow 1080",
+    "12 pending source textures load, enlarge and download separately from gameplay",
+    "asset failure remains explicit and cannot open an incomplete game"
+  ],
+  "errors": [],
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "overflow": false
+    },
+    {
+      "width": 1080,
+      "height": 2400,
+      "overflow": false
+    }
+  ],
+  "runtimeUpgradeArtRequests": [],
+  "warmRender": {
+    "p95": 6.7,
+    "cacheMiB": 34
+  },
+  "day": {
+    "net": 7309.03999999999,
+    "predicted": 7309.03999999999,
+    "admissions": 177
+  },
+  "status": "passed",
+  "finishedAt": "2026-11-14T02:58:04.865Z"
+}

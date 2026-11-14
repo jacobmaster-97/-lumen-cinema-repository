@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting-user-approval",
+  "runtimeIntegrated": false,
+  "files": {
+    "rooms": "upgrade-atlas.png",
+    "seats": "seat-upgrades.png"
+  },
+  "sources": {
+    "rooms": {
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "959d4cd625e1ca960c2b115c44414d5a92677326986b19585d08206b84f2a70f",
+      "bytes": 2397687
+    },
+    "seats": {
+      "size": [
+        2172,
+        724
+      ],
+      "sha256": "654ba329c590acbf8008dc14d74bc5dcd274bbf3285e0d5ef560f3cdf669776b",
+      "bytes": 1365162
+    }
+  },
+  "assets": [
+    {
+      "id": "tickets-1",
+      "family": "tickets",
+      "name": "售票區",
+      "level": 1,
+      "source": "rooms",
+      "region": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "description": "黃銅邊框與雙服務櫃位",
+      "footprint": [
+        1,
+        1
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "tickets-2",
+      "family": "tickets",
+      "name": "售票區",
+      "level": 2,
+      "source": "rooms",
+      "region": [
+        418,
+        0,
+        418,
+        418
+      ],
+      "description": "整合式自助售票及更精緻燈箱",
+      "footprint": [
+        1,
+        1
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "tickets-3",
+      "family": "tickets",
+      "name": "售票區",
+      "level": 3,
+      "source": "rooms",
+      "region": [
+        836,
+        0,
+        418,
+        418
+      ],
+      "description": "黃銅直紋櫃枱與旗艦影院飾面",
+      "footprint": [
+        1,
+        1
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "snacks-1",
+      "family": "snacks",
+      "name": "小食部",
+      "level": 1,
+      "source": "rooms",
+      "region": [
+        0,
+        418,
+        418,
+        418
+      ],
+      "description": "整理後吧及服務設備",
+      "footprint": [
+        1,
+        1
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "snacks-2",
+      "family": "snacks",
+      "name": "小食部",
+      "level": 2,
+      "source": "rooms",
+      "region": [
+        418,
+        418,
+        418,
+        418
+      ],
+      "description": "玻璃展示及升級出餐設備",
+      "footprint": [
+        1,
+        1
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "snacks-3",
+      "family": "snacks",
+      "name": "小食部",
+      "level": 3,
+      "source": "rooms",
+      "region": [
+        836,
+        418,
+        418,
+        418
+      ],
+      "description": "黃銅櫃枱與高級熱食展示",
+      "footprint": [
+        1,
+        1
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "hall-style-1",
+      "family": "hall-style",
+      "name": "影廳外觀",
+      "level": 1,
+      "source": "rooms",
+      "region": [
+        0,
+        836,
+        418,
+        418
+      ],
+      "description": "酒紅座椅與深藍吸音牆",
+      "footprint": [
+        2,
+        2
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "hall-style-2",
+      "family": "hall-style",
+      "name": "影廳外觀",
+      "level": 2,
+      "source": "rooms",
+      "region": [
+        418,
+        836,
+        418,
+        418
+      ],
+      "description": "牆板與走道邊燈升級",
+      "footprint": [
+        2,
+        2
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "hall-style-3",
+      "family": "hall-style",
+      "name": "影廳外觀",
+      "level": 3,
+      "source": "rooms",
+      "region": [
+        836,
+        836,
+        418,
+        418
+      ],
+      "description": "幾何黃銅吸音牆與旗艦座椅風格",
+      "footprint": [
+        2,
+        2
+      ],
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "seat-1",
+      "family": "seats",
+      "name": "獨立座椅",
+      "level": 1,
+      "source": "seats",
+      "region": [
+        0,
+        0,
+        724,
+        724
+      ],
+      "description": "加厚酒紅軟墊及深藍扶手",
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "seat-2",
+      "family": "seats",
+      "name": "獨立座椅",
+      "level": 2,
+      "source": "seats",
+      "region": [
+        724,
+        0,
+        724,
+        724
+      ],
+      "description": "附杯架的高級軟墊座椅",
+      "status": "awaiting-user-approval"
+    },
+    {
+      "id": "seat-3",
+      "family": "seats",
+      "name": "獨立座椅",
+      "level": 3,
+      "source": "seats",
+      "region": [
+        1448,
+        0,
+        724,
+        724
+      ],
+      "description": "黃銅飾邊及伸展腳托的旗艦座椅",
+      "status": "awaiting-user-approval"
+    }
+  ]
+}

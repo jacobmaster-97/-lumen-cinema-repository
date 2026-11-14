@@ -2,13 +2,21 @@
 
 現代香港像素戲院經營遊戲。安排電影、票價同人手，觀察戲院自動營業；遇突發事件再決定親自救場，並用盈利升級、買斷物業及管理第二間分店。
 
-[立即試玩 · GitHub Pages](https://jacobmaster-97.github.io/-lumen-cinema-repository/) · [遊戲框架](design/gdd.md) · [v0.4 地圖說明](design/rebuild-v0.4.md) · [目前交接](CODEX_HANDOFF.md)
+[立即試玩 · GitHub Pages](https://jacobmaster-97.github.io/-lumen-cinema-repository/) · [遊戲框架](design/gdd.md) · [營運與預測](design/operations-v0.5.md) · [地圖說明](design/rebuild-v0.4.md) · [目前交接](CODEX_HANDOFF.md)
 
 [地圖設計入口](https://jacobmaster-97.github.io/-lumen-cinema-repository/design/) · [像素地圖預覽](https://jacobmaster-97.github.io/-lumen-cinema-repository/map-preview/) · [拖放編排器](https://jacobmaster-97.github.io/-lumen-cinema-repository/layout-editor/)
 
 正式遊戲現已採用你編排的 7×7 方塊地圖，由右下角單塊地板起步，洗手間入口向右。按底部施工指引逐格建造，或在「建造及擴建」自行選格；基本四區完成即可開業。編排器保留作設計工具，新匯出不會自動覆寫遊戲。
 
-![實際營業畫面](docs/screenshots/v0.4-running.png)
+![實際營業畫面](docs/screenshots/v0.5-queue.png)
+
+## v0.5 可觀察營運及排片預測
+
+- 客人逐分鐘到場、排隊購票／買小食、入座及散場，實際交易影響現金；畫面人物來自營運客流。
+- 員工技能影響服務速度，等候、滿座、延誤及取消有明確流失原因；散場後清潔，未完成可延遲下一場。
+- 排片頁顯示每場入座率、主要客群、票房、片商分帳及毛利；修改方案即預測全日淨利，不儲存不會改動安排。
+- 預測由同一營運規則在副本模擬，三種客流情境，不含突發事件、貸款及新投資，非保證收益。
+- [升級貼圖確認](https://jacobmaster-97.github.io/-lumen-cinema-repository/upgrade-art/)：售票／小食三級整區素材、三級獨立座椅及影廳風格圖。僅供確認，未接入遊戲。
 
 ## v0.4 正式方塊地圖
 
@@ -48,17 +56,17 @@ python3 -m http.server 8000 --directory dist/pages
 
 ## 驗證
 
-`npm test --prefix prototypes/browser`：41 項測試，包括財務／事件、DOM 整合、地圖、樓梯、升級容量、來源 PNG 及前版存檔相容。
+`npm test --prefix prototypes/browser`：55 項測試，包括財務／事件、DOM 整合、地圖、樓梯、升級容量、來源 PNG 及前版存檔相容。
 
 真實 Chromium 流程使用：
 
 ```sh
 python3 -m http.server 8192 --directory dist/pages
 # 另開終端；需要環境提供 Playwright 及 Chromium
-CINEMA_TEST_URL=http://127.0.0.1:8192/ node scripts/verify-modular-browser.cjs
+CINEMA_TEST_URL=http://127.0.0.1:8192/ node scripts/verify-operations-browser.cjs
 ```
 
-本機真實瀏覽器檢查涵蓋按鈕施工、正式地圖營業／日結、離線存讀檔及390／720／1080像素觸控尺寸。證據見 [瀏覽器紀錄](production/verification/v0.4/browser.json) 及 [地圖說明](design/rebuild-v0.4.md)。DOM 測試與瀏覽器模擬尺寸不當作手機實機測試。
+本機真實瀏覽器檢查涵蓋按鈕施工、正式地圖營業／日結、離線存讀檔及390／720／1080像素觸控尺寸。證據見 [瀏覽器紀錄](production/verification/v0.5/browser.json) 及 [地圖說明](design/rebuild-v0.4.md)。DOM 測試與瀏覽器模擬尺寸不當作手機實機測試。
 
 ## 專案結構
 

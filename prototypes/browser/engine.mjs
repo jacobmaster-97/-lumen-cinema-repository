@@ -1,5 +1,6 @@
 // Pure, deterministic management simulation. DOM, audio and storage stay outside.
 import * as C from './construction.mjs';
+import * as Flow from './operations.mjs';
 export const DAY_SECONDS = 180;
 export const OPEN_MINUTE = 660;
 export const DAY_MINUTES = 780;
@@ -533,6 +534,8 @@ export const emptyLedger = () => ({
   eventCost: 0,
   loanPayment: 0,
   admissions: 0,
+  ticketsSold: 0,
+  snackLost: 0,
   demand: 0,
   lost: 0,
   snackUnits: [0, 0, 0],
@@ -664,7 +667,7 @@ export function suggestProgramme(s, branchId) {
 }
 export function validateProgramme(s, programme) {
   const errors = [];
-  if (!Array.isArray(programme) || programme.length > 30)
+  if (!Array.isArray(programme) || programme.length > 30 || programme.some(p=>!p||typeof p.id!=='string'||!p.id||p.id.length>100) || new Set(programme.map(p=>p.id)).size!==programme.length)
     return ["場次資料無效"];
   for (const p of programme) {
     const m = movie(p.movie);
@@ -701,7 +704,7 @@ export function setProgramme(s, id, programme) {
   const b = s.branches.find((x) => x.id === id);
   if (!b) return "找不到分店";
   const errors = validateProgramme(s, programme);
-  if(Array.isArray(programme)&&programme.some(p=>!C.hasRoom(b,`hall${p.hall+1}`)))errors.push('未建成的影廳不能排片');
+  if(Array.isArray(programme)&&programme.some(p=>p&&!C.hasRoom(b,`hall${p.hall+1}`)))errors.push('未建成的影廳不能排片');
   if (errors.length) return errors.join("；");
   b.programme = structuredClone(programme);
   return null;
@@ -718,7 +721,8 @@ function timeWeight(group, start, day) {
 export function buildDemand(s, b) {
   const random = rng(s.seed + s.day * 1777 + b.id * 331);
   b.walkIns = [0, 0, 0, 0, 0, 0];
-  const result = b.programme.map((p) => ({
+  // The same timetable must give the same demand regardless of editor array order.
+  const result = [...b.programme].sort((a,b)=>a.start-b.start||a.hall-b.hall||a.id.localeCompare(b.id)).map((p) => ({
     ...p,
     groups: [0, 0, 0, 0, 0, 0],
     demand: 0,
@@ -784,6 +788,8 @@ export const roleSkill = (b, role) =>
   b.staff
     .filter((p) => p.role === role)
     .reduce((n, p) => n + p.skill * (p.special === role ? 1 : 0.78), 0);
+const FLOW_CONTEXT={movie,roleSkill,FOODS,COHORTS,isBanned};
+export const operationsSnapshot=(s,id)=>{const b=s.branches.find(b=>b.id===id);return b?Flow.snapshot(s,b,FLOW_CONTEXT):null};
 function makeEvents(s, b) {
   const random = rng(s.seed + s.day * 49 + b.id * 93);
   const count =
@@ -833,13 +839,14 @@ export function startDay(s) {
   s.paused = false;
   for (const b of s.branches) {
     b.ledger = emptyLedger();
-    if(!C.operational(b)){b.shows=[];b.service=[];continue;}
+    if(!C.operational(b)){b.shows=[];b.service=[];delete b.flow;continue;}
     b.shows = buildDemand(s, b);
     b.service = [];
     b.roomReady = [0, 0];
     b.closedUntil = [0, 0];
     b.buffs = { tickets: 0, snacks: 0, cleaning: 0, until: 0 };
     b.celebrity = null;
+    Flow.prepare(s,b);
     s.events.push(...makeEvents(s, b));
   }
   s.events.sort((a, b) => a.at - b.at || a.branch - b.branch);
@@ -1001,7 +1008,8 @@ export function advance(s, seconds) {
         if (raiseEvent(s, e)) return;
       }
     for (const b of s.branches)
-      for (const p of b.shows)
+      if(b.flow)Flow.tick(s,b,FLOW_CONTEXT);
+      else for (const p of b.shows)
         if (!p.booked && p.start <= s.minute) book(s, b, p);
     if (s.minute >= DAY_MINUTES) {
       finishDay(s);
@@ -1122,11 +1130,13 @@ export function resolveEvent(s, choice, score = 0, replacement = null) {
   e.done = true;
   s.pending = null;
   s.phase = "running";
+  for(const b of s.branches)Flow.reconcile(s,b,FLOW_CONTEXT);
   return null;
 }
 function finishDay(s) {
   const rows = [];
   for (const b of s.branches) {
+    Flow.close(s,b);
     const l = b.ledger;
     l.wages = C.operational(b)?b.staff.reduce((n, p) => n + p.wage, 0):0;
     l.rent = C.operational(b)&&!b.owned?b.rent:0;
@@ -1204,6 +1214,7 @@ export function nextDay(s) {
         format,
       }));
     b.shows = [];
+    delete b.flow;
     b.ledger = emptyLedger();
     b.closedUntil = [0, 0];
     b.roomReady = [0, 0];
@@ -1407,6 +1418,7 @@ export function loadGame(raw) {
         throw Error("價格或座位資料無效");
   }
   if (s.phase === "event" && !currentEvent(s)) throw Error("事件資料不完整");
+  for(const b of s.branches)Flow.validate(b);
   s.paused = s.phase === "running";
   return s;
 }
@@ -1416,4 +1428,21 @@ export function buildFloor(s,id,x,y){
 }
 export function constructRoom(s,id,roomId){
  if(s.phase!=='planning')return '請在營業前安排建造';const b=s.branches.find(b=>b.id===id),r=C.ROOMS.find(r=>r.id===roomId);if(!b||!r||!b.map)return '無效建造區域';if(C.hasRoom(b,roomId))return '這個區域已建好';const error=C.roomError(b,roomId);if(error)return error;if(s.cash<r.cost)return '建造資金不足';s.cash-=r.cost;s.investment+=r.cost;b.map.built.push(roomId);if(roomId.startsWith('hall'))b.programme.push(...suggestProgramme(s,id).filter(p=>p.hall===Number(roomId.slice(-1))-1));addNews(s,`${r.name}建造完成${C.operational(b)?'，基本設施已齊，可以開始營業。':'。'}`);return null;
+}
+
+// A dry-run uses exactly the live rules, on private copies, with random events excluded.
+export function forecastProgramme(s,id,programme=null){
+ const original=s.branches.find(b=>b.id===id);if(!original)return {error:'找不到分店'};
+ const plan=programme||original.programme,errors=validateProgramme(s,plan);
+ if(errors.length)return {error:errors.join('；')};
+ if(!plan.length)return {error:'先加入放映場次，再查看預測'};
+ if(!C.operational(original))return {error:'建好基本設施及影廳後，即可預測營運'};
+ if(plan.some(p=>!C.hasRoom(original,`hall${p.hall+1}`)))return {error:'未建成的影廳不能排片'};
+ const samples=[0,-101,101].map(offset=>{
+  const copy=structuredClone(s),b=structuredClone(original);copy.branches=[b];copy.activeBranch=b.id;copy.phase='planning';copy.seed+=offset;b.programme=structuredClone(plan);
+  const error=startDay(copy);if(error)throw Error(error);copy.events=[];advance(copy,DAY_SECONDS);
+  return {report:copy.history[0],branch:b};
+ });
+ const {report,branch:b}=samples[0],l=b.ledger,range=samples.map(x=>x.report.net);
+ return {error:null,net:report.net,low:Math.min(...range),high:Math.max(...range),gross:l.gross,share:l.share,ticketNet:l.gross-l.share,foodProfit:l.foodRevenue-l.foodCost,admissions:l.admissions,lost:l.lost,snackLost:l.snackLost,wages:l.wages,rent:l.rent,maintenance:l.maintenance,delay:l.delay,peak:{...b.flow.peak},rows:b.shows.map(p=>({id:p.id,hall:p.hall,movie:p.movie,start:p.start,price:p.price,demand:p.flowDemand,served:p.served,sold:p.sold,occupancy:p.served/b.seats[p.hall],gross:p.ticketGross,share:p.ticketShare,ticketNet:p.ticketGross-p.ticketShare,foodProfit:p.foodRevenue-p.foodCost,contribution:p.ticketGross-p.ticketShare+p.foodRevenue-p.foodCost,lost:p.lost,delay:p.delay,groups:p.groups.map((n,g)=>({id:COHORTS[g].id,name:COHORTS[g].name,count:n})).sort((a,b)=>b.count-a.count)})),basis:'依現有人手、價格、設備及今日熱度模擬；不含突發事件、貸款還款及新投資。範圍為三種客流情境，不是保證收入。'};
 }
