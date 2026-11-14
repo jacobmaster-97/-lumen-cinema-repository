@@ -1,15 +1,15 @@
 {
   "repository": "jacobmaster-97/-lumen-cinema-repository",
   "source_pushed": true,
-  "game_commit": "e5aad16e6f287a5268d489e534bdf6ed1c507102",
-  "tests_run": 43549699236,
+  "game_commit": "7e570aef888892f7809b3a81f2f585acf378d1b3",
+  "tests_run": 43553784471,
   "tests_conclusion": "success",
-  "pages_run": 43549699308,
+  "pages_run": 43553784527,
   "build_conclusion": "success",
   "deploy_conclusion": "success",
   "pages_live": true,
   "pages_url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
-  "http_verification": "Public 0.5.0 and SHA match; all live runtime and 12-texture review requests passed",
-  "visual_browser_qa": "Completed: 15 local Chromium paths + 6 live public checks, including forecast purity, service/admission state, backup and unintegrated art boundary. See production/verification/v0.5.",
-  "version": "0.5.0"
+  "http_verification": "Public 0.6.0 and SHA match; all runtime HTTPS responses passed",
+  "visual_browser_qa": "73 Node tests, 11 local Chromium paths and 6 public checks passed; strategy, real maintenance booking/refund, forecast, feedback/wear and held-art boundary. Evidence production/verification/v0.6.",
+  "version": "0.6.0"
 }

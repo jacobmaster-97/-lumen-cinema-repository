@@ -17,7 +17,7 @@ satisfaction-maintenance-pages-06：使用者明確授權分項滿意度／漸�
 
 73項Node測試通過（原55＋18），11條實際Chromium流程通過，errors=[]、runtimeArtRequests=[]。包括保養預付／取消／時段失敗、完整自然營業日、實際日結與預測同為6292.04、分項評價及定位保留、保養地圖／故障彈窗、舊檔與離線、390／720／1080觸控提交。暖機CPU p95 7.1ms、首店快取34MiB。新設備事件原先未提供片名會令彈窗建構失敗，已補齊事件資料及容錯、實際urgent按鈕驗證通過。無反覆未解缺陷，未建立DEBUG_HANDOFF。
 
-證據production/verification/v0.6與docs/screenshots/v0.6-*。公開SHA及workflow待部署完成後補齊。
+證據production/verification/v0.6與docs/screenshots/v0.6-*。已發佈來源7e570aef888892f7809b3a81f2f585acf378d1b3；測試43553784471與Pages43553784527均success。公開0.6.0及SHA一致，6項公開檢查通過，errors／failedRequests／runtimeArtRequests均為空，見deployment.json及public.json。後續[skip ci]交接提交不改公開來源。
 
 ## Documentation Impact
 
@@ -31,4 +31,4 @@ satisfaction-maintenance-pages-06：使用者明確授權分項滿意度／漸�
 
 ## Risks / next safe task
 
-真人手機、長期定位／回訪、清潔工時及保養數值待試玩。預測不含事件；風險為檢查時觸發概率，不是每日必然故障。下一步公開驗證後請使用者試玩；升級圖持續未採用。
+真人手機、長期定位／回訪、清潔工時及保養數值待試玩。預測不含事件；風險為檢查時觸發概率，不是每日必然故障。下一步請使用者試玩已上線版本；升級圖持續未採用。

@@ -7,7 +7,7 @@
 ## Current Phase
 
 - Phase: v0.6 playable release verification。
-- Status: 本機可玩及驗證通過，準備發佈。基準57df4b4。
+- Status: 已發佈並核對公開v0.6.0，來源7e570aef888892f7809b3a81f2f585acf378d1b3。基準57df4b4。
 
 ## Latest Completed Work
 
@@ -24,12 +24,12 @@ strategy.mjs為四項體驗、定位／六類回訪、清潔標準、損耗與�
 - npm test --prefix prototypes/browser：73／73（原55＋18）。逐分鐘對帳、評價／定位、維護時段／退款／整日保養、故障、預測、存檔與兩店。
 - scripts/verify-strategy-browser.cjs：11條真實Chromium流程通過，errors=[]、未請求暫存美術。自然日結6292.04與預測一致，評價及設備狀況均來自實際營運。390／720／1080觸控預約無頁面溢出，CPU p95 7.1ms、34MiB首店快取。
 - 故障彈窗缺少片名的重現已修正，真實urgent按鈕可用。沒有反覆未解缺陷，DEBUG_HANDOFF未建立。
-- 證據production/verification/v0.6；公開SHA／workflow待本輪部署後補齊。
+- 證據production/verification/v0.6；公開6項檢查通過，errors=[]、failedRequests=[]、runtimeArtRequests=[]；包含版號／SHA、施工與策略頁、保養與退款、預測成本、真實評價／損耗及未採用圖隔離。
 
 ## Release / recovery
 
-https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。沿用main Pages workflow與0.6.0快取。必要時revert功能提交；先保留最新檔，再視需要恢復before-strategy-v1備份，不刪玩家進度。歷史未追蹤草稿不屬本輪，避免blanket git add。
+https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。沿用main Pages workflow與0.6.0快取。功能來源7e570aef888892f7809b3a81f2f585acf378d1b3，測試run43553784471與Pages run43553784527均success，公開version.json同SHA；見production/verification/v0.6/deployment.json／public.json。公開頁由保留TLS驗證的即時HTTPS回應轉交Chromium呈現，未用本機檔案替代。後續[skip ci]交接提交不改公開功能來源。必要時revert功能提交；先保留最新檔，再視需要恢復before-strategy-v1備份，不刪玩家進度。歷史未追蹤草稿不屬本輪，避免blanket git add。
 
 ## Risks / next safe task
 
-真人手機及長期經濟／回訪／保養節奏待試玩；故障風險不等於必然事件，預測不含突發事件。完成公開核對後讓使用者試玩「口碑與維護」。升級美術未採用，保持不實裝。
+真人手機及長期經濟／回訪／保養節奏待試玩；故障風險不等於必然事件，預測不含突發事件。讓使用者試玩「口碑與維護」，觀察長期定位、清潔及保養取捨。升級美術未採用，保持不實裝。
