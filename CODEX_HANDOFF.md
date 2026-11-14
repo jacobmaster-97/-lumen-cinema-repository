@@ -6,8 +6,8 @@
 
 ## Current Phase
 
-- Phase: publish design tools；正在同步 GitHub／Pages。
-- Status: 使用者已要求「接入到去 github」。本輪發佈已確認配置、像素預覽及拖放工具到現有 repository 與 Pages；遊戲主頁加獨立設計入口。洗手間向右，真正開局仍 1 塊、0 房間。
+- Phase: published design tools；等待整體設計／實裝下一步。
+- Status: 已推送 b42d07ff075ef802f00fc83a86830b19f371cb87 至現有 main 並成功部署 Pages。公開 /design/、/map-preview/、/layout-editor/ 已驗證；洗手間向右，真正開局 1 塊、0 房間，五區入口可達。
 - 本輪授權公開設計工具及預覽。新的可玩地圖、建造／擴建及經濟規則仍待整體設計確認，不在本輪修改。source confirmed-config.json 保留使用者已確認方向。
 
 ## Latest Completed Work
@@ -49,21 +49,23 @@
 
 - Repository: jacobmaster-97/-lumen-cinema-repository；main 起點 c6511c2cd4d24e7bc9b6ca3117dbea5155c8d9f1。
 - GitHub Pages: https://jacobmaster-97.github.io/-lumen-cinema-repository/
+- Design release: b42d07ff075ef802f00fc83a86830b19f371cb87；測試 run 43535976756、Pages run 43535976626 均成功。公開 design/version.json 與來源一致。後續僅文件提交使用 [skip ci]。
 - Released code: 9a55adcf4ab1b4316ecf615668ac23aba1556307；測試 run 43375605633、Pages run 43375605632 均成功，公開 version.json 與該 commit 一致。
 - 使用原 Pages workflow。保留舊存檔；失敗時可回退本輪 release commit，由相同 workflow 重新部署。
 
 ## Known Risks / Next Safest Task
 
-洗手間方向已確認。整體像素設計的遊戲實裝仍待確認；家具導航、素材拆層、擴建存檔與經濟尚未實裝。本輪只新增公開設計工具／預覽及主頁連結，正在核對部署。DEBUG_HANDOFF.md 未建立：沒有經反覆修正仍未解的程式缺陷。
+公開設計工具／預覽及主頁連結已部署驗證。整體新地圖的可玩實裝仍待確認；家具導航、素材拆層、擴建存檔與經濟尚未實裝。下一步依使用者決定接入可玩版本。DEBUG_HANDOFF.md 未建立：沒有經反覆修正仍未解的程式缺陷。
 
 ## Verification Evidence
 
+- production/verification/design-pages：27 項遊戲測試、8 組本機子路徑流程、遠端兩個成功 workflow，以及公開版本／預覽／編排器／原遊戲驗證。public.json 的 errors 及 failedRequests 均為空。
 - selected-layout-v2/qa-confirmed.json：僅 toilets.door 由 south 改為 east；其他配置一致，預覽預設向右，五區入口均可達，console errors=[]。
 - selected-layout-v2/qa.json：來源雜湊、五區新座標／尺寸比對，無重疊或越界，起始 1 塊及 initial=false 保留；原入口開出邊界偵測、左右替代方案五區連通、49 步相鄰擴建及瀏覽器預覽。
 - 編排器：真實 Chromium 完成拖放、重疊／越界、筆刷、入口、復原／重做、鍵盤、觸控、JSON 下載／匯入及失敗原子性、本機儲存、離線、320px、對話沙箱／widgetState／交接訊息內容檢查；證據見 design/tools/layout-editor/qa.json。
 - 本次方案 B：初始一塊、零房間及零預建通道網；49 次地板狀態中的新增方塊均共邊相連、無重複；房間齊塊及入口已連接；最終 49 塊全開發、38 塊為走道地板。證據：design/art/modular-map-v2/qa.json。這不是家具／座位級導航驗證。
 - 本次：三張 RGBA PNG 的尺寸及 SHA256 已記錄；真實 Chromium 預覽顯示三區、沒有後勤室，格網切換及截圖完成，errors=[]。證據：design/art/integrated-zones-v2/qa.json。
-- 本次沒有修改執行期程式，因此沒有重跑遊戲測試，也沒有推送或部署。
+- 先前僅設計階段未部署；本輪新增公開入口及打包，已重新執行 27 項測試並成功部署，證據以 design-pages 為準。
 - 已上線 v0.3 的既有基準：npm test --prefix prototypes/browser 27/27；node scripts/verify-cinema-browser.cjs 18 player paths, no browser errors。
 - production/verification/v0.3/browser.json: 1440×1000 desktop; 390/720/1080 touch layouts; old save, all minigames, day close, offline controls.
 - production/verification/v0.3/deployment.json / public.json: 成功的遠端 workflow 與公開網站實測。公開瀏覽器透過平台 CA 驗證的 HTTPS APIRequestContext 載入遠端回應，保留 TLS 驗證，避開雲端 Chromium 獨立憑證庫的代理 CA 限制；未替換成本機遊戲檔案。

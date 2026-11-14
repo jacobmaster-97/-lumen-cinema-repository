@@ -1,0 +1,33 @@
+{
+  "status": "verified",
+  "site": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "codeCommit": "b42d07ff075ef802f00fc83a86830b19f371cb87",
+  "workflows": [
+    {
+      "id": 43535976756,
+      "name": "Cinema prototype tests",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/jacobmaster-97/-lumen-cinema-repository/actions/runs/43535976756",
+      "headSha": "b42d07ff075ef802f00fc83a86830b19f371cb87"
+    },
+    {
+      "id": 43535976626,
+      "name": "Publish playable game to Pages",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/jacobmaster-97/-lumen-cinema-repository/actions/runs/43535976626",
+      "headSha": "b42d07ff075ef802f00fc83a86830b19f371cb87"
+    }
+  ],
+  "paths": {
+    "hub": "design/",
+    "preview": "map-preview/",
+    "editor": "layout-editor/",
+    "confirmedConfig": "map-preview/confirmed-config.json"
+  },
+  "tests": 27,
+  "localEvidence": "local.json",
+  "publicEvidence": "public.json",
+  "verifiedAt": "2026-11-14T00:45:42.508Z"
+}

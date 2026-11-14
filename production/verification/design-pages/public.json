@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "base": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "codeCommit": "b42d07ff075ef802f00fc83a86830b19f371cb87",
+  "version": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "commit": "b42d07ff075ef802f00fc83a86830b19f371cb87",
+    "builtAt": "2026-11-14T00:42:39.175Z",
+    "confirmedConfig": "../map-preview/confirmed-config.json",
+    "bathroomDoor": "east"
+  },
+  "transport": "Live public HTTPS via platform-CA-verified APIRequestContext and browser routing; TLS verification enabled",
+  "checks": [
+    "public design hub",
+    "live preview has confirmed coordinates and five reachable doors",
+    "live initial view is one floor, no rooms",
+    "public editor defaults, placement and JSON export",
+    "existing playable game and design navigation load"
+  ],
+  "confirmedRooms": [
+    {
+      "id": "hall1",
+      "position": [
+        2,
+        4
+      ],
+      "door": "east",
+      "initial": false
+    },
+    {
+      "id": "hall2",
+      "position": [
+        5,
+        3
+      ],
+      "door": "west",
+      "initial": false
+    },
+    {
+      "id": "tickets",
+      "position": [
+        5,
+        5
+      ],
+      "door": "south",
+      "initial": false
+    },
+    {
+      "id": "snacks",
+      "position": [
+        6,
+        5
+      ],
+      "door": "south",
+      "initial": false
+    },
+    {
+      "id": "toilets",
+      "position": [
+        3,
+        6
+      ],
+      "door": "east",
+      "initial": false
+    }
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "verifiedAt": "2026-11-14T00:44:10.978Z"
+}

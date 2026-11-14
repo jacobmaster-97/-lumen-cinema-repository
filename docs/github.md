@@ -44,4 +44,6 @@ repository 擁有者已啟用 GitHub Actions 作 Pages 來源。重試 run 43176
 
 build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具；調整發佈副本中的相對匯入，避免暴露或依賴工作區路徑。遊戲主頁增加獨立分頁入口，不改財務、存檔或可玩地圖。新的建造／擴建玩法沒有在此輪實裝。
 
-本機建置與子路徑瀏覽器驗證見 production/verification/design-pages/local.json；遠端部署完成後在同目錄補充工作流程與公開網址證據。回退本輪發佈 commit 可移除設計入口及新工具，既有 v2 存檔不受影響。
+已發佈來源 b42d07ff075ef802f00fc83a86830b19f371cb87：測試 run 43535976756、Pages run 43535976626 均成功。公開 /design/version.json 與來源一致，預覽座標／向右入口、單塊開局、編排器放置及 JSON 匯出、遊戲入口均通過驗證。
+
+本機建置與子路徑驗證見 production/verification/design-pages/local.json；遠端工作流程及公開 HTTPS 瀏覽器證據見 deployment.json、public.json、public-map.png。公開瀏覽器用平台 CA 驗證的 HTTPS 請求載入遠端回應，保留 TLS 驗證。後續 [skip ci] 文件提交不改公開設計的來源版本。回退發佈 commit 可移除設計入口及新工具，既有 v2 存檔不受影響。
