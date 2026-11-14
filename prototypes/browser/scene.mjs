@@ -1,9 +1,10 @@
-import { WORLD, project, placement, worldObjects, Navigation, customerRoutes } from './world.mjs';
+import { WORLD, project, placement, Navigation, customerRoutes, elevation as terrainHeight } from './world.mjs';
+import {modularLayout} from './map-world.mjs';
 // Static art is cached in tightly bounded depth layers; actors can move between them.
 export function createCinemaScene(atlas, images, branch) {
- const layout=atlas.layout,WIDTH=WORLD.width,HEIGHT=WORLD.height,TW=48,TH=24,OX=900,OY=270,ZM=32;
+ const layout=modularLayout(branch,atlas.assets),[baseX,baseY,WIDTH,HEIGHT]=layout.bounds,TW=48,TH=24,OX=900,OY=270,ZM=32;
  const canvas=document.createElement('canvas');canvas.width=WIDTH;canvas.height=HEIGHT;
- let ctx=canvas.getContext('2d'),offsetX=0,offsetY=0;
+ let ctx=canvas.getContext('2d'),offsetX=baseX,offsetY=baseY;ctx.translate(-baseX,-baseY);
  const C={ink:'#162631',edge:'#11212b',cream:'#ded0af',gold:'#c8a363',goldLight:'#f0d8a1',navy:'#263f4b',teal:'#385a60',burgundy:'#732d45'};
  const ip=(x,y,z=0)=>project(x,y,z/ZM).map(Math.round);
  const rectPoints=([x,y,w,h],z=0)=>[ip(x,y,z),ip(x+w,y,z),ip(x+w,y+h,z),ip(x,y+h,z)];
@@ -33,6 +34,11 @@ function plaque(s,x,y,{accent=C.gold,size=13,align='center'}={}){
  px(L+3,T+3,w,h,'#0e1925');px(L,T,w,h,C.ink);px(L,T,w,2,accent);px(L,T,2,h,accent);text(s,L+w/2,T+h/2,size,C.cream,'center');
 }
 function floor(){
+ if(layout.modular){
+  const q=Math.floor(materialSize/2);
+  for(const block of layout.floorBlocks){const [a,b]=block.split(',').map(n=>Number(n)*8);ctx.save();ctx.setTransform(24,12,-24,12,OX-offsetX,OY-offsetY);ctx.beginPath();ctx.rect(a,b,8,8);ctx.clip();for(let x=a;x<a+8;x+=4)for(let y=b;y<b+8;y+=4)ctx.drawImage(materials,0,0,q,q,x,y,4,4);ctx.restore()}
+  return;
+ }
  // Render flat material samples directly to the isometric plane; this never edits the source PNG.
  const output=ctx.createImageData(WIDTH,HEIGHT),dst=output.data,src=materialPixels;
  const q=Math.floor(materialSize/2),materialOf={hall1:1,hall2:2,toilets:3,staff:3};
@@ -47,11 +53,13 @@ function floor(){
  ctx.putImageData(output,0,0);
 }
 function floorTrim(){
+ if(layout.modular){for(let y=0;y<7;y++)for(let x=0;x<7;x++){const owned=layout.floorBlocks.includes(`${x},${y}`);border(rectPoints([x*8,y*8,8,8]),owned?'#9e8b60':'#29434c')}return;}
  for(const r of layout.rooms.filter(r=>!r.id.startsWith('hall'))) {const [x,y,w,h]=r.rect;border(rectPoints([x+.15,y+.15,w-.3,h-.3]),'#a88d61');}
  const p=rectPoints([14.5,32.25,3,1.5]);poly(p,'#30494b');border(p,C.gold);
  poly([ip(16,32.6),ip(16.6,33),ip(16,33.4),ip(15.4,33)],C.gold);
 }
 function elevation(x,y){
+ if(layout.modular)return terrainHeight(layout,x,y);
  const hall=layout.terraces.find(t=>{const r=layout.rooms.find(r=>r.id===t.room);return inside(x,y,r.rect)});
  if(!hall||y<6.5)return 0;
  if(y>=16.5)return 2.1;
@@ -162,32 +170,41 @@ function addTerraceGeometry(items){
   chunks(t.rear_walkway,2.1,material);
  }
 }
-function stairRails(){
- for(const t of layout.terraces){
+function stairRails(terraces=layout.terraces){
+ for(const t of terraces){
   for(const x of [t.aisle_x[0]+.08,t.aisle_x[1]-.08]){
-   const ys=[6.5,9,11.5,14,16.5],points=[];
+   const first=t.tiers[0].front_y,ys=[first,first+2.5,first+5,first+7.5,t.rear_walkway[1]],points=[];
    for(const y of ys){const z=elevation(x,y)*ZM,P=ip(x,y,z),Q=ip(x,y,z+.75*ZM);line(P,Q,'#87978e',2);points.push(Q);}
    for(let i=0;i+1<points.length;i++)line(points[i],points[i+1],'#e4d6ad',2);
   }
  }
 }
 
- const objects=worldObjects(layout,branch),props=objects.map(o=>placement(o,atlas.assets));
+ function zoneMatrix(r){const spec=atlas.zoneSprites[r.id],[x,y,w,h]=r.rect,A=project(x,y),B=project(x+w,y),D=project(x,y+h),[sx,sy]=spec.origin,ux=spec.right[0]-sx,uy=spec.right[1]-sy,vx=spec.left[0]-sx,vy=spec.left[1]-sy,det=ux*vy-vx*uy,bx=B[0]-A[0],by=B[1]-A[1],dx=D[0]-A[0],dy=D[1]-A[1];const a=(bx*vy-dx*uy)/det,b=(by*vy-dy*uy)/det,c=(-bx*vx+dx*ux)/det,d=(-by*vx+dy*ux)/det;return [a,b,c,d,A[0]-a*sx-c*sy,A[1]-b*sx-d*sy]}
+ function zoneImage(r,mask=null){const spec=atlas.zoneSprites[r.id],im=images[spec.image],m=zoneMatrix(r);const clip=mask===true?spec.foreground:mask;
+  ctx.save();ctx.imageSmoothingEnabled=false;ctx.setTransform(m[0],m[1],m[2],m[3],m[4]-offsetX,m[5]-offsetY);for(const polygon of [spec.outline,...(clip?[clip]:[])]){ctx.beginPath();polygon.forEach(([u,v],i)=>i?ctx.lineTo(u,v):ctx.moveTo(u,v));ctx.closePath();ctx.clip()}ctx.drawImage(im,0,0);ctx.restore();
+ }
+ const objects=layout.objects,props=objects.map(o=>placement(o,atlas.assets));
  const nav=new Navigation(layout,objects,atlas.assets),routes=customerRoutes(layout,nav);
  ctx.imageSmoothingEnabled=false;floor();floorTrim();
  const items=[];addTerraceGeometry(items);
- for(const w of layout.walls)for(let a=w.a;a<w.b;a+=.5){
+ for(const w of layout.walls.filter(w=>w.room.startsWith('hall')))for(let a=w.a;a<w.b;a+=.5){
   const b=Math.min(a+.5,w.b),p=w.axis==='h'?ip(a,w.line):ip(w.line,a),q=w.axis==='h'?ip(b,w.line):ip(w.line,b);
   items.push({depth:w.line+(a+b)/2,bounds:bounds([p,q,[p[0],p[1]-180],[q[0],q[1]-180]],10),draw:()=>wallSegment(w,a,b)});
  }
  for(const o of objects){const g=props.find(p=>p.id===o.id);items.push({depth:g.depth,bounds:g.bounds.map((n,i)=>n+(i<2?-4:4)),draw:()=>sprite(o)});}
+ for(const r of layout.zoneObjects){const [x,y,w,h]=r.rect,box=bounds([...rectPoints(r.rect),...rectPoints(r.rect,3.6*ZM)],10),spec=atlas.zoneSprites[r.id];items.push({depth:x+y+(r.id==='toilets'?8.3:-.1),bounds:box,draw:()=>zoneImage(r)});if(spec.foreground){
+  // Rear architecture is restored in depth strips; staff remain between the fitted backbar and counter front.
+  const mix=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t),m=zoneMatrix(r);
+  for(const side of ['right','left'])for(let i=0;i<16;i++){const top=side==='right'?spec.outline[1]:spec.outline[5],bottom=spec[side],pad=side==='right'?[-100,55]:[100,55],a=mix(spec.outline[0],top,i/16),b=mix(spec.outline[0],top,(i+1)/16),c=mix(spec.origin,bottom,(i+1)/16).map((v,j)=>v+pad[j]),d=mix(spec.origin,bottom,i/16).map((v,j)=>v+pad[j]),mask=[a,b,c,d],points=mask.map(([u,v])=>[m[0]*u+m[2]*v+m[4],m[1]*u+m[3]*v+m[5]]);items.push({depth:x+y+(i+.5)/2+.2,bounds:bounds(points,3),draw:()=>zoneImage(r,mask)})}
+  items.push({depth:x+y+8.4,bounds:box,draw:()=>zoneImage(r,true)})
+ }}
  for(const d of layout.doors){const p=d.axis==='h'?ip(d.a,d.line):ip(d.line,d.a),q=d.axis==='h'?ip(d.b,d.line):ip(d.line,d.b);items.push({depth:d.line+(d.a+d.b)/2+.5,bounds:bounds([p,q,[p[0],p[1]-95],[q[0],q[1]-95]],18),draw:()=>door(d)});}
  const railPoints=layout.queues.flatMap(q=>{const [x,y,X,Y]=q.rail;return [ip(x,y),ip(X,Y),ip(x,y,24),ip(X,Y,24)];});
- items.push({depth:65,bounds:bounds(railPoints,8),draw:rails});
- const stairPoints=layout.terraces.flatMap(t=>t.aisle_x.flatMap(x=>[ip(x,6.5,24),ip(x,16.5,100),ip(x,16.5)]));
- items.push({depth:70,bounds:bounds(stairPoints,10),draw:stairRails});
+ if(railPoints.length)items.push({depth:65,bounds:bounds(railPoints,8),draw:rails});
+ for(const t of layout.terraces){const stairPoints=t.aisle_x.flatMap(x=>[ip(x,t.tiers[0].front_y,24),ip(x,t.rear_walkway[1],100),ip(x,t.rear_walkway[1])]);items.push({depth:t.aisle_x[1]+t.rear_walkway[1]+.1,bounds:bounds(stairPoints,10),draw:()=>stairRails([t])})}
  const bands=new Map();for(const item of items){const n=Math.floor(item.depth);if(!bands.has(n))bands.set(n,[]);bands.get(n).push(item);}
- const layers=[{depth:-100,canvas,x:0,y:0}],baseContext=ctx;
+ const layers=[{depth:-100,canvas,x:baseX,y:baseY}],baseContext=ctx;
  for(const [depth,group]of [...bands].sort((a,b)=>a[0]-b[0])){
   const box=bounds(group.flatMap(i=>[[i.bounds[0],i.bounds[1]],[i.bounds[2],i.bounds[3]]]),3),[L,T,R,B]=box;
   const image=document.createElement('canvas');image.width=R-L;image.height=B-T;ctx=image.getContext('2d');offsetX=L;offsetY=T;ctx.imageSmoothingEnabled=false;ctx.translate(-L,-T);

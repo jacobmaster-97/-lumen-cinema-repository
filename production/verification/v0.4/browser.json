@@ -1,0 +1,216 @@
+{
+  "url": "http://127.0.0.1:8250/pages/",
+  "checks": [
+    "fresh game: only lower-right floor, zero buildings/seats, 68,000 cash",
+    "15 footer construction actions: connected starter cinema, 48 seats, affordable budget",
+    "schedule only offers constructed auditoriums",
+    "new construction save round-trip through welcome resume",
+    "individual adjacent purchases to all 49 floors and both halls, full-map camera",
+    "actual first day: admissions, customers and film projection",
+    "warm full-map renderer below 40ms CPU p95",
+    "natural day close with staff event resolution, accounts and next day",
+    "legacy fixture: original raw backup, cash/ownership/two branches/upgraded seating preserved",
+    "loaded construction map saves and reloads offline",
+    "touch construction, zone selection and no horizontal overflow 390",
+    "touch construction, zone selection and no horizontal overflow 720",
+    "touch construction, zone selection and no horizontal overflow 1080",
+    "failed asset load blocks opening and provides retry"
+  ],
+  "errors": [],
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "overflow": false
+    },
+    {
+      "width": 1080,
+      "height": 2400,
+      "overflow": false
+    }
+  ],
+  "scope": "Built site, actual UI construction and operation; desktop Chromium and simulated touch, not physical devices.",
+  "complete": {
+    "coldCompileMs": 322,
+    "walkers": 4,
+    "version": "0.4.0",
+    "mapGrid": [
+      56,
+      56
+    ],
+    "mapBlocks": [
+      7,
+      7
+    ],
+    "floorBlocks": 49,
+    "builtRooms": [
+      "tickets",
+      "snacks",
+      "toilets",
+      "hall1",
+      "hall2"
+    ],
+    "roomRects": [
+      {
+        "id": "hall1",
+        "rect": [
+          16,
+          32,
+          16,
+          16
+        ],
+        "door": "east"
+      },
+      {
+        "id": "hall2",
+        "rect": [
+          40,
+          24,
+          16,
+          16
+        ],
+        "door": "west"
+      },
+      {
+        "id": "tickets",
+        "rect": [
+          40,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "snacks",
+        "rect": [
+          48,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "toilets",
+        "rect": [
+          24,
+          48,
+          8,
+          8
+        ],
+        "door": "east"
+      }
+    ],
+    "objects": 88,
+    "seatCounts": [
+      48,
+      40
+    ],
+    "layers": 51,
+    "cacheMiB": 52,
+    "renderP95Ms": 85,
+    "pathsReachable": true,
+    "camera": {
+      "zoom": 1,
+      "x": 0,
+      "y": 0,
+      "scope": "full"
+    }
+  },
+  "warmRender": {
+    "coldCompileMs": 0,
+    "walkers": 133,
+    "version": "0.4.0",
+    "mapGrid": [
+      56,
+      56
+    ],
+    "mapBlocks": [
+      7,
+      7
+    ],
+    "floorBlocks": 49,
+    "builtRooms": [
+      "tickets",
+      "snacks",
+      "toilets",
+      "hall1",
+      "hall2"
+    ],
+    "roomRects": [
+      {
+        "id": "hall1",
+        "rect": [
+          16,
+          32,
+          16,
+          16
+        ],
+        "door": "east"
+      },
+      {
+        "id": "hall2",
+        "rect": [
+          40,
+          24,
+          16,
+          16
+        ],
+        "door": "west"
+      },
+      {
+        "id": "tickets",
+        "rect": [
+          40,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "snacks",
+        "rect": [
+          48,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "toilets",
+        "rect": [
+          24,
+          48,
+          8,
+          8
+        ],
+        "door": "east"
+      }
+    ],
+    "objects": 88,
+    "seatCounts": [
+      48,
+      40
+    ],
+    "layers": 51,
+    "cacheMiB": 52,
+    "renderP95Ms": 8.3,
+    "pathsReachable": true,
+    "camera": {
+      "zoom": 1,
+      "x": 0,
+      "y": 0,
+      "scope": "full"
+    }
+  },
+  "status": "passed",
+  "finishedAt": "2026-11-14T01:36:35.695Z"
+}

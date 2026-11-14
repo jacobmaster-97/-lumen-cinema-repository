@@ -31,3 +31,7 @@ Each film ID m0–m19 has one explicit atlas crop. In-world projection uses a la
 ## QA and import record
 
 Source dimensions, all 16 actor cells, all 20 film mappings and furniture crop bounds are checked by tests/cinema/world.test.mjs. Newline text is external to the illustrations. The production browser verification inspects actual alpha, movement, seating, projection, equipment changes, rendering cost and mobile controls. See production/verification/v0.3/browser.json.
+
+## v0.4 integrated rooms
+
+zones/tickets.png, snacks.png and toilets.png are unchanged copies of the approved ImageGen sources in design/art/integrated-zones-v2/. They replace scattered service props with complete square room artwork. The runtime uses source landmarks and in-memory clipping for back walls/counter foreground, without modifying PNG pixels. manifest.zoneSprites owns those import polygons; map-data.mjs and map-world.mjs own placement and collision, not the archived legacy_layout. Seats, acoustic walls, elevated floors, actors and poster sources above are reused in the formal 56×56 map. Verification: tests/cinema/construction.test.mjs and production/verification/v0.4/browser.json.

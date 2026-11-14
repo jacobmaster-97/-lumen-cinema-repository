@@ -20,7 +20,7 @@
       "status": "selected",
       "statusReason": "selected within budget",
       "safety": "safe",
-      "chars": 3318
+      "chars": 3317
     },
     {
       "sourcePath": "design/gdd.md",
@@ -29,7 +29,7 @@
       "status": "selected",
       "statusReason": "selected within budget",
       "safety": "safe",
-      "chars": 3407
+      "chars": 3711
     },
     {
       "sourcePath": "production/timeline.md",
@@ -38,7 +38,7 @@
       "status": "selected",
       "statusReason": "selected within budget",
       "safety": "safe",
-      "chars": 714
+      "chars": 912
     },
     {
       "sourcePath": "docs/market-overview.md",
@@ -91,6 +91,6 @@
     "maxChars": 48000,
     "maxEntryChars": 16000,
     "usedFiles": 9,
-    "usedChars": 15717
+    "usedChars": 16218
   }
 }

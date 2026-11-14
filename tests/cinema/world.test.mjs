@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import * as E from '../../prototypes/browser/engine.mjs';
 import { worldObjects, placement, Navigation, customerRoutes, elevation, overlaps, hallUnderRepair, pickRoom, project } from '../../prototypes/browser/world.mjs';
 const manifest=JSON.parse(await readFile(new URL('../../src/assets/cinema/runtime/manifest.json',import.meta.url),'utf8'));
-const {layout,assets}=manifest;
+const {legacy_layout:layout,assets}=manifest;
 test('a real save produced by the previous release keeps cash, property, branches and upgraded capacity',async()=>{
   const raw=await readFile(new URL('./fixtures/v2-save.json',import.meta.url),'utf8'),old=JSON.parse(raw).state,restored=E.loadGame(raw);
   assert.equal(restored.cash,old.cash);assert.equal(restored.activeBranch,1);assert.equal(restored.branches[0].owned,true);
@@ -17,7 +17,7 @@ test('planning never displays a false repair; a real closure follows the running
   s.minute=45;assert.equal(hallUnderRepair(b,s,0),false);
 });
 
-test('production map has two elevated eight-row halls, no lounge, and ground-level entries',()=>{
+test('legacy geometry fixture has two elevated eight-row halls, no lounge, and ground-level entries',()=>{
   assert.deepEqual(layout.grid,[32,34]);assert.ok(!layout.rooms.some(r=>r.id==='lounge'));assert.ok(!layout.objects.some(o=>o.kind==='bench'));
   for(const t of layout.terraces){assert.equal(t.tiers.length,8);assert.equal(t.tiers[0].elevation_m,0);assert.equal(t.tiers[7].elevation_m,2.1);assert.equal(t.stair_rise_m,.15);assert.equal(elevation(layout,(t.aisle_x[0]+t.aisle_x[1])/2,17.25),2.1);}
   for(const d of layout.doors.filter(d=>d.room.startsWith('hall'))){assert.equal(d.threshold_m,0);assert.ok(d.b<layout.terraces[0].tiers[0].front_y);}

@@ -10,7 +10,7 @@
 
 網址：https://jacobmaster-97.github.io/-lumen-cinema-repository/
 
-main 推送會觸發 .github/workflows/pages.yml；先跑 27 項遊戲測試，再由 scripts/build-pages.mjs 產生 dist/pages 並部署。build job 只有 contents:read，部署 job 使用 pages:write 與 id-token:write。
+main 推送會觸發 .github/workflows/pages.yml；先跑 41 項遊戲測試，再由 scripts/build-pages.mjs 產生 dist/pages 並部署。build job 只有 contents:read，部署 job 使用 pages:write 與 id-token:write。
 
 遊戲主頁及貼圖工作台都使用相對資源路徑，適用於 repository 子路徑。正式發佈會複製 PNG 與 AtlasTexture 為一般檔案，不依賴 GitHub Pages 對符號連結的支援。
 
@@ -47,3 +47,11 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 已發佈來源 b42d07ff075ef802f00fc83a86830b19f371cb87：測試 run 43535976756、Pages run 43535976626 均成功。公開 /design/version.json 與來源一致，預覽座標／向右入口、單塊開局、編排器放置及 JSON 匯出、遊戲入口均通過驗證。
 
 本機建置與子路徑驗證見 production/verification/design-pages/local.json；遠端工作流程及公開 HTTPS 瀏覽器證據見 deployment.json、public.json、public-map.png。公開瀏覽器用平台 CA 驗證的 HTTPS 請求載入遠端回應，保留 TLS 驗證。後續 [skip ci] 文件提交不改公開設計的來源版本。回退發佈 commit 可移除設計入口及新工具，既有 v2 存檔不受影響。
+
+## v0.4 正式地圖接入
+
+使用者澄清要正式遊戲採用已編排地圖，本輪已接入。根入口即為新地圖及逐格建造玩法，`/design/`僅保留工具入口；前節「未實裝」是先前設計版的歷史狀態。本版Node測試增至41項。
+
+`map-data.mjs`同步已確認配置，洗手間向右；新局單格起步、施工後開業。三張整區PNG與地圖幾何／門／座位／導航在遊戲中實際使用，詳細規則見 design/rebuild-v0.4.md。舊v2存檔保留進度轉為已建完整地圖，並備份原始舊檔。
+
+本輪驗證在 production/verification/v0.4：打包後真實Chromium測試、遠端workflow及公開HTTPS版本。version.json為0.4.0並記錄來源SHA；全部相對模組匯入附0.4版號。發布後補上來源及成功workflow，回退revert功能提交重跑相同工作流程。

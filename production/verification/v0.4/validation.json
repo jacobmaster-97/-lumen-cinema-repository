@@ -1,0 +1,51 @@
+{
+  "nodeTests": {
+    "command": "npm test --prefix prototypes/browser",
+    "passed": 41,
+    "failed": 0
+  },
+  "studioValidation": {
+    "command": "./codex-game-studio validate",
+    "passed": 1207,
+    "failed": 0
+  },
+  "documentationImpact": {
+    "command": "./codex-game-studio docs-impact --base 6234b64",
+    "result": "passed",
+    "evidence": [
+      "PASS project.documentation_impact.document.design/rebuild-v0.4.md: Documentation Impact document changed: design/rebuild-v0.4.md (/workspace/codex-game-studio/design/rebuild-v0.4.md)",
+      "PASS project.documentation_impact.document.design/gdd.md: Documentation Impact document changed: design/gdd.md (/workspace/codex-game-studio/design/gdd.md)",
+      "PASS project.documentation_impact.document.docs/github.md: Documentation Impact document changed: docs/github.md (/workspace/codex-game-studio/docs/github.md)",
+      "PASS project.documentation_impact.document.production/timeline.md: Documentation Impact document changed: production/timeline.md (/workspace/codex-game-studio/production/timeline.md)",
+      "PASS project.documentation_impact.document.production/session-state/active.md: Documentation Impact document changed: production/session-state/active.md (/workspace/codex-game-studio/production/session-state/active.md)",
+      "PASS project.documentation_impact: functional changes have updated documentation evidence (/workspace/codex-game-studio/production/session-state/active.md)"
+    ]
+  },
+  "sourceAssets": [
+    {
+      "runtime": "src/assets/cinema/runtime/zones/snacks.png",
+      "source": "design/art/integrated-zones-v2/snacks.png",
+      "bytes": 1826882,
+      "sha256": "cfda459bc45dd9e36f891f6f36d9595059ef0fa6856ea8fb60684ea40dd1648b"
+    },
+    {
+      "runtime": "src/assets/cinema/runtime/zones/tickets.png",
+      "source": "design/art/integrated-zones-v2/tickets.png",
+      "bytes": 1852297,
+      "sha256": "3c6bf8fe565f6071f2aece062d5daec1e81e57984e478ce0d1f74e92ebe598bb"
+    },
+    {
+      "runtime": "src/assets/cinema/runtime/zones/toilets.png",
+      "source": "design/art/integrated-zones-v2/toilets.png",
+      "bytes": 1174908,
+      "sha256": "00fff5c5b98b7c7f6adb1093ade6eeaed92803db92024f08d4de293f88377d96"
+    }
+  ],
+  "browser": {
+    "command": "node scripts/verify-modular-browser.cjs",
+    "passed": 14,
+    "failed": 0,
+    "errors": [],
+    "warmRenderP95Ms": 8.3
+  }
+}

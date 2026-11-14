@@ -77,12 +77,12 @@ function crosses(p,q,w) {
 export class Navigation {
   constructor(layout,objects,assets) {
     this.layout=layout;this.width=layout.grid[0]*2;this.height=layout.grid[1]*2;this.cache=new Map();
-    this.obstacles=objects.map(o=>placement(o,assets).footprint).concat(layout.terraces.map(t=>t.stage.rect));
+    this.obstacles=(layout.obstacles||objects.map(o=>placement(o,assets).footprint)).concat(layout.terraces.map(t=>t.stage.rect));
     this.walls=layout.walls.concat(layout.queues.map(q=>({axis:'h',line:q.rail[1],a:q.rail[0],b:q.rail[2]})));
     this.walkable=new Uint8Array(this.width*this.height);this.heights=new Float64Array(this.walkable.length);this.links=new Array(this.walkable.length);
     for(let n=0;n<this.walkable.length;n++){
       const [x,y]=this.point(n);this.heights[n]=elevation(layout,x,y);
-      this.walkable[n]=!this.obstacles.some(([a,b,w,h])=>x>a-.18&&x<a+w+.18&&y>b-.18&&y<b+h+.18);
+      this.walkable[n]=(!layout.floorBlocks||layout.floorBlocks.includes(`${Math.floor(x/8)},${Math.floor(y/8)}`))&&!this.obstacles.some(([a,b,w,h])=>x>a-.18&&x<a+w+.18&&y>b-.18&&y<b+h+.18);
     }
     for(let n=0;n<this.walkable.length;n++){
       this.links[n]=[];if(!this.walkable[n])continue;const p=this.point(n),x=n%this.width,y=Math.floor(n/this.width);
@@ -115,5 +115,6 @@ export function sampleRoute(route,progress) {
 }
 
 export function customerRoutes(layout,nav) {
+  if(layout.modular)return [0,1].map(h=>layout.destinations[`hall${h+1}-rear`]&&layout.destinations.tickets&&layout.destinations.snacks?nav.through([layout.entrance,layout.destinations.tickets,layout.destinations.snacks,layout.destinations[`hall${h+1}-entry`],layout.destinations[`hall${h+1}-front`],layout.destinations[`hall${h+1}-rear`]]):[]);
   return [0,1].map(h=>nav.through([layout.entrance,...layout.queues[0].points,...layout.queues[1].points,layout.destinations[`hall${h+1}-entry`],layout.destinations[`hall${h+1}-rear`]]));
 }

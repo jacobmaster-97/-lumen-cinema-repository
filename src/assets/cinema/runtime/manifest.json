@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "projection": {
     "tile_pixels": [
       48,
@@ -7,7 +7,7 @@
     ],
     "vertical_pixels_per_m": 32
   },
-  "layout": {
+  "legacy_layout": {
     "version": 3,
     "status": "design only; awaiting user confirmation",
     "grid": [
@@ -2606,7 +2606,10 @@
     "walls": "walls-v3.png",
     "actors": "actors-v3.png",
     "posters": "posters-v3.png",
-    "postersLate": "posters-late-v3.png"
+    "postersLate": "posters-late-v3.png",
+    "zone_tickets": "zones/tickets.png",
+    "zone_snacks": "zones/snacks.png",
+    "zone_toilets": "zones/toilets.png"
   },
   "actor_grid": [
     4,
@@ -2953,6 +2956,173 @@
         "m18",
         "m19"
       ]
+    }
+  },
+  "map_source": "map-data.mjs",
+  "zoneSprites": {
+    "tickets": {
+      "image": "zone_tickets",
+      "origin": [
+        768,
+        395
+      ],
+      "right": [
+        1345,
+        684
+      ],
+      "left": [
+        191,
+        684
+      ],
+      "outline": [
+        [
+          768,
+          60
+        ],
+        [
+          1363,
+          380
+        ],
+        [
+          1363,
+          684
+        ],
+        [
+          768,
+          992
+        ],
+        [
+          171,
+          684
+        ],
+        [
+          171,
+          380
+        ]
+      ],
+      "foreground": [
+        [
+          570,
+          405
+        ],
+        [
+          1095,
+          655
+        ],
+        [
+          1095,
+          790
+        ],
+        [
+          1030,
+          790
+        ],
+        [
+          570,
+          555
+        ]
+      ]
+    },
+    "snacks": {
+      "image": "zone_snacks",
+      "origin": [
+        768,
+        395
+      ],
+      "right": [
+        1338,
+        685
+      ],
+      "left": [
+        198,
+        685
+      ],
+      "outline": [
+        [
+          768,
+          60
+        ],
+        [
+          1339,
+          393
+        ],
+        [
+          1339,
+          685
+        ],
+        [
+          768,
+          997
+        ],
+        [
+          196,
+          685
+        ],
+        [
+          196,
+          394
+        ]
+      ],
+      "foreground": [
+        [
+          490,
+          490
+        ],
+        [
+          1032,
+          744
+        ],
+        [
+          1032,
+          862
+        ],
+        [
+          490,
+          620
+        ]
+      ]
+    },
+    "toilets": {
+      "image": "zone_toilets",
+      "origin": [
+        794,
+        361
+      ],
+      "right": [
+        1344,
+        663
+      ],
+      "left": [
+        244,
+        663
+      ],
+      "outline": [
+        [
+          794,
+          43
+        ],
+        [
+          1344,
+          340
+        ],
+        [
+          1344,
+          668
+        ],
+        [
+          794,
+          970
+        ],
+        [
+          239,
+          668
+        ],
+        [
+          239,
+          340
+        ]
+      ],
+      "foreground": null
     }
   }
 }

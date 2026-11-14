@@ -1,5 +1,7 @@
 import * as E from "./engine.mjs";
-import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.3.0";
+import * as C from "./construction.mjs";
+import {constructionSummary,constructionPanel,roomConstruction} from "./construction-ui.mjs";
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.4.0";
 import { loadCinemaAssets } from "./assets.mjs";
 import { CinemaAudio } from "./audio.mjs";
 import { hallUnderRepair } from "./world.mjs";
@@ -31,7 +33,8 @@ const clock = (n) => {
 };
 const STORAGE = "lumen-cinema-v2";
 let selectedZone = null;
-let state = E.createGame(),
+let selectedBlock=null;
+let state = E.createGame({construction:true}),
   view = "overview",
   filmFilter = "available",
   reportIndex = 0,
@@ -137,7 +140,7 @@ function hydratePosters(root = document) {
 }
 function estimateNet(branch) {
   const l = { ...branch.ledger };
-  if (state.phase !== "closed") {
+  if (state.phase !== "closed" && C.operational(branch)) {
     l.wages = branch.staff.reduce((n, p) => n + p.wage, 0);
     l.rent = branch.owned ? 0 : branch.rent;
     l.maintenance =
@@ -156,7 +159,7 @@ function updateHeader() {
       ? "營業已暫停"
       : "兩店同步營業".replace(
           "兩店",
-          state.branches.length === 1 ? "戲院" : "兩店",
+          state.branches.filter(C.operational).length < 2 ? "戲院" : "兩店",
         ),
     event: "突發事件・時間暫停",
     closed: "當日營業已結束",
@@ -185,7 +188,7 @@ function updateHeader() {
       ? `籌備第 ${state.day + 1} 日 <span>→</span>`
       : state.phase === "event"
         ? "處理突發事件 <span>!</span>"
-        : `開始第 ${state.day} 日營業 <span>▶</span>`;
+        : state.branches.some(C.operational)?`開始第 ${state.day} 日營業 <span>▶</span>`:C.nextStep(v)?`${C.nextStep(v).label} · ${money(C.nextStep(v).cost)} <span>→</span>`:"先完成首輪建造 <span>→</span>";
   for (const button of document.querySelectorAll("[data-speed]"))
     button.classList.toggle(
       "active",
@@ -223,8 +226,11 @@ function nowShows() {
   );
 }
 function zoneInfo() {
-  const venue=b(),room=atlas?.layout.rooms.find(r=>r.id===selectedZone);
-  if(!room)return `<p class="eyebrow">THE NEXT GOOD SHOW</p><h2>今日，由你話事。</h2><p>先檢查排片同票價，再為戲院開燈。日常交畀員工，突發時先決定點樣救場。</p><div class="ready-row"><span>放映安排</span><b>${venue.programme.length} 場</b></div><div class="ready-row"><span>當值團隊</span><b>${venue.staff.length} 位</b></div><div class="ready-row"><span>兩個影廳</span><b>${venue.seats[0]} + ${venue.seats[1]} 席</b></div><button class="primary" data-action="navigate" data-target="schedule">檢查今日排片 →</button><p class="zone-tip">點選地圖區域，查看營運狀態。</p>`;
+  const venue=b(),room=C.ROOMS.find(r=>r.id===selectedZone);
+  if(venue.map&&selectedBlock)return constructionSummary(state,venue,selectedBlock);
+  if(room&&!C.hasRoom(venue,room.id))return roomConstruction(state,venue,room);
+  if(!room&&venue.map&&!C.operational(venue))return constructionSummary(state,venue);
+  if(!room)return `<p class="eyebrow">THE NEXT GOOD SHOW</p><h2>今日，由你話事。</h2><p>先檢查排片同票價，再為戲院開燈。日常交畀員工，突發時先決定點樣救場。</p><div class="ready-row"><span>放映安排</span><b>${venue.programme.length} 場</b></div><div class="ready-row"><span>當值團隊</span><b>${venue.staff.length} 位</b></div><div class="ready-row"><span>已建影廳</span><b>${venue.seats.filter((_,h)=>C.hasRoom(venue,`hall${h+1}`)).join(" + ")} 席</b></div><button class="primary" data-action="navigate" data-target="schedule">檢查今日排片 →</button><p class="zone-tip">點選地圖區域，查看營運狀態。</p>`;
   const hall=room.id.startsWith('hall')?Number(room.id.slice(-1))-1:null;
   let title=room.name,description='',detail='',target='investment',actionText='查看裝修';
   if(hall!==null){
@@ -239,10 +245,10 @@ function zoneInfo() {
   }else description='獨立入口連接大堂，設施與公共通道分開，保持動線暢通。';
   return `<p class="eyebrow">CINEMA OPERATIONS</p><h2>${title}</h2><p>${description}</p>${detail}<button class="primary" data-action="navigate" data-target="${target}">${actionText} →</button><button class="text-button" data-action="clear-zone">返回營運摘要</button>`;
 }
-function selectZone(id){selectedZone=id;if(renderer){renderer.selected=id;renderer.dirty=true;}if($('#zone-inspector'))$('#zone-inspector').innerHTML=zoneInfo();for(const el of document.querySelectorAll('[data-zone]')){el.classList.toggle('active',el.dataset.zone===id);el.setAttribute('aria-pressed',String(el.dataset.zone===id));}}
+function selectZone(id){selectedBlock=null;if(id?.startsWith("block:")){selectedBlock=id.slice(6).split(",").map(Number);id=null;}selectedZone=id;if(renderer){renderer.selected=id;renderer.dirty=true;}if($('#zone-inspector'))$('#zone-inspector').innerHTML=zoneInfo();for(const el of document.querySelectorAll('[data-zone]')){el.classList.toggle('active',el.dataset.zone===id);el.setAttribute('aria-pressed',String(el.dataset.zone===id));}}
 function overview() {
   const v=b();
-  return `<div class="studio-overview"><section class="scene-card"><div class="panel-header"><div><p class="eyebrow">YOUR LITTLE PICTURE HOUSE</p><h2>${esc(v.name)}</h2><p>自動營運 · 每一場好戲，都由你安排</p></div><div class="map-controls" aria-label="地圖視角"><button data-action="zoom-out" aria-label="縮小地圖">−</button><span id="map-zoom">100%</span><button data-action="zoom-in" aria-label="放大地圖">＋</button><button data-action="map-fit">全景</button></div></div><div class="scene-wrap"><span class="scene-label">${state.phase==='planning'?'開業前準備':state.phase==='closed'?'今日好戲，圓滿散場':'好戲正在上演'}</span><canvas id="cinema" width="1440" height="1000" tabindex="0" aria-label="立體階梯像素戲院；可拖曳移動，使用加減號縮放，亦可用下方按鈕選擇區域"></canvas><span class="scene-tag">拖曳移動 · ＋／－縮放</span></div><div class="zone-tabs" aria-label="選擇戲院區域">${[['hall1','影廳 1'],['hall2','影廳 2'],['tickets','售票'],['snacks','小食'],['staff','後勤'],['toilets','洗手間']].map(([id,name])=>`<button data-action="select-zone" data-id="${id}" data-zone="${id}" aria-pressed="${selectedZone===id}" class="${selectedZone===id?'active':''}">${name}</button>`).join('')}</div><div class="scene-bottom"><span>口碑 <b id="reputation">${Math.round(v.reputation)}</b> / 100</span><span>${v.staff.length} 位員工 · ${v.programme.length} 場放映 · ${v.district}</span></div></section><aside class="operations-dock"><section class="panel zone-inspector" id="zone-inspector">${zoneInfo()}</section><section class="panel programme-card"><div class="panel-header"><h2>今日放映</h2><button data-action="navigate" data-target="schedule">完整排片 ↗</button></div><div id="live-show-list" class="show-list">${nowShows()}</div></section></aside></div><div class="metrics"><div class="metric"><label>戲院票房留成</label><strong id="metric-tickets">${money(v.ledger.gross-v.ledger.share)}</strong><span>已扣片商分帳</span></div><div class="metric"><label>小食毛利</label><strong id="metric-food">${money(v.ledger.foodRevenue-v.ledger.foodCost)}</strong><span>已扣食品成本</span></div><div class="metric"><label>今日入場人次</label><strong id="metric-visitors">${v.ledger.admissions}<small> 人</small></strong><span id="metric-seats">兩廳共 ${v.seats.reduce((a,b)=>a+b,0)} 席</span></div><div class="metric ${estimateNet(v)>=0?'positive':'negative'}" id="net-card"><label>${state.phase==='closed'?'今日營運淨利':'計入日常開支後'}</label><strong id="metric-net">${money(estimateNet(v))}</strong><span>包括人工、租金及維護</span></div></div><div class="studio-lower"><section class="panel ownership-goal"><p class="eyebrow">MAKE IT YOURS</p><h2>${v.owned?'有間自己嘅戲院。':'由租舖，到擁有。'}</h2><p>${v.owned?'往後免租，繼續用心維護，或為下一間戲院亮燈。':`儲起 ${money(E.PROPERTY_PRICE[v.id])}，買斷後每日免租 ${money(v.rent)}。`}</p><div class="ownership-progress"><span style="width:${v.owned?100:Math.min(100,Math.max(0,state.cash)/E.PROPERTY_PRICE[v.id]*100)}%"></span></div><button class="text-button" data-action="navigate" data-target="investment">裝修、物業與第二分店 →</button></section><section class="panel"><div class="panel-header"><h2>戲院小報</h2><span class="muted">LUMEN DAILY</span></div><div class="news" id="live-news">${newsHTML()}</div></section></div>`;
+  return `<div class="studio-overview"><section class="scene-card"><div class="panel-header"><div><p class="eyebrow">YOUR LITTLE PICTURE HOUSE</p><h2>${esc(v.name)}</h2><p>自動營運 · 每一場好戲，都由你安排</p></div><div class="map-controls" aria-label="地圖視角"><button data-action="zoom-out" aria-label="縮小地圖">−</button><span id="map-zoom">100%</span><button data-action="zoom-in" aria-label="放大地圖">＋</button><button data-action="map-fit">全圖</button><button data-action="map-owned">已建範圍</button></div></div><div class="scene-wrap"><span class="scene-label">${state.phase==='planning'?'開業前準備':state.phase==='closed'?'今日好戲，圓滿散場':'好戲正在上演'}</span><canvas id="cinema" width="1440" height="1000" tabindex="0" aria-label="立體階梯像素戲院；可拖曳移動，使用加減號縮放，亦可用下方按鈕選擇區域"></canvas><span class="scene-tag">拖曳移動 · ＋／－縮放</span></div><div class="zone-tabs" aria-label="選擇戲院區域">${[['hall1','影廳 1'],['hall2','影廳 2'],['tickets','售票'],['snacks','小食'],['toilets','洗手間']].map(([id,name])=>`<button data-action="select-zone" data-id="${id}" data-zone="${id}" aria-pressed="${selectedZone===id}" class="${selectedZone===id?'active':''}">${name}${C.hasRoom(v,id)?'':'（未建）'}</button>`).join('')}</div><div class="scene-bottom"><span>口碑 <b id="reputation">${Math.round(v.reputation)}</b> / 100</span><span>${v.staff.length} 位員工 · ${v.programme.length} 場放映 · ${v.district}</span></div></section><aside class="operations-dock"><section class="panel zone-inspector" id="zone-inspector">${zoneInfo()}</section><section class="panel programme-card"><div class="panel-header"><h2>今日放映</h2><button data-action="navigate" data-target="schedule">完整排片 ↗</button></div><div id="live-show-list" class="show-list">${nowShows()}</div></section></aside></div><div class="metrics"><div class="metric"><label>戲院票房留成</label><strong id="metric-tickets">${money(v.ledger.gross-v.ledger.share)}</strong><span>已扣片商分帳</span></div><div class="metric"><label>小食毛利</label><strong id="metric-food">${money(v.ledger.foodRevenue-v.ledger.foodCost)}</strong><span>已扣食品成本</span></div><div class="metric"><label>今日入場人次</label><strong id="metric-visitors">${v.ledger.admissions}<small> 人</small></strong><span id="metric-seats">已建影廳共 ${v.seats.reduce((n,seats,h)=>n+(C.hasRoom(v,`hall${h+1}`)?seats:0),0)} 席</span></div><div class="metric ${estimateNet(v)>=0?'positive':'negative'}" id="net-card"><label>${state.phase==='closed'?'今日營運淨利':'計入日常開支後'}</label><strong id="metric-net">${money(estimateNet(v))}</strong><span>包括人工、租金及維護</span></div></div><div class="studio-lower"><section class="panel ownership-goal"><p class="eyebrow">MAKE IT YOURS</p><h2>${v.owned?'有間自己嘅戲院。':'由租舖，到擁有。'}</h2><p>${v.owned?'往後免租，繼續用心維護，或為下一間戲院亮燈。':`儲起 ${money(E.PROPERTY_PRICE[v.id])}，買斷後每日免租 ${money(v.rent)}。`}</p><div class="ownership-progress"><span style="width:${v.owned?100:Math.min(100,Math.max(0,state.cash)/E.PROPERTY_PRICE[v.id]*100)}%"></span></div><button class="text-button" data-action="navigate" data-target="investment">裝修、物業與第二分店 →</button></section><section class="panel"><div class="panel-header"><h2>戲院小報</h2><span class="muted">LUMEN DAILY</span></div><div class="news" id="live-news">${newsHTML()}</div></section></div>`;
 }
 function newsHTML() {
   return state.news
@@ -328,7 +334,7 @@ function snacks() {
 }
 function investment() {
   const v = b();
-  return `<div class="investment-grid"><section class="card property-card ${v.owned ? "owned" : ""}"><p class="eyebrow">${esc(v.district)} / PROPERTY</p><span class="property-stamp">${v.owned ? "自置物業" : "租賃中"}</span><h2>${v.owned ? "呢間戲院，屬於你。" : "買斷自己的戲院。"}</h2><p>${v.owned ? "物業已買斷，往後免租。音響、清潔與設備保養仍然需要維護費。" : `目前每日租金 ${money(v.rent)}。買斷後永久免租，保留維護支出；你亦可以先開第二間分店。`}</p><span class="price">${v.owned ? "免租經營" : money(E.PROPERTY_PRICE[v.id])}</span><button class="primary" data-action="buy-property" ${v.owned || !planning() ? "disabled" : ""}>${v.owned ? "物業已買斷" : "買斷物業"}</button></section><section class="card property-card"><p class="eyebrow">KWUN TONG / EXPANSION</p><h2>${state.branches.length > 1 ? "觀塘 · 光影東岸" : "為第二間戲院亮燈。"}</h2><p>${state.branches.length > 1 ? "兩間戲院共用公司資金與日期。排片、票價、人手同收支獨立，由你親自掌握。" : "在觀塘開設兩個影廳的新分店，包含初始設施與四位員工。每日租金 $1,550，開業後需要由你安排排片。"}</p><span class="price">${state.branches.length > 1 ? "第二間分店已開業" : money(E.BRANCH_PRICE)}</span><button class="primary" data-action="${state.branches.length > 1 ? "branch" : "open-branch"}" data-id="1" ${!planning() && state.branches.length < 2 ? "disabled" : ""}>${state.branches.length > 1 ? "切換到觀塘店" : "開設第二間分店"}</button></section></div><div class="section-toolbar" style="margin-top:28px"><p>區域配置 · 各店獨立升級，毋須逐格建牆。<br>投資在營業前安排，效果由當日開始。</p></div><div class="upgrade-grid">${Object.entries(
+  return `<div class="investment-grid"><section class="card property-card ${v.owned ? "owned" : ""}"><p class="eyebrow">${esc(v.district)} / PROPERTY</p><span class="property-stamp">${v.owned ? "自置物業" : "租賃中"}</span><h2>${v.owned ? "呢間戲院，屬於你。" : "買斷自己的戲院。"}</h2><p>${v.owned ? "物業已買斷，往後免租。音響、清潔與設備保養仍然需要維護費。" : `目前每日租金 ${money(v.rent)}。買斷後永久免租，保留維護支出；你亦可以先開第二間分店。`}</p><span class="price">${v.owned ? "免租經營" : money(E.PROPERTY_PRICE[v.id])}</span><button class="primary" data-action="buy-property" ${v.owned || !planning() ? "disabled" : ""}>${v.owned ? "物業已買斷" : "買斷物業"}</button></section><section class="card property-card"><p class="eyebrow">KWUN TONG / EXPANSION</p><h2>${state.branches.length > 1 ? "觀塘 · 光影東岸" : "為第二間戲院亮燈。"}</h2><p>${state.branches.length > 1 ? "兩間戲院共用公司資金與日期。排片、票價、人手同收支獨立，由你親自掌握。" : "在觀塘開設新分店，由一塊地板起步及四位員工協助籌備。建好基本設施後才營業，每日租金 $1,550；籌備不阻礙原店營業。"}</p><span class="price">${state.branches.length > 1 ? "第二間分店已開業" : money(E.BRANCH_PRICE)}</span><button class="primary" data-action="${state.branches.length > 1 ? "branch" : "open-branch"}" data-id="1" ${!planning() && state.branches.length < 2 ? "disabled" : ""}>${state.branches.length > 1 ? "切換到觀塘店" : "開設第二間分店"}</button></section></div><div class="section-toolbar" style="margin-top:28px"><p>區域配置 · 各店獨立建造；逐格鋪地，房間成區完成。<br>投資在營業前安排，效果由當日開始。</p></div><div class="upgrade-grid">${Object.entries(
     E.UPGRADES,
   )
     .map(
@@ -385,6 +391,7 @@ function render() {
     investment,
     report,
   }[view]();
+  if(view==="overview")$("#view-content").insertAdjacentHTML("beforeend",constructionPanel(state,b()));
   if (view === "overview" && atlas) {
     renderer = new CinemaRenderer($("#cinema"), atlas, images, {onSelect: selectZone, camera});
     renderer.selected=selectedZone;
@@ -421,9 +428,11 @@ function showForm(id = null, preferredMovie = null) {
     return;
   }
   const existing = b().programme.find((p) => p.id === id);
+  const firstHall = [0, 1].find(h => C.hasRoom(b(), `hall${h+1}`));
+  if (firstHall === undefined) { toast("先建好影廳，再安排放映場次。", true); return; }
   const p = existing || {
     id: null,
-    hall: 0,
+    hall: firstHall,
     start: 0,
     movie: preferredMovie || E.availableMovies(state)[0].id,
     price: 88,
@@ -438,7 +447,7 @@ function showForm(id = null, preferredMovie = null) {
       )
       .join(
         "",
-      )}</select></label><label>影廳<select name="hall"><option value="0" ${p.hall === 0 ? "selected" : ""}>1 號廳 · ${b().seats[0]} 席</option><option value="1" ${p.hall === 1 ? "selected" : ""}>2 號廳 · ${b().seats[1]} 席</option></select></label><label>開場時間<input name="time" type="time" min="11:00" max="23:00" step="300" value="${clock(p.start)}" required></label><label>票價（HKD）<input name="price" type="number" min="20" max="300" step="1" value="${p.price}" required></label><label>放映格式<select name="format"><option value="2D">普通 2D</option></select></label></div><div id="form-error"></div><div class="modal-actions">${existing ? `<button type="button" class="subtle-button danger" data-action="delete-show" data-id="${esc(p.id)}">刪除場次</button>` : ""}<button type="button" class="secondary" data-action="close">取消</button><button class="primary" type="submit">儲存場次</button></div></form></div>`,
+      )}</select></label><label>影廳<select name="hall">${[0,1].filter(h=>C.hasRoom(b(),`hall${h+1}`)).map(h=>`<option value="${h}" ${p.hall===h?"selected":""}>${h+1} 號廳 · ${b().seats[h]} 席</option>`).join("")}</select></label><label>開場時間<input name="time" type="time" min="11:00" max="23:00" step="300" value="${clock(p.start)}" required></label><label>票價（HKD）<input name="price" type="number" min="20" max="300" step="1" value="${p.price}" required></label><label>放映格式<select name="format"><option value="2D">普通 2D</option></select></label></div><div id="form-error"></div><div class="modal-actions">${existing ? `<button type="button" class="subtle-button danger" data-action="delete-show" data-id="${esc(p.id)}">刪除場次</button>` : ""}<button type="button" class="secondary" data-action="close">取消</button><button class="primary" type="submit">儲存場次</button></div></form></div>`,
   );
 }
 function movieDetail(id) {
@@ -451,7 +460,7 @@ function movieDetail(id) {
 }
 function help(welcome = false) {
   openModal(
-    `<div class="modal-body">${modalHeader("WELCOME TO LUMEN CINEMA", welcome ? "歡迎做戲院老闆。" : "好戲點樣開始？")}<p>現代香港，一間租用戲院。你負責安排營運，員工負責日常工作，突發時再決定要唔要親自救場。</p><div class="help-steps"><div class="help-step"><b>01</b><span><strong>先排片、定價同安排人手</strong>已有一套開業排片供調整；複製昨日可以減少重複操作。第二間分店需要由你親自安排。</span></div><div class="help-step"><b>02</b><span><strong>睇住戲院自己運作</strong>正常速度一日 3 分鐘，可用 2×／4× 加速，不能跳到事件。離開分頁會自動暫停。</span></div><div class="help-step"><b>03</b><span><strong>親自救場，再投資下一步</strong>一般每日每店 0–2 次事件。小遊戲可交員工；儲錢買斷免租，或開設觀塘分店。</span></div></div><p>進度儲存於本機瀏覽器。價格、日長同獎勵目前係試玩設定；可以拖曳及縮放地圖，點選區域查看營運狀態。</p><div class="modal-actions">${welcome && readStored() ? '<button class="secondary" data-action="resume-save">繼續已儲存進度</button>' : ""}${!welcome ? '<button class="subtle-button danger" data-action="reset-prompt">重新開局</button>' : ""}<button class="primary" data-action="close">${welcome ? "開始籌備第一日" : "明白，繼續經營"}</button></div></div>`,
+    `<div class="modal-body">${modalHeader("WELCOME TO LUMEN CINEMA", welcome ? "歡迎做戲院老闆。" : "好戲點樣開始？")}<p>現代香港，一間租用戲院。你負責安排營運，員工負責日常工作，突發時再決定要唔要親自救場。</p><div class="help-steps"><div class="help-step"><b>01</b><span><strong>由右下角地板建造影院</strong>按施工指引逐格鋪地，再建售票、小食、洗手間及影廳；建好的影廳會提供建議排片，可再調整。</span></div><div class="help-step"><b>02</b><span><strong>睇住戲院自己運作</strong>正常速度一日 3 分鐘，可用 2×／4× 加速，不能跳到事件。離開分頁會自動暫停。</span></div><div class="help-step"><b>03</b><span><strong>親自救場，再投資下一步</strong>一般每日每店 0–2 次事件。小遊戲可交員工；儲錢買斷免租，或開設觀塘分店。</span></div></div><p>進度儲存於本機瀏覽器。價格、日長同獎勵目前係試玩設定；可以拖曳及縮放地圖，點選區域查看營運狀態。</p><div class="modal-actions">${welcome && readStored() ? '<button class="secondary" data-action="resume-save">繼續已儲存進度</button>' : ""}${!welcome ? '<button class="subtle-button danger" data-action="reset-prompt">重新開局</button>' : ""}<button class="primary" data-action="close">${welcome ? "開始籌備第一日" : "明白，繼續經營"}</button></div></div>`,
   );
 }
 function showEvent() {
@@ -618,13 +627,18 @@ function confirmInvestment(kind) {
   const venue = b(),
     property = kind === "property";
   openModal(
-    `<div class="modal-body">${modalHeader("INVEST IN YOUR STORY", property ? "買斷呢間戲院。" : "開設觀塘分店。")}<p>${property ? `${esc(venue.name)}物業價款為 ${money(E.PROPERTY_PRICE[venue.id])}。買斷後每日免租 ${money(venue.rent)}，但人工、維護及其他成本繼續支付。` : `開業投資 ${money(E.BRANCH_PRICE)}，包含兩個影廳、初始設施及四位員工。每日租金 $1,550，日薪合共 $1,220。你需要親自安排第二店排片，之後兩店會同步營業。`}</p><div class="notice">公司現金 ${money(state.cash)}<br>投資後餘額 ${money(state.cash - (property ? E.PROPERTY_PRICE[venue.id] : E.BRANCH_PRICE))}</div><div class="modal-actions"><button class="secondary" data-action="close">再諗一諗</button><button class="primary" data-action="${property ? "commit-property" : "commit-branch"}">確認${property ? "買斷" : "開業"}</button></div></div>`,
+    `<div class="modal-body">${modalHeader("INVEST IN YOUR STORY", property ? "買斷呢間戲院。" : "開設觀塘分店。")}<p>${property ? `${esc(venue.name)}物業價款為 ${money(E.PROPERTY_PRICE[venue.id])}。買斷後每日免租 ${money(venue.rent)}，但人工、維護及其他成本繼續支付。` : `分店投資 ${money(E.BRANCH_PRICE)}，聘用四位員工並取得起始地板；另需鋪地及建造基本設施（施工指引合共 $30,400）。完成後每日租金 $1,550、日薪合共 $1,220，兩店可同步營業；籌備中的分店不收營業開支。`}</p><div class="notice">公司現金 ${money(state.cash)}<br>投資後餘額 ${money(state.cash - (property ? E.PROPERTY_PRICE[venue.id] : E.BRANCH_PRICE))}</div><div class="modal-actions"><button class="secondary" data-action="close">再諗一諗</button><button class="primary" data-action="${property ? "commit-property" : "commit-branch"}">確認${property ? "買斷" : "開業"}</button></div></div>`,
   );
 }
 function action(name, target) {
   const id = target?.dataset.id;
   switch (name) {
     case "select-zone": selectZone(id); return;
+    case "select-block": selectZone(`block:${target.dataset.x},${target.dataset.y}`); return;
+    case "build-floor": result(E.buildFloor(state,b().id,Number(target.dataset.x),Number(target.dataset.y)),"地板已鋪好。"); return;
+    case "construct-room": result(E.constructRoom(state,b().id,id),"區域建造完成。"); return;
+    case "construction-next": {const step=C.nextStep(b());if(step)result(step.kind==='floor'?E.buildFloor(state,b().id,step.x,step.y):E.constructRoom(state,b().id,step.id),step.label+'完成。');return;}
+    case "map-owned": renderer?.focus(); if($("#map-zoom"))$("#map-zoom").textContent="100%"; return;
     case "clear-zone": selectZone(null); return;
     case "zoom-in": renderer?.zoom(.2); if($("#map-zoom"))$("#map-zoom").textContent=Math.round(renderer.camera.zoom*100)+"%"; return;
     case "zoom-out": renderer?.zoom(-.2); if($("#map-zoom"))$("#map-zoom").textContent=Math.round(renderer.camera.zoom*100)+"%"; return;
@@ -750,7 +764,7 @@ function action(name, target) {
         result(E.openBranch(state), "第二間分店開業！先親自排片，再開始營業。")
       ) {
         closeModal();
-        view = "schedule";
+        view = "overview";
         render();
       }
       return;
@@ -808,7 +822,7 @@ function action(name, target) {
       );
       return;
     case "commit-reset":
-      state = E.createGame();
+      state = E.createGame({construction:true});
       view = "overview";
       mini = null;
       closeModal();
@@ -824,7 +838,10 @@ function loadSaved() {
       toast("未有本機存檔。", true);
       return;
     }
-    state = E.loadGame(raw);
+    const legacy=JSON.parse(raw)?.state?.branches?.some(b=>!b.map);
+    const loaded=E.loadGame(raw);
+    if(legacy)try{if(!localStorage.getItem(STORAGE+"-before-map-v1"))localStorage.setItem(STORAGE+"-before-map-v1",raw);}catch{}
+    state=loaded;selectedZone=null;selectedBlock=null;
     mini = null;
     view = "overview";
     closeModal();
@@ -841,6 +858,7 @@ function loadSaved() {
 }
 function mainAction() {
   if (state.phase === "planning") {
+    if(!state.branches.some(C.operational)){view="overview";selectedZone=null;selectedBlock=null;action("construction-next",{dataset:{}});return;}
     const error = E.startDay(state);
     if (error) {
       toast(error, true);
@@ -852,7 +870,7 @@ function mainAction() {
     persist();
     render();
     audio.play("open");
-    toast(`第 ${state.day} 日開場！${state.branches.length} 間戲院同步營業。`);
+    toast(`第 ${state.day} 日開場！${state.branches.filter(C.operational).length} 間戲院同步營業。`);
   } else if (state.phase === "closed") {
     E.nextDay(state);
     persist();

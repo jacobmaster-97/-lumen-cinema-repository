@@ -1,6 +1,7 @@
 import { movie } from './engine.mjs';
 import { createCinemaScene } from './scene.mjs';
-import { project, pickRoom, sampleRoute, hallUnderRepair } from './world.mjs';
+import { project, unproject, pickRoom, sampleRoute, hallUnderRepair } from './world.mjs';
+import * as C from './construction.mjs';
 
 const scenes=new Map();
 let posterFrames=new Map();
@@ -38,14 +39,16 @@ export class CinemaRenderer {
     canvas.addEventListener('keydown',e=>{const keys={ArrowLeft:[30,0],ArrowRight:[-30,0],ArrowUp:[0,30],ArrowDown:[0,-30]};if(keys[e.key]){e.preventDefault();this.camera.x+=keys[e.key][0];this.camera.y+=keys[e.key][1];this.dirty=true;}if(e.key==='+'||e.key==='=')this.zoom(.2);if(e.key==='-')this.zoom(-.2);if(e.key==='0')this.fit();});
   }
   zoom(change){this.camera.zoom=clamp(this.camera.zoom+change,.8,2.5);this.dirty=true;}
-  fit(){this.camera={zoom:1,x:0,y:0};this.dirty=true;}
-  view(){const s=Math.min(this.canvas.width/1640,this.canvas.height/1020)*.96*this.camera.zoom;return {s,x:this.canvas.width/2+this.camera.x-880*s,y:this.canvas.height/2+this.camera.y-610*s};}
+  fit(){this.camera={zoom:1,x:0,y:0,scope:'full'};this.dirty=true;}
+  focus(){this.camera={zoom:1,x:0,y:0,scope:'owned'};this.dirty=true;}
+  view(){let box=this.scene?.layout.bounds||[-474,210,2748,1480];if(this.scene&&this.camera.scope!=='full'){const points=this.scene.layout.floorBlocks.flatMap(k=>{const [x,y]=k.split(',').map(n=>Number(n)*8);return [project(x,y),project(x+8,y),project(x,y+8),project(x+8,y+8)]}).concat(this.scene.layout.rooms.filter(r=>C.hasRoom(this.state.branches.find(b=>b.id===this.state.activeBranch)||this.state.branches[0],r.id)).flatMap(r=>[project(r.rect[0],r.rect[1],5.5),project(r.rect[0]+r.rect[2],r.rect[1],5.5)]));const a=Math.min(...points.map(p=>p[0]))-40,b=Math.min(...points.map(p=>p[1]))-50,w=Math.max(720,Math.max(...points.map(p=>p[0]))-a+40),h=Math.max(520,Math.max(...points.map(p=>p[1]))-b+50);box=[a-(w-(Math.max(...points.map(p=>p[0]))-a+40))/2,b,w,h]};const [L,T,W,H]=box,s=Math.min(this.canvas.width/W,this.canvas.height/H)*.94*this.camera.zoom;return {s,x:this.canvas.width/2+this.camera.x-(L+W/2)*s,y:this.canvas.height/2+this.camera.y-(T+H/2)*s};}
   pick(x,y){
     if(!this.scene)return;const v=this.view(),room=pickRoom(this.scene.layout,(x-v.x)/v.s,(y-v.y)/v.s);
-    if(room){this.selected=room.id;this.dirty=true;this.onSelect(room.id);}
+    const branch=this.state.branches.find(b=>b.id===this.state.activeBranch)||this.state.branches[0];
+    if(room&&C.hasRoom(branch,room.id)){this.selected=room.id;this.dirty=true;this.onSelect(room.id);}else{const [a,b]=unproject((x-v.x)/v.s,(y-v.y)/v.s),col=Math.floor(a/8),row=Math.floor(b/8);if(col>=0&&col<7&&row>=0&&row<7)this.onSelect(`block:${col},${row}`)}
   }
   sceneFor(branch){
-    const signature=JSON.stringify([branch.seats,branch.upgrades]),cached=scenes.get(branch.id);
+    const signature=JSON.stringify([branch.seats,branch.upgrades,branch.map]),cached=scenes.get(branch.id);
     if(cached?.signature===signature)return cached.scene;
     const scene=createCinemaScene(this.manifest,this.images,branch);scenes.set(branch.id,{signature,scene});return scene;
   }
@@ -63,7 +66,7 @@ export class CinemaRenderer {
   dynamic(branch,state){
     const actors=[],scene=this.scene,shows=this.activeShows(branch,state),running=state.phase==='running'||state.phase==='event';
     for(let h=0;h<2;h++)if(shows[h]){
-      const frame=posterFrames.get(shows[h].movie),s=scene.layout.terraces[h].screen;
+      const t=scene.layout.terraces.find(t=>t.room===`hall${h+1}`);if(!t)continue;const frame=posterFrames.get(shows[h].movie),s=t.screen;
       if(frame)for(let x=s.x;x<s.x+s.width-.001;x+=.5){
         const length=Math.min(.5,s.x+s.width-x),ratio=length/s.width,left=(x-s.x)/s.width;
         actors.push({depth:x+s.y+.25,draw:()=>{
@@ -86,10 +89,10 @@ export class CinemaRenderer {
         for(let i=0;i<filled;i++){const p=seats[i],[x,y,w,d]=p.footprint;actors.push({depth:p.depth+.3,draw:()=>this.actor(x+w/2,y+d/2,p.elevation_m,{seated:true,moving:false,index:i})});}
       }
     }
-    const jobs={tickets:[[9,22.25],[5.5,22.25],[3.25,25.25]],snacks:[[25.25,21.75],[27.75,22.25],[27.25,24.25]],cleaning:[[6.75,31.25],[16.25,19.75],[21.25,29.25]]};
+    const jobs={tickets:scene.layout.jobs.tickets||[],snacks:scene.layout.jobs.snacks||[],cleaning:C.operational(branch)?[scene.layout.entrance,scene.layout.destinations.toilets,scene.layout.entrance]:[]};
     for(const role of Object.keys(jobs))branch.staff.filter(p=>p.role===role).slice(0,3).forEach((person,i)=>{
-      let [x,y]=jobs[role][i],z=0,dx=0,dy=1;
-      if(role==='cleaning'&&running){const route=scene.nav.through([[6.75,31.25],[16.25,19.75],[16.25,29.25]]);const p=sampleRoute(route,(this.animation*.018+i*.2)%1);if(p){({x,y,z,dx,dy}=p);}}
+      if(!jobs[role][i])return;let [x,y]=jobs[role][i],z=0,dx=0,dy=1;
+      if(role==='cleaning'&&running){const route=scene.nav.through([scene.layout.entrance,scene.layout.destinations.toilets,scene.layout.entrance]);const p=sampleRoute(route,(this.animation*.018+i*.2)%1);if(p){({x,y,z,dx,dy}=p);}}
       actors.push({depth:x+y+.3,draw:()=>this.actor(x,y,z,{staff:true,dx,dy,index:person.id,moving:role==='cleaning'&&running&&!state.paused})});
     });
     this.stats.walkers=actors.length;return actors.sort((a,b)=>a.depth-b.depth);
@@ -99,9 +102,9 @@ export class CinemaRenderer {
     c.fillStyle='#10242d';c.fillRect(Math.round(x-w/2),Math.round(y-17),Math.ceil(w),33);c.fillStyle=selected?'#7bc4b5':color;c.fillRect(Math.round(x-w/2),Math.round(y-17),Math.ceil(w),2);c.textAlign='center';c.textBaseline='middle';c.fillText(text,Math.round(x),Math.round(y));
   }
   labels(branch,state){
-    for(const r of this.scene.layout.rooms){const [x,y,w]=r.rect,p=project(x+w/2,y+.25,r.id.startsWith('hall')?5.5:3.1);this.label(r.name+(r.id.startsWith('hall')?` · ${branch.seats[Number(r.id.slice(-1))-1]} 席`:''),p[0],p[1],{selected:this.selected===r.id});}
-    const P=project(16,34.5);this.label('入口',P[0],P[1]+12,{color:'#9dd4bf'});
-    for(let h=0;h<2;h++)if(hallUnderRepair(branch,state,h)){const p=project(h?25:7,11,1.5);this.label('維修中 · 暫停入場',p[0],p[1],{color:'#efb18c'});}
+    for(const r of this.scene.layout.rooms.filter(r=>C.hasRoom(branch,r.id))){const [x,y,w]=r.rect,p=project(x+w/2,y+.25,r.id.startsWith('hall')?5.5:3.1);this.label(r.name+(r.id.startsWith('hall')?` · ${branch.seats[Number(r.id.slice(-1))-1]} 席`:''),p[0],p[1],{selected:this.selected===r.id});}
+    const P=project(...this.scene.layout.entrance);this.label('入口／起點',P[0],P[1]+18,{color:'#9dd4bf'});
+    for(let h=0;h<2;h++)if(C.hasRoom(branch,`hall${h+1}`)&&hallUnderRepair(branch,state,h)){const r=C.ROOMS.find(r=>r.id===`hall${h+1}`),p=project(r.rect[0]+8,r.rect[1]+8,1.5);this.label('維修中 · 暫停入場',p[0],p[1],{color:'#efb18c'});}
     if(this.selected){const room=this.scene.layout.rooms.find(r=>r.id===this.selected);if(room){const [x,y,w,h]=room.rect;this.c.fillStyle='#89d6bd';this.c.globalAlpha=.12;this.c.beginPath();[[x,y],[x+w,y],[x+w,y+h],[x,y+h]].map(([a,b])=>project(a,b)).forEach(([a,b],i)=>i?this.c.lineTo(a,b):this.c.moveTo(a,b));this.c.closePath();this.c.fill();this.c.globalAlpha=1;}}
   }
   render(state,delta=0){
@@ -116,7 +119,7 @@ export class CinemaRenderer {
     for(const layer of this.scene.layers){while(cursor<actors.length&&actors[cursor].depth<layer.depth)actors[cursor++].draw();c.drawImage(layer.canvas,layer.x,layer.y);}
     while(cursor<actors.length)actors[cursor++].draw();this.labels(branch,state);c.setTransform(1,0,0,1,0,0);
     this.timings.push(performance.now()-start);if(this.timings.length>180)this.timings.shift();
-    this.stats={...this.stats,version:'0.3.0',objects:this.scene.props.length,seatCounts:[0,1].map(h=>this.scene.props.filter(p=>p.kind==='seat'&&p.room===`hall${h+1}`).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),renderP95Ms:Math.round([...this.timings].sort((a,b)=>a-b)[Math.floor(this.timings.length*.95)]*10)/10,pathsReachable:this.scene.routes.every(p=>p.length>0)};
+    this.stats={...this.stats,version:'0.4.0',mapGrid:[56,56],mapBlocks:[7,7],floorBlocks:this.scene.layout.floorBlocks.length,builtRooms:this.scene.layout.built,roomRects:C.ROOMS.map(r=>({id:r.id,rect:r.rect,door:r.door})),objects:this.scene.props.length,seatCounts:[0,1].map(h=>this.scene.props.filter(p=>p.kind==='seat'&&p.room===`hall${h+1}`).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),renderP95Ms:Math.round([...this.timings].sort((a,b)=>a-b)[Math.floor(this.timings.length*.95)]*10)/10,pathsReachable:this.scene.routes.every((p,h)=>!C.hasRoom(branch,`hall${h+1}`)||!C.operational(branch)||p.length>0)};
   }
 }
 

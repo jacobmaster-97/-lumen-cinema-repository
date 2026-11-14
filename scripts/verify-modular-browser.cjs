@@ -1,0 +1,42 @@
+// Real UI acceptance test for the packaged v0.4 map. Legacy fixtures use the public load button.
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),base=process.env.CINEMA_TEST_URL||'http://127.0.0.1:8250/pages/';
+(async()=>{
+ const out=path.join(root,'production/verification/v0.4');await fs.mkdir(out,{recursive:true});await fs.mkdir(path.join(root,'docs/screenshots'),{recursive:true});
+ const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const result={url:base,checks:[],errors:[],viewports:[],scope:'Built site, actual UI construction and operation; desktop Chromium and simulated touch, not physical devices.'};
+ const pass=name=>{result.checks.push(name);console.log('PASS '+name)};
+ const watch=page=>{page.on('pageerror',e=>result.errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')result.errors.push(m.text())})};
+ const shot=async(page,name)=>fs.writeFile(path.join(root,'docs/screenshots/v0.4-'+name+'.png'),Buffer.from(await page.locator('#cinema').evaluate(c=>c.toDataURL().split(',')[1]),'base64'));
+ try{
+  const context=await browser.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:1}),page=await context.newPage();watch(page);
+  await page.goto(base,{waitUntil:'networkidle'});await page.locator('#modal .primary[data-action="close"]').click();
+  const state=()=>page.evaluate(()=>window.__lumen.getState()),diag=()=>page.evaluate(()=>window.__lumen.getDiagnostics());
+  await page.waitForFunction(()=>window.__lumen?.getDiagnostics()?.version==='0.4.0');
+  assert.deepEqual((await state()).branches[0].map,{version:1,floors:['6,6'],built:[]});assert.deepEqual((await diag()).seatCounts,[0,0]);await shot(page,'initial');pass('fresh game: only lower-right floor, zero buildings/seats, 68,000 cash');
+  for(let i=0;i<15;i++)await page.locator('#main-action').click();
+  let s=await state();assert.equal(s.cash,37600);assert.equal(s.branches[0].map.floors.length,12);assert.equal(s.branches[0].map.built.length,4);assert.equal(s.branches[0].programme.length,4);assert.deepEqual((await diag()).seatCounts,[48,0]);assert.equal((await diag()).pathsReachable,true);await shot(page,'starter');pass('15 footer construction actions: connected starter cinema, 48 seats, affordable budget');
+  await page.locator('[data-view="schedule"]').click();await page.locator('[data-action="edit-show"]').first().click();assert.equal(await page.locator('select[name="hall"] option').count(),1);await page.locator('#modal [data-action="close"]').last().click();await page.locator('[data-view="overview"]').click();pass('schedule only offers constructed auditoriums');
+  await page.locator('#save-button').click();const saved=await state();await page.reload({waitUntil:'networkidle'});await page.locator('[data-action="resume-save"]').click();assert.deepEqual(await state(),saved);pass('new construction save round-trip through welcome resume');
+  while(await page.locator('.plot-cell.available:not([disabled])').count())await page.locator('.plot-cell.available:not([disabled])').first().click();
+  await page.locator('#construction-panel [data-action="construct-room"][data-id="hall2"]').click();s=await state();assert.equal(s.cash,2800);assert.equal(s.branches[0].map.floors.length,49);assert.equal(s.branches[0].map.built.length,5);assert.deepEqual((await diag()).seatCounts,[48,40]);assert.equal((await diag()).pathsReachable,true);assert.equal(s.branches[0].programme.length,8);await page.locator('[data-action="map-fit"]').click();await shot(page,'complete');result.complete=await diag();pass('individual adjacent purchases to all 49 floors and both halls, full-map camera');
+  await page.locator('[data-speed="4"]').click();await page.locator('#main-action').click();await page.waitForFunction(()=>window.__lumen.getState().branches[0].ledger.admissions>0,null,{timeout:15000});await shot(page,'running');pass('actual first day: admissions, customers and film projection');
+  await page.waitForTimeout(5000);result.warmRender=await diag();assert.ok(result.warmRender.renderP95Ms<40,'warm CPU p95 '+result.warmRender.renderP95Ms);pass('warm full-map renderer below 40ms CPU p95');
+  const deadline=Date.now()+65000; let lastTrace=-1;
+  while((await state()).phase!=='closed'&&Date.now()<deadline){
+   const trace=await state();if(Math.floor(trace.elapsed/20)!==lastTrace){lastTrace=Math.floor(trace.elapsed/20);console.log(JSON.stringify({elapsed:trace.elapsed,phase:trace.phase,paused:trace.paused,speed:trace.speed}));}
+   if(await page.locator('[data-action="resolve"][data-choice="staff"]:visible').count())await page.locator('[data-action="resolve"][data-choice="staff"]:visible').click();
+   await page.waitForTimeout(700);
+  }
+  s=await state();assert.equal(s.phase,'closed',JSON.stringify({elapsed:s.elapsed,phase:s.phase,paused:s.paused,speed:s.speed,diag:await diag()}));assert.equal(s.history.length,1);assert.ok(s.history[0]);await page.locator('[data-view="report"]').click();assert.match(await page.locator('#view-content').innerText(),/日終公司現金/);await page.locator('#main-action').click();assert.equal((await state()).day,2);assert.equal((await state()).phase,'planning');pass('natural day close with staff event resolution, accounts and next day');
+  const raw=await fs.readFile(path.join(root,'tests/cinema/fixtures/v2-save.json'),'utf8'),legacy=JSON.parse(raw).state;await page.evaluate(raw=>localStorage.setItem('lumen-cinema-v2',raw),raw);await page.locator('#load-button').click();s=await state();assert.equal(s.cash,legacy.cash);assert.equal(s.branches[0].owned,legacy.branches[0].owned);assert.equal(s.activeBranch,1);assert.ok(s.branches.every(b=>b.map.floors.length===49&&b.map.built.length===5));assert.equal(await page.evaluate(()=>localStorage.getItem('lumen-cinema-v2-before-map-v1')),raw);await page.locator('[data-action="branch"][data-id="0"]').click();assert.deepEqual((await diag()).seatCounts,[56,48]);assert.equal((await diag()).pathsReachable,true);pass('legacy fixture: original raw backup, cash/ownership/two branches/upgraded seating preserved');
+  await context.setOffline(true);await page.locator('#save-button').click();await page.locator('#load-button').click();assert.equal((await state()).cash,legacy.cash);await context.setOffline(false);pass('loaded construction map saves and reloads offline');
+  for(const viewport of [{width:390,height:844},{width:720,height:1280},{width:1080,height:2400}]){
+   const mobile=await browser.newPage({viewport,isMobile:true,hasTouch:true,deviceScaleFactor:1});watch(mobile);await mobile.goto(base,{waitUntil:'networkidle'});await mobile.locator('#modal .primary[data-action="close"]').tap();await mobile.locator('#main-action').tap();assert.equal((await mobile.evaluate(()=>window.__lumen.getState())).branches[0].map.floors.length,2);await mobile.locator('.plot-cell.available:not([disabled])').first().tap();assert.equal((await mobile.evaluate(()=>window.__lumen.getState())).branches[0].map.floors.length,3);
+   const overflow=await mobile.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert.equal(overflow,false);await mobile.locator('[data-action="select-zone"][data-id="toilets"]').tap();assert.match(await mobile.locator('#zone-inspector').innerText(),/尚未建造/);await mobile.evaluate(()=>scrollTo(0,0));await mobile.screenshot({path:path.join(root,`docs/screenshots/v0.4-${viewport.width}.png`),fullPage:true});result.viewports.push({...viewport,overflow});await mobile.close();pass('touch construction, zone selection and no horizontal overflow '+viewport.width);
+  }
+  const failure=await browser.newPage();await failure.route('**/assets/runtime/manifest.json*',r=>r.abort());await failure.goto(base);await failure.waitForSelector('.load-failure');assert.equal(await failure.locator('#main-action').isDisabled(),true);await failure.close();pass('failed asset load blocks opening and provides retry');
+  assert.deepEqual(result.errors,[]);result.status='passed';result.finishedAt=new Date().toISOString();await fs.writeFile(path.join(out,'browser.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({status:result.status,checks:result.checks.length,warmP95:result.warmRender.renderP95Ms,errors:result.errors}));
+ }finally{await browser.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});

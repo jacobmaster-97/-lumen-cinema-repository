@@ -100,6 +100,11 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
     assert.ok(d.querySelector("#modal").open);
     close();
     assert.ok(draws > 0, "Real sprite rendering path was exercised");
+    assert.deepEqual(save().branches[0].map.floors,['6,6']);
+    assert.equal(save().branches[0].map.built.length,0);
+    for(let i=0;i<15;i++)click('[data-action="construction-next"]');
+    assert.equal(save().branches[0].map.built.length,4);
+    assert.equal(save().cash,37600);
     for (const view of [
       "schedule",
       "movies",
@@ -141,13 +146,17 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
       "snacks",
     );
     change('[data-role-staff="1"]', "tickets");
+    const expandedBudget=save();expandedBudget.cash=100000;restore(expandedBudget);
     click('[data-view="investment"]');
     click('[data-action="open-branch"]');
     click('[data-action="commit-branch"]');
     assert.equal(save().branches.length, 2);
     assert.equal(save().branches[1].programme.length, 0);
+    assert.deepEqual(save().branches[1].map.floors,['6,6']);
+    for(let i=0;i<15;i++)click('[data-action="construction-next"]');
+    click('[data-view="schedule"]');
     click('[data-action="suggest-programme"]');
-    assert.equal(save().branches[1].programme.length, 8);
+    assert.equal(save().branches[1].programme.length, 4);
     assert.equal(
       save().branches[0].programme.find((p) => p.start === 15 && p.hall === 0)
         .price,

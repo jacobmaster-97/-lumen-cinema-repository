@@ -1,4 +1,5 @@
 // Pure, deterministic management simulation. DOM, audio and storage stay outside.
+import * as C from './construction.mjs';
 export const DAY_SECONDS = 180;
 export const OPEN_MINUTE = 660;
 export const DAY_MINUTES = 780;
@@ -603,7 +604,7 @@ export function branch(id) {
     celebrity: null,
   };
 }
-export function createGame() {
+export function createGame({construction=false}={}) {
   const s = {
     version: 2,
     day: 1,
@@ -627,8 +628,9 @@ export function createGame() {
     seed: 20261111,
     nextId: 100,
   };
+  if(construction)s.branches[0].map=C.newMap();
   s.branches[0].programme = suggestProgramme(s, 0);
-  addNews(s, "歡迎開業！先檢查排片、票價同員工，再開始第一日營業。");
+  addNews(s, construction?'由右下角一塊地板開始。按施工指引逐格鋪地，建好基本設施及影廳後開業。':"歡迎開業！先檢查排片、票價同員工，再開始第一日營業。");
   return s;
 }
 export function addNews(s, text) {
@@ -646,6 +648,7 @@ export function suggestProgramme(s, branchId) {
   const out = [];
   for (let hall = 0; hall < 2; hall++)
     for (let j = 0; j < 4; j++) {
+      if(!C.hasRoom(b,`hall${hall+1}`))continue;
       const m = pool[(j * 2 + hall + (s.day >= 8 ? 2 : 0)) % pool.length];
       if (!m) continue;
       out.push({
@@ -698,6 +701,7 @@ export function setProgramme(s, id, programme) {
   const b = s.branches.find((x) => x.id === id);
   if (!b) return "找不到分店";
   const errors = validateProgramme(s, programme);
+  if(Array.isArray(programme)&&programme.some(p=>!C.hasRoom(b,`hall${p.hall+1}`)))errors.push('未建成的影廳不能排片');
   if (errors.length) return errors.join("；");
   b.programme = structuredClone(programme);
   return null;
@@ -814,8 +818,11 @@ function makeEvents(s, b) {
 }
 export function startDay(s) {
   if (s.phase !== "planning") return "目前不能開始營業";
+  if(!s.branches.some(b=>C.operational(b)))return C.preparationError(s.branches.find(b=>b.id===s.activeBranch)||s.branches[0]);
   for (const b of s.branches) {
+    if(!C.operational(b))continue;
     if (!b.programme.length) return `${b.name} 尚未排片`;
+    if(b.programme.some(p=>!C.hasRoom(b,`hall${p.hall+1}`)))return '未建成的影廳不能排片';
     const e = validateProgramme(s, b.programme);
     if (e.length) return `${b.name}：${e.join("；")}`;
   }
@@ -826,6 +833,7 @@ export function startDay(s) {
   s.paused = false;
   for (const b of s.branches) {
     b.ledger = emptyLedger();
+    if(!C.operational(b)){b.shows=[];b.service=[];continue;}
     b.shows = buildDemand(s, b);
     b.service = [];
     b.roomReady = [0, 0];
@@ -836,7 +844,7 @@ export function startDay(s) {
   }
   s.events.sort((a, b) => a.at - b.at || a.branch - b.branch);
   s.phase = "running";
-  addNews(s, `第 ${s.day} 日開始營業，${s.branches.length} 間戲院同步運作。`);
+  addNews(s, `第 ${s.day} 日開始營業，${s.branches.filter(C.operational).length} 間戲院同步運作。`);
   return null;
 }
 function book(s, b, p) {
@@ -1120,12 +1128,12 @@ function finishDay(s) {
   const rows = [];
   for (const b of s.branches) {
     const l = b.ledger;
-    l.wages = b.staff.reduce((n, p) => n + p.wage, 0);
-    l.rent = b.owned ? 0 : b.rent;
-    l.maintenance = 280 + b.upgrades.sound * 70 + b.upgrades.seats * 45;
+    l.wages = C.operational(b)?b.staff.reduce((n, p) => n + p.wage, 0):0;
+    l.rent = C.operational(b)&&!b.owned?b.rent:0;
+    l.maintenance = C.operational(b)?280 + b.upgrades.sound * 70 + b.upgrades.seats * 45:0;
     s.cash -= l.wages + l.rent + l.maintenance;
     const rate = l.demand ? l.admissions / l.demand : 0;
-    b.reputation = clamp(
+    if(C.operational(b))b.reputation = clamp(
       b.reputation + (rate > 0.7 ? 0.8 : rate < 0.35 ? -1.2 : 0),
       25,
       100,
@@ -1227,8 +1235,9 @@ export function openBranch(s) {
   s.cash -= BRANCH_PRICE;
   s.investment += BRANCH_PRICE;
   s.branches.push(branch(1));
+  if(s.branches[0].map)s.branches.at(-1).map=C.newMap();
   s.activeBranch = 1;
-  addNews(s, "觀塘分店已開業！請親自排片、定價及配置員工，兩店將同步營業。");
+  addNews(s, s.branches[1].map?'觀塘分店開始籌備。先鋪地及建造基本設施，原店可繼續營業。':"觀塘分店已開業！請親自排片、定價及配置員工，兩店將同步營業。");
   return null;
 }
 export function upgrade(s, id, key) {
@@ -1350,6 +1359,7 @@ export function loadGame(raw) {
   )
     throw Error("紀錄資料無效");
   for (const b of s.branches) {
+    if(b.map===undefined)b.map=C.fullMap();else C.validateMap(b.map);
     if (
       !Array.isArray(b.staff) ||
       b.staff.length > 12 ||
@@ -1399,4 +1409,11 @@ export function loadGame(raw) {
   if (s.phase === "event" && !currentEvent(s)) throw Error("事件資料不完整");
   s.paused = s.phase === "running";
   return s;
+}
+
+export function buildFloor(s,id,x,y){
+ if(s.phase!=='planning')return '請在營業前安排建造';const b=s.branches.find(b=>b.id===id);if(!b)return '找不到分店';const error=C.floorError(b,x,y);if(error)return error;if(s.cash<C.FLOOR_COST)return '鋪地資金不足';s.cash-=C.FLOOR_COST;s.investment+=C.FLOOR_COST;b.map.floors.push(C.key(x,y));addNews(s,`已鋪第 ${y+1} 行、第 ${x+1} 列地板。`);return null;
+}
+export function constructRoom(s,id,roomId){
+ if(s.phase!=='planning')return '請在營業前安排建造';const b=s.branches.find(b=>b.id===id),r=C.ROOMS.find(r=>r.id===roomId);if(!b||!r||!b.map)return '無效建造區域';if(C.hasRoom(b,roomId))return '這個區域已建好';const error=C.roomError(b,roomId);if(error)return error;if(s.cash<r.cost)return '建造資金不足';s.cash-=r.cost;s.investment+=r.cost;b.map.built.push(roomId);if(roomId.startsWith('hall'))b.programme.push(...suggestProgramme(s,id).filter(p=>p.hall===Number(roomId.slice(-1))-1));addNews(s,`${r.name}建造完成${C.operational(b)?'，基本設施已齊，可以開始營業。':'。'}`);return null;
 }
