@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "awaiting-user-approval",
+  "status": "on-hold-not-accepted",
   "runtimeIntegrated": false,
   "files": {
     "rooms": "upgrade-atlas.png",
@@ -42,7 +42,7 @@
         1,
         1
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "tickets-2",
@@ -61,7 +61,7 @@
         1,
         1
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "tickets-3",
@@ -80,7 +80,7 @@
         1,
         1
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "snacks-1",
@@ -99,7 +99,7 @@
         1,
         1
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "snacks-2",
@@ -118,7 +118,7 @@
         1,
         1
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "snacks-3",
@@ -137,7 +137,7 @@
         1,
         1
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "hall-style-1",
@@ -156,7 +156,7 @@
         2,
         2
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "hall-style-2",
@@ -175,7 +175,7 @@
         2,
         2
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "hall-style-3",
@@ -194,7 +194,7 @@
         2,
         2
       ],
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "seat-1",
@@ -209,7 +209,7 @@
         724
       ],
       "description": "加厚酒紅軟墊及深藍扶手",
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "seat-2",
@@ -224,7 +224,7 @@
         724
       ],
       "description": "附杯架的高級軟墊座椅",
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     },
     {
       "id": "seat-3",
@@ -239,7 +239,7 @@
         724
       ],
       "description": "黃銅飾邊及伸展腳托的旗艦座椅",
-      "status": "awaiting-user-approval"
+      "status": "on-hold-not-accepted"
     }
   ]
 }

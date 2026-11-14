@@ -10,13 +10,22 @@
 
 ![實際營業畫面](docs/screenshots/v0.5-queue.png)
 
+## v0.6 口碑、定位與設備保養
+
+- 新增「口碑與維護」：價格體感、服務、清潔及觀影品質依實際入場體驗累積，日報顯示原因及改善建議。
+- 實際放映逐步形成家庭、文藝、大片或綜合定位，影響六類客群回訪傾向，可自由混合經營。
+- 快速／標準／深度清潔在工時、潔淨度與耗材之間取捨。
+- 設備按放映及使用量損耗；可預付預約保養，保養停廳、時段衝突、完成恢復與未完成退款均接入實際營運。
+- 預測包含保養與清潔成本；提供周轉現金及投資後一日開支預留提示。可整日只做保養，仍須支付人工及租金。
+- 使用者不滿意的升級美術暫存未採用，沒有改動原PNG或加入runtime。
+
 ## v0.5 可觀察營運及排片預測
 
 - 客人逐分鐘到場、排隊購票／買小食、入座及散場，實際交易影響現金；畫面人物來自營運客流。
 - 員工技能影響服務速度，等候、滿座、延誤及取消有明確流失原因；散場後清潔，未完成可延遲下一場。
 - 排片頁顯示每場入座率、主要客群、票房、片商分帳及毛利；修改方案即預測全日淨利，不儲存不會改動安排。
 - 預測由同一營運規則在副本模擬，三種客流情境，不含突發事件、貸款及新投資，非保證收益。
-- [升級貼圖確認](https://jacobmaster-97.github.io/-lumen-cinema-repository/upgrade-art/)：售票／小食三級整區素材、三級獨立座椅及影廳風格圖。僅供確認，未接入遊戲。
+- [暫存升級貼圖](https://jacobmaster-97.github.io/-lumen-cinema-repository/upgrade-art/)：售票／小食三級整區素材、三級獨立座椅及影廳風格圖。效果未獲採用，先保留原檔，未接入遊戲。
 
 ## v0.4 正式方塊地圖
 
@@ -56,17 +65,17 @@ python3 -m http.server 8000 --directory dist/pages
 
 ## 驗證
 
-`npm test --prefix prototypes/browser`：55 項測試，包括財務／事件、DOM 整合、地圖、樓梯、升級容量、來源 PNG 及前版存檔相容。
+`npm test --prefix prototypes/browser`：73 項測試，包括財務／事件、DOM 整合、地圖、樓梯、升級容量、來源 PNG 及前版存檔相容。
 
 真實 Chromium 流程使用：
 
 ```sh
 python3 -m http.server 8192 --directory dist/pages
 # 另開終端；需要環境提供 Playwright 及 Chromium
-CINEMA_TEST_URL=http://127.0.0.1:8192/ node scripts/verify-operations-browser.cjs
+CINEMA_TEST_URL=http://127.0.0.1:8192/ node scripts/verify-strategy-browser.cjs
 ```
 
-本機真實瀏覽器檢查涵蓋按鈕施工、正式地圖營業／日結、離線存讀檔及390／720／1080像素觸控尺寸。證據見 [瀏覽器紀錄](production/verification/v0.5/browser.json) 及 [地圖說明](design/rebuild-v0.4.md)。DOM 測試與瀏覽器模擬尺寸不當作手機實機測試。
+本機真實瀏覽器檢查涵蓋按鈕施工、正式地圖營業／日結、離線存讀檔及390／720／1080像素觸控尺寸。證據見 [瀏覽器紀錄](production/verification/v0.6/browser.json) 及 [地圖說明](design/rebuild-v0.4.md)。DOM 測試與瀏覽器模擬尺寸不當作手機實機測試。
 
 ## 專案結構
 

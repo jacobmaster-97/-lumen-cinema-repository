@@ -1,10 +1,12 @@
+import {entry} from './construction.mjs';
 // World paths use the same room geometry/collision as the active map.
 export function queuePosition(layout,kind,index){const r=layout.rooms.find(r=>r.id===kind);return [r.rect[0]+4.25+(index%2)*.5,r.rect[1]+6.25+Math.floor(index/2)*.5]}
-export function patronRoute(scene,c,p){
+export function patronRoute(scene,c,p,hall=null){
  const l=scene.layout,d=l.destinations,h='hall'+(p.hall+1),from=c.from==='snacks'?d.snacks:d.tickets;
  if(c.stage==='arriving')return scene.nav.route(l.entrance,d.tickets);
  if(c.stage==='to-snacks')return scene.nav.route(d.tickets,d.snacks);
  if(c.stage==='to-hall'){
+  if(hall&&hall.state!=='ready'&&!(hall.state==='playing'&&hall.show===p.id)){const r=l.rooms.find(r=>r.id===h),xy=entry(r);xy[0]+=r.door==='east'?.75:r.door==='west'?-.75:0;xy[1]+=r.door==='south'?.75:r.door==='north'?-.75:0;return scene.nav.route(from,xy)}
   const seat=scene.props.filter(o=>o.kind==='seat'&&o.room===h)[c.seat],room=l.rooms.find(r=>r.id===h),y=seat?seat.footprint[1]+seat.footprint[3]/2:d[h+'-rear'][1];
   return scene.nav.through([from,d[h+'-entry'],d[h+'-front'],[room.rect[0]+8.25,y]]);
  }

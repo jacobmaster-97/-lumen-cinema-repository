@@ -1,4 +1,4 @@
-# 光影大亨瀏覽器版 v0.5
+# 光影大亨瀏覽器版 v0.6
 
 ES modules + Canvas 2D，可直接靜態部署。使用現有經營模擬及 v2 存檔，重製像素貼圖、階梯影廳、客流、介面及地圖操作。
 
@@ -34,9 +34,12 @@ python3 -m http.server 8000 --directory dist/pages
 
 ## 驗證
 
-55 項 Node 測試；另外使用 scripts/verify-operations-browser.cjs 執行真實 Chromium 流程，結果及截圖在 production/verification/v0.5/ 與 docs/screenshots/。DOM Canvas mock 不當作視覺證據。
+73 項 Node 測試；另外使用 scripts/verify-strategy-browser.cjs 執行真實 Chromium 流程，結果及截圖在 production/verification/v0.5/ 與 docs/screenshots/。DOM Canvas mock 不當作視覺證據。
 
 只暴露唯讀 window.__lumen.getState() / getDiagnostics() 供重複 QA；沒有修改遊戲狀態的測試後門。
 
 
 v0.5：operations.mjs為每分鐘客流、服務、退款及清潔權威；operations-world.mjs為狀態對應的碰撞路徑；operations-ui.mjs為即時狀態及預測面板。engine.forecastProgramme在副本執行同一規則且排除事件；編輯器未儲存方案不修改資金及排片。新營業日初始化flow.version1；舊營業中v2存檔沒有flow時沿用舊結算至日終，下一日切換，避免重算已結算的票房。升級設計素材只放在獨立/upgrade-art/，不能加入runtime manifest。
+
+
+v0.6：strategy.mjs為分項體驗、漸進定位、回訪傾向、損耗及保養規則；strategy-ui.mjs提供「口碑與維護」與日報。保養費在規劃時預付，startDay只保留ledger.maintenance／preventive，不再扣現金；日結只扣新增例行維護，避免重複計費。新flow.strategyVersion1才執行本版規則，舊v0.5營業中flow沿用當日舊規則。before-strategy-v1保存原始舊檔。

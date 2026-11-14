@@ -1,6 +1,6 @@
 // Generated source sheets stay intact. Chroma extraction is a one-time import step.
 export async function loadCinemaAssets() {
-  const response=await fetch('./assets/runtime/manifest.json?v=0.5.0');
+  const response=await fetch('./assets/runtime/manifest.json?v=0.6.0');
   if(!response.ok)throw Error('新版戲院素材清單未能載入');
   const manifest=await response.json();
   const images=Object.fromEntries(await Promise.all(Object.entries(manifest.files).map(async([key,file])=>{

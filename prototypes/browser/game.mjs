@@ -2,7 +2,8 @@ import * as E from "./engine.mjs";
 import * as C from "./construction.mjs";
 import {constructionSummary,constructionPanel,roomConstruction} from "./construction-ui.mjs";
 import {operationsPanel,forecastPanel,draftForecast} from './operations-ui.mjs';
-import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.5.0";
+import {strategyView,reviewPanel,cashPanel,maintenanceForm} from './strategy-ui.mjs';
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.6.0";
 import { loadCinemaAssets } from "./assets.mjs";
 import { CinemaAudio } from "./audio.mjs";
 import { hallUnderRepair } from "./world.mjs";
@@ -76,6 +77,7 @@ const labels = {
     "好戲，配好味。",
     "自動供貨，按銷量扣成本。定價與服務能力，一樣重要。",
   ],
+  strategy: ["QUALITY & LONG-TERM HEALTH","好口碑，長做長有。","定價、服務、清潔與觀影品質，逐步塑造你的戲院。"],
   investment: [
     "BUILD YOUR CINEMA STORY",
     "把生意，變成自己的。",
@@ -144,7 +146,7 @@ function estimateNet(branch) {
   if (state.phase !== "closed" && C.operational(branch)) {
     l.wages = branch.staff.reduce((n, p) => n + p.wage, 0);
     l.rent = branch.owned ? 0 : branch.rent;
-    l.maintenance =
+    l.maintenance = (l.maintenance||0)+
       280 + branch.upgrades.sound * 70 + branch.upgrades.seats * 45;
   }
   return E.net(l);
@@ -262,7 +264,7 @@ function newsHTML() {
 }
 function schedule() {
   const v = b(),
-    errors = E.validateProgramme(state, v.programme),
+    errors = E.validateProgramme(state, v.programme,v.id),
     shows = state.phase === "planning" ? v.programme : v.shows;
   return `<div class="section-toolbar"><p>11:00–24:00 營業 · 每場預留 15 分鐘清潔<br>點擊場次可更改電影、開場時間及票價。</p><div class="button-row"><button class="secondary small-button" data-action="copy-programme" ${disabled()}>複製昨日</button><button class="secondary small-button" data-action="suggest-programme" ${disabled()}>套用建議排片</button><button class="primary small-button" data-action="add-show" ${disabled()}>＋ 加入場次</button></div></div>${!planning() ? '<div class="notice">營業期間日常排片已鎖定；突發事件仍可透過補救選項換片。</div>' : ""}${errors.length ? `<div class="notice warning">${errors.map(esc).join("<br>")} <button class="text-button" data-action="remove-banned" ${disabled()}>移除停映場次</button></div>` : ""}<section class="panel"><div class="panel-header"><h2>${esc(v.name)}・每日排片</h2><span class="muted" style="font-size:9px">共 ${shows.length} 場</span></div><div class="timeline-panel"><div class="timeline-hours">${Array.from({ length: 14 }, (_, i) => `<span style="left:${(i / 13) * 100}%">${String(11 + i).padStart(2, "0")}:00</span>`).join("")}</div>${[
     0, 1,
@@ -358,7 +360,7 @@ function report() {
       ["小食成本", "foodCost", -1],
       ["員工薪金", "wages", -1],
       ["物業租金", "rent", -1],
-      ["例行維護", "maintenance", -1],
+      ["維護、保養及清潔耗材", "maintenance", -1],
       ["事件處理費", "eventCost", -1],
     ];
   const aggregate = (key) => rows.reduce((n, row) => n + row.ledger[key], 0);
@@ -390,12 +392,15 @@ function render() {
     staff,
     snacks,
     investment,
+    strategy:()=>strategyView(state,b()),
     report,
   }[view]();
   if(view==="overview"){
     $('.studio-overview').insertAdjacentHTML('afterend',operationsPanel(state,b()));
     $("#view-content").insertAdjacentHTML("beforeend",constructionPanel(state,b()));
   }
+  if(view==='investment')$('#view-content').insertAdjacentHTML('afterbegin',cashPanel(state));
+  if(view==='report'&&state.history.length){const row=state.history[Math.min(reportIndex,state.history.length-1)].rows.find(r=>r.id===b().id);if(row?.review)$('#view-content').insertAdjacentHTML('beforeend',reviewPanel(row.review,'本日分項體驗'))}
   if(view==='schedule'&&planning())$('#view-content').insertAdjacentHTML('beforeend',forecastPanel(state,b()));
   if (view === "overview" && atlas) {
     renderer = new CinemaRenderer($("#cinema"), atlas, images, {onSelect: selectZone, camera});
@@ -409,6 +414,7 @@ function render() {
 }
 function liveUpdate() {
   updateHeader();
+  if(view==='strategy'&&state.phase==='running')$('#view-content').innerHTML=strategyView(state,b());
   if (view === "overview") {
     $("#metric-tickets").textContent = money(
       b().ledger.gross - b().ledger.share,
@@ -510,12 +516,12 @@ function showEvent() {
     withdrawal: [
       "▥",
       "片商要求臨時下映。",
-      `《${E.movie(e.movie).title}》停映至第 ${state.bans[e.movie]} 日。兩店未開場的同片場次都受影響，可換片補救。`,
+      `《${E.movie(e.movie)?.title||"指定電影"}》停映至第 ${state.bans[e.movie]} 日。兩店未開場的同片場次都受影響，可換片補救。`,
     ],
     thanks: [
       "✦",
       "謝票場邀請到埠。",
-      `《${E.movie(e.movie).title}》主創提出到場謝票。保留已排的指定電影場次，當日剩餘同片場次需求將上升，仍受座位與服務限制。`,
+      `《${E.movie(e.movie)?.title||"指定電影"}》主創提出到場謝票。保留已排的指定電影場次，當日剩餘同片場次需求將上升，仍受座位與服務限制。`,
     ],
   };
   const [icon, title, description] = names[e.kind];
@@ -645,7 +651,7 @@ function confirmInvestment(kind) {
   const venue = b(),
     property = kind === "property";
   openModal(
-    `<div class="modal-body">${modalHeader("INVEST IN YOUR STORY", property ? "買斷呢間戲院。" : "開設觀塘分店。")}<p>${property ? `${esc(venue.name)}物業價款為 ${money(E.PROPERTY_PRICE[venue.id])}。買斷後每日免租 ${money(venue.rent)}，但人工、維護及其他成本繼續支付。` : `分店投資 ${money(E.BRANCH_PRICE)}，聘用四位員工並取得起始地板；另需鋪地及建造基本設施（施工指引合共 $30,400）。完成後每日租金 $1,550、日薪合共 $1,220，兩店可同步營業；籌備中的分店不收營業開支。`}</p><div class="notice">公司現金 ${money(state.cash)}<br>投資後餘額 ${money(state.cash - (property ? E.PROPERTY_PRICE[venue.id] : E.BRANCH_PRICE))}</div><div class="modal-actions"><button class="secondary" data-action="close">再諗一諗</button><button class="primary" data-action="${property ? "commit-property" : "commit-branch"}">確認${property ? "買斷" : "開業"}</button></div></div>`,
+    `<div class="modal-body">${modalHeader("INVEST IN YOUR STORY", property ? "買斷呢間戲院。" : "開設觀塘分店。")}<p>${property ? `${esc(venue.name)}物業價款為 ${money(E.PROPERTY_PRICE[venue.id])}。買斷後每日免租 ${money(venue.rent)}，但人工、維護及其他成本繼續支付。` : `分店投資 ${money(E.BRANCH_PRICE)}，聘用四位員工並取得起始地板；另需鋪地及建造基本設施（施工指引合共 $30,400）。完成後每日租金 $1,550、日薪合共 $1,220，兩店可同步營業；籌備中的分店不收營業開支。`}</p><div class="notice">公司現金 ${money(state.cash)}<br>投資後餘額 ${money(state.cash - (property ? E.PROPERTY_PRICE[venue.id] : E.BRANCH_PRICE))}<br>一日固定開支建議預留 ${money(E.reserveSummary(state).daily)}${state.cash-(property?E.PROPERTY_PRICE[venue.id]:E.BRANCH_PRICE)<E.reserveSummary(state).daily?" · 投資後周轉預留不足":""}</div><div class="modal-actions"><button class="secondary" data-action="close">再諗一諗</button><button class="primary" data-action="${property ? "commit-property" : "commit-branch"}">確認${property ? "買斷" : "開業"}</button></div></div>`,
   );
 }
 function action(name, target) {
@@ -759,6 +765,12 @@ function action(name, target) {
     case "unlock-food":
       result(E.unlockFood(state, b().id), "芝士熱狗開始供應，可自訂售價。");
       return;
+    case "cleaning-policy":
+      result(E.setCleaning(state,b().id,target.dataset.key),"清潔標準已更新，排片預測會一併調整。");return;
+    case "maintenance-form":
+      openModal(`<div class="modal-body">${modalHeader("EQUIPMENT CARE",`${Number(id)+1}號廳保養`)}${maintenanceForm(state,b(),Number(id))}</div>`);return;
+    case "cancel-maintenance":
+      result(E.cancelMaintenance(state,b().id,Number(id)),"保養預約已取消，預付費已退還。");return;
     case "upgrade":
       result(
         E.upgrade(state, b().id, target.dataset.key),
@@ -859,6 +871,7 @@ function loadSaved() {
     const legacy=JSON.parse(raw)?.state?.branches?.some(b=>!b.map);
     const loaded=E.loadGame(raw);
     if(legacy)try{if(!localStorage.getItem(STORAGE+"-before-map-v1"))localStorage.setItem(STORAGE+"-before-map-v1",raw);}catch{}
+    if(JSON.parse(raw).state.branches.some(b=>!b.strategy||b.flow&&!b.flow.strategyVersion))try{if(!localStorage.getItem(STORAGE+'-before-strategy-v1'))localStorage.setItem(STORAGE+'-before-strategy-v1',raw)}catch{}
     if(loaded.branches.every(b=>!b.flow))try{if(!localStorage.getItem(STORAGE+'-before-flow-v1'))localStorage.setItem(STORAGE+'-before-flow-v1',raw)}catch{}
     state=loaded;selectedZone=null;selectedBlock=null;
     mini = null;
@@ -942,6 +955,11 @@ document.addEventListener("click", (e) => {
   }
 });
 document.addEventListener("submit", (e) => {
+  if(e.target.id==='maintenance-form'){
+    e.preventDefault();const f=new FormData(e.target),[hour,minute]=String(f.get('time')).split(':').map(Number);
+    const error=E.bookMaintenance(state,b().id,Number(e.target.dataset.hall),f.get('kind'),hour*60+minute-E.OPEN_MINUTE);
+    if(error){$('#maintenance-error').textContent=error;return;}closeModal();persist();render();toast('保養已預約，費用已預付。');return;
+  }
   if (e.target.id !== "programme-form") return;
   e.preventDefault();
   const f = new FormData(e.target),

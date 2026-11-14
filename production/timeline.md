@@ -1,6 +1,6 @@
 # Timeline
 
-目前里程碑：operations-forecast-pages-05，v0.5真實營運、排片預測及待確認升級素材。
+目前里程碑：satisfaction-maintenance-pages-06，v0.6滿意度、影院定位與設備保養。
 
 # Milestones
 
@@ -31,3 +31,7 @@
 ## Operations Forecast Pages 05
 
 使用者要求真實客流／排隊／員工服務及排片收益預測，已完成可玩實作。55項測試、15條實際瀏覽器流程通過；3個觸控尺寸、逐分鐘對帳、預測與完整日結相符，已部署原Pages，來源e5aad16，測試及Pages workflow均success；公開0.5.0／SHA及6條檢查通過。升級美術12項只預製獨立確認頁，不加入runtime；等使用者確認後另做實裝。下一門檻是核對完整日結與預測、觸控、舊檔及美術邊界。
+
+## Satisfaction Maintenance Pages 06
+
+使用者授權分項滿意度／漸進定位與設備／現金管理。已實作並通過73項測試、11條真實Chromium流程，完整日結及預測一致、三種觸控尺寸通過。正在發佈核對原Pages；升級圖因使用者不滿意，保留未採用，不加入runtime。真人長期平衡為下一門檻。

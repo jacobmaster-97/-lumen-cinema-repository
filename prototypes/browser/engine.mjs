@@ -1,6 +1,8 @@
 // Pure, deterministic management simulation. DOM, audio and storage stay outside.
 import * as C from './construction.mjs';
 import * as Flow from './operations.mjs';
+import * as Strategy from './strategy.mjs';
+export * as Strategy from './strategy.mjs';
 export const DAY_SECONDS = 180;
 export const OPEN_MINUTE = 660;
 export const DAY_MINUTES = 780;
@@ -531,6 +533,8 @@ export const emptyLedger = () => ({
   wages: 0,
   rent: 0,
   maintenance: 0,
+  preventive: 0,
+  cleaningSupplies: 0,
   eventCost: 0,
   loanPayment: 0,
   admissions: 0,
@@ -563,6 +567,7 @@ export function branch(id) {
     foods: FOODS.map((f) => f.price),
     foodUnlocked: [true, true, false],
     reputation: 70,
+    strategy: Strategy.newStrategy(),
     staff: [
       {
         id: 1,
@@ -665,7 +670,7 @@ export function suggestProgramme(s, branchId) {
     }
   return out;
 }
-export function validateProgramme(s, programme) {
+export function validateProgramme(s, programme, branchId=s.activeBranch) {
   const errors = [];
   if (!Array.isArray(programme) || programme.length > 30 || programme.some(p=>!p||typeof p.id!=='string'||!p.id||p.id.length>100) || new Set(programme.map(p=>p.id)).size!==programme.length)
     return ["場次資料無效"];
@@ -697,13 +702,15 @@ export function validateProgramme(s, programme) {
       )
         errors.push(`${hall + 1} 號影廳場次重疊，或未留 15 分鐘清潔`);
   }
+  const b=s.branches.find(b=>b.id===branchId);
+  if(b&&!errors.length)errors.push(...Strategy.planConflicts(b,programme,FLOW_CONTEXT));
   return [...new Set(errors)];
 }
 export function setProgramme(s, id, programme) {
   if (s.phase !== "planning") return "營業前先可以更改日常排片";
   const b = s.branches.find((x) => x.id === id);
   if (!b) return "找不到分店";
-  const errors = validateProgramme(s, programme);
+  const errors = validateProgramme(s, programme, id);
   if(Array.isArray(programme)&&programme.some(p=>p&&!C.hasRoom(b,`hall${p.hall+1}`)))errors.push('未建成的影廳不能排片');
   if (errors.length) return errors.join("；");
   b.programme = structuredClone(programme);
@@ -763,6 +770,7 @@ export function buildDemand(s, b) {
         timeWeight(c.id, p.start, s.day) *
         clamp(price, 0.02, 2) *
         quality *
+        Strategy.demandFactor(b,g,p.hall) *
         0.55
       );
     });
@@ -805,6 +813,7 @@ function makeEvents(s, b) {
   const events = [];
   for (let i = 0; i < count; i++) {
     let kind = types[(s.day - 1 + b.id + i * 2) % types.length];
+    if(kind==='repair'&&Strategy.active(b))continue;
     let at = 130 + i * 330 + Math.floor(random() * 45);
     const future = b.shows.filter((p) => p.start > at + 35);
     if (!future.length) continue;
@@ -820,6 +829,8 @@ function makeEvents(s, b) {
       hall: target.hall,
     });
   }
+  // Equipment checks share the existing interruption budget; calm days stay calm.
+  if(Strategy.active(b)&&count>0){const check=Strategy.inspection(s,b,FLOW_CONTEXT);if(check){if(events.length>1)events.length=1;events.push(check);}}
   return events;
 }
 export function startDay(s) {
@@ -827,9 +838,10 @@ export function startDay(s) {
   if(!s.branches.some(b=>C.operational(b)))return C.preparationError(s.branches.find(b=>b.id===s.activeBranch)||s.branches[0]);
   for (const b of s.branches) {
     if(!C.operational(b))continue;
-    if (!b.programme.length) return `${b.name} 尚未排片`;
+    if (!b.programme.length&&!Strategy.prepaid(b)) return `${b.name} 尚未排片`;
     if(b.programme.some(p=>!C.hasRoom(b,`hall${p.hall+1}`)))return '未建成的影廳不能排片';
-    const e = validateProgramme(s, b.programme);
+    Strategy.ensure(b);
+    const e = validateProgramme(s, b.programme,b.id);
     if (e.length) return `${b.name}：${e.join("；")}`;
   }
   s.elapsed = 0;
@@ -838,7 +850,7 @@ export function startDay(s) {
   s.pending = null;
   s.paused = false;
   for (const b of s.branches) {
-    b.ledger = emptyLedger();
+    b.ledger = {...emptyLedger(),maintenance:Strategy.prepaid(b),preventive:Strategy.prepaid(b)};
     if(!C.operational(b)){b.shows=[];b.service=[];delete b.flow;continue;}
     b.shows = buildDemand(s, b);
     b.service = [];
@@ -955,6 +967,11 @@ function book(s, b, p) {
 }
 function raiseEvent(s, e) {
   const b = s.branches.find((x) => x.id === e.branch);
+  if(e.source==='condition'){
+    const hall=b.flow?.halls[e.hall],plan=b.strategy?.equipment[e.hall].plan;
+    const starting=hall?.state==='ready'&&plan?.state==='booked'&&plan.start<=s.minute;
+    if(!Strategy.active(b)||hall.state==='maintenance'||starting||e.roll>=Strategy.risk(b.strategy.equipment[e.hall].condition)){e.done=true;return false;}
+  }
   if (
     e.kind === "withdrawal" &&
     !b.shows.some((p) => !p.booked && !p.cancelled && p.movie === e.movie)
@@ -969,8 +986,14 @@ function raiseEvent(s, e) {
     e.done = true;
     return false;
   }
-  if (e.kind === "repair")
+  if (e.kind === "repair") {
     b.closedUntil[e.hall] = Math.min(DAY_MINUTES, e.at + 180);
+    if(Strategy.active(b)){
+      const hall=b.flow.halls[e.hall];
+      if(hall.state==='playing'){const show=b.shows.find(p=>p.id===hall.show);if(show){show.cancelled=true;show.ended=true;}}
+      Flow.reconcile(s,b,FLOW_CONTEXT);hall.state='repair';hall.until=b.closedUntil[e.hall];
+    }
+  }
   if (e.kind === "withdrawal") {
     s.bans[e.movie] = s.day + 2;
     addNews(
@@ -1073,6 +1096,10 @@ export function resolveEvent(s, choice, score = 0, replacement = null) {
         : choice === "standard"
           ? s.minute + 180
           : DAY_MINUTES;
+    if(Strategy.active(b)){
+      b.flow.halls[e.hall].until=b.closedUntil[e.hall];
+      b.strategy.equipment[e.hall].condition=Math.min(100,b.strategy.equipment[e.hall].condition+(choice==='urgent'?12:choice==='standard'?8:3));
+    }
     addNews(
       s,
       `${b.name} ${e.hall + 1} 號廳：${choice === "urgent" ? "加急維修，45 分鐘後恢復" : choice === "standard" ? "一般維修，3 小時後恢復" : "暫停至明日，交由例行維護處理"}。`,
@@ -1137,13 +1164,15 @@ function finishDay(s) {
   const rows = [];
   for (const b of s.branches) {
     Flow.close(s,b);
+    Strategy.finishMaintenance(s,b);
     const l = b.ledger;
     l.wages = C.operational(b)?b.staff.reduce((n, p) => n + p.wage, 0):0;
     l.rent = C.operational(b)&&!b.owned?b.rent:0;
-    l.maintenance = C.operational(b)?280 + b.upgrades.sound * 70 + b.upgrades.seats * 45:0;
-    s.cash -= l.wages + l.rent + l.maintenance;
+    const baseMaintenance=C.operational(b)?Strategy.dailyBase(b):0;
+    l.maintenance += baseMaintenance;
+    s.cash -= l.wages + l.rent + baseMaintenance;
     const rate = l.demand ? l.admissions / l.demand : 0;
-    if(C.operational(b))b.reputation = clamp(
+    if(C.operational(b)&&!Strategy.active(b))b.reputation = clamp(
       b.reputation + (rate > 0.7 ? 0.8 : rate < 0.35 ? -1.2 : 0),
       25,
       100,
@@ -1163,6 +1192,8 @@ function finishDay(s) {
           format,
         })),
       ledger: structuredClone(l),
+      review: Strategy.finishExperience(s,b),
+      equipment: b.strategy?structuredClone(b.strategy.equipment):null,
       net: net(l),
     });
   }
@@ -1215,6 +1246,7 @@ export function nextDay(s) {
       }));
     b.shows = [];
     delete b.flow;
+    if(b.strategy)for(const e of b.strategy.equipment)e.plan=null;
     b.ledger = emptyLedger();
     b.closedUntil = [0, 0];
     b.roomReady = [0, 0];
@@ -1419,6 +1451,7 @@ export function loadGame(raw) {
   }
   if (s.phase === "event" && !currentEvent(s)) throw Error("事件資料不完整");
   for(const b of s.branches)Flow.validate(b);
+  for(const b of s.branches){if(Strategy.active(b)&&!b.strategy)throw Error('口碑與設備資料不完整');Strategy.ensure(b);Strategy.validate(b);}
   s.paused = s.phase === "running";
   return s;
 }
@@ -1433,9 +1466,9 @@ export function constructRoom(s,id,roomId){
 // A dry-run uses exactly the live rules, on private copies, with random events excluded.
 export function forecastProgramme(s,id,programme=null){
  const original=s.branches.find(b=>b.id===id);if(!original)return {error:'找不到分店'};
- const plan=programme||original.programme,errors=validateProgramme(s,plan);
+ const plan=programme||original.programme,errors=validateProgramme(s,plan,id);
  if(errors.length)return {error:errors.join('；')};
- if(!plan.length)return {error:'先加入放映場次，再查看預測'};
+ if(!plan.length&&!Strategy.prepaid(original))return {error:'先加入放映場次或預約保養，再查看預測'};
  if(!C.operational(original))return {error:'建好基本設施及影廳後，即可預測營運'};
  if(plan.some(p=>!C.hasRoom(original,`hall${p.hall+1}`)))return {error:'未建成的影廳不能排片'};
  const samples=[0,-101,101].map(offset=>{
@@ -1444,5 +1477,10 @@ export function forecastProgramme(s,id,programme=null){
   return {report:copy.history[0],branch:b};
  });
  const {report,branch:b}=samples[0],l=b.ledger,range=samples.map(x=>x.report.net);
- return {error:null,net:report.net,low:Math.min(...range),high:Math.max(...range),gross:l.gross,share:l.share,ticketNet:l.gross-l.share,foodProfit:l.foodRevenue-l.foodCost,admissions:l.admissions,lost:l.lost,snackLost:l.snackLost,wages:l.wages,rent:l.rent,maintenance:l.maintenance,delay:l.delay,peak:{...b.flow.peak},rows:b.shows.map(p=>({id:p.id,hall:p.hall,movie:p.movie,start:p.start,price:p.price,demand:p.flowDemand,served:p.served,sold:p.sold,occupancy:p.served/b.seats[p.hall],gross:p.ticketGross,share:p.ticketShare,ticketNet:p.ticketGross-p.ticketShare,foodProfit:p.foodRevenue-p.foodCost,contribution:p.ticketGross-p.ticketShare+p.foodRevenue-p.foodCost,lost:p.lost,delay:p.delay,groups:p.groups.map((n,g)=>({id:COHORTS[g].id,name:COHORTS[g].name,count:n})).sort((a,b)=>b.count-a.count)})),basis:'依現有人手、價格、設備及今日熱度模擬；不含突發事件、貸款還款及新投資。範圍為三種客流情境，不是保證收入。'};
+ return {error:null,prepaid:Strategy.prepaid(original),review:report.rows[0].review,equipment:structuredClone(b.strategy.equipment),net:report.net,low:Math.min(...range),high:Math.max(...range),gross:l.gross,share:l.share,ticketNet:l.gross-l.share,foodProfit:l.foodRevenue-l.foodCost,admissions:l.admissions,lost:l.lost,snackLost:l.snackLost,wages:l.wages,rent:l.rent,maintenance:l.maintenance,delay:l.delay,peak:{...b.flow.peak},rows:b.shows.map(p=>({id:p.id,hall:p.hall,movie:p.movie,start:p.start,price:p.price,demand:p.flowDemand,served:p.served,sold:p.sold,occupancy:p.served/b.seats[p.hall],gross:p.ticketGross,share:p.ticketShare,ticketNet:p.ticketGross-p.ticketShare,foodProfit:p.foodRevenue-p.foodCost,contribution:p.ticketGross-p.ticketShare+p.foodRevenue-p.foodCost,lost:p.lost,delay:p.delay,groups:p.groups.map((n,g)=>({id:COHORTS[g].id,name:COHORTS[g].name,count:n})).sort((a,b)=>b.count-a.count)})),basis:'依現有人手、價格、口碑及設備模擬；包含已預付保養、停廳及清潔耗材，不含突發事件、貸款還款及新投資。範圍為三種客流情境，不是保證收入。'};
 }
+
+export function setCleaning(s,id,mode){const b=s.branches.find(b=>b.id===id);if(s.phase!=='planning'||!b||!Object.hasOwn(Strategy.CLEANING,mode))return '請在營業前選擇有效清潔標準';Strategy.ensure(b);const old=b.strategy.cleaning;b.strategy.cleaning=mode;const errors=Strategy.planConflicts(b,b.programme,FLOW_CONTEXT);if(errors.length){b.strategy.cleaning=old;return errors.join('；')}return null}
+export function bookMaintenance(s,id,h,kind,start){const b=s.branches.find(b=>b.id===id);if(!b)return '找不到分店';Strategy.ensure(b);const error=Strategy.maintenanceError(s,b,h,kind,start,FLOW_CONTEXT);if(error)return error;const rule=Strategy.MAINTENANCE[kind];s.cash-=rule.cost;b.ledger.maintenance+=rule.cost;b.ledger.preventive=(b.ledger.preventive||0)+rule.cost;b.strategy.equipment[h].plan={kind,...rule,start,paid:true,state:'booked',actualStart:null,actualEnd:null};addNews(s,`${h+1}號廳已預約${rule.name}，預付 $${rule.cost}，停廳${rule.duration}分鐘。`);return null}
+export function cancelMaintenance(s,id,h){const b=s.branches.find(b=>b.id===id),plan=b?.strategy?.equipment[h]?.plan;if(s.phase!=='planning'||!plan||!plan.paid||plan.state!=='booked')return '目前不能取消這個保養預約';s.cash+=plan.cost;b.ledger.maintenance-=plan.cost;b.ledger.preventive-=plan.cost;b.strategy.equipment[h].plan=null;return null}
+export const reserveSummary=s=>Strategy.cashReserve(s);

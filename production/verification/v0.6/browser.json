@@ -1,0 +1,52 @@
+{
+  "url": "http://127.0.0.1:8290/pages/",
+  "checks": [
+    "approved construction and new four-factor/positioning dashboard",
+    "cleaning policy commits, recalculates forecast and retains selected state",
+    "conflicting maintenance fails without charge; booking prepays once and cancellation refunds exactly",
+    "natural day completes booked maintenance and actual financial/experience results match forecast",
+    "day report records ratings; next day retains positioning and wear but clears completed booking",
+    "maintenance state is visible on actual map and operation panel",
+    "actual breakdown dialog interrupts projection, refunds tickets and urgent repair charges exactly once",
+    "legacy two-store save migrates without lost progress, keeps exact backup and saves offline",
+    "touch strategy, scroll-to-submit maintenance and no overflow 390",
+    "touch strategy, scroll-to-submit maintenance and no overflow 720",
+    "touch strategy, scroll-to-submit maintenance and no overflow 1080"
+  ],
+  "errors": [],
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "overflow": false
+    },
+    {
+      "width": 1080,
+      "height": 2400,
+      "overflow": false
+    }
+  ],
+  "runtimeArtRequests": [],
+  "warmRender": {
+    "p95": 7.1,
+    "cacheMiB": 34
+  },
+  "day": {
+    "net": 6292.03999999999,
+    "predicted": 6292.03999999999,
+    "review": {
+      "price": 84.27694749752207,
+      "service": 89.7945799255322,
+      "cleanliness": 92,
+      "presentation": 69.8722754237287
+    },
+    "condition": 96.16499999999843
+  },
+  "status": "passed",
+  "finishedAt": "2026-11-14T03:45:39.502Z"
+}
