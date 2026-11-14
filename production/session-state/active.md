@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-modular-map-pages-04：依使用者明確指示，把已編排配置接入正式遊戲並更新原GitHub Pages。v0.4可玩實作完成，正在驗證及部署；不是只更新預覽。
+modular-map-pages-04：依使用者明確指示，把已編排配置接入正式遊戲並更新原GitHub Pages。v0.4可玩實作已部署驗證，來源76b65bb；正式遊戲已採新地圖。
 
 ## Confirmed design
 
@@ -19,7 +19,7 @@ modular-map-pages-04：依使用者明確指示，把已編排配置接入正式
 
 ## Verification
 
-41項Node測試通過。真實Chromium整合腳本 scripts/verify-modular-browser.cjs：14條實際按鈕施工、完整開業／日結、舊檔、離線、390／720／1080觸控及失敗回復通過，errors=[]，暖機CPU繪製p95為8.3ms。Studio validate 1207項及docs-impact通過。證據輸出 production/verification/v0.4 及 docs/screenshots/v0.4-*。本輪發佈驗證完成後補上公開版本與workflow來源。
+41項Node測試通過。真實Chromium整合腳本 scripts/verify-modular-browser.cjs：14條實際按鈕施工、完整開業／日結、舊檔、離線、390／720／1080觸控及失敗回復通過，errors=[]，暖機CPU繪製p95為8.3ms。Studio validate 1207項及docs-impact通過。證據輸出 production/verification/v0.4 及 docs/screenshots/v0.4-*。公開version.json為0.4.0且SHA與76b65bb完整一致；測試43541664436、Pages43541664482均success。公開6條實際檢查通過，errors=[]、failedRequests=[]，證據public.json、deployment.json。後續[skip ci]文件提交不改公開來源。
 
 ## Documentation Impact
 

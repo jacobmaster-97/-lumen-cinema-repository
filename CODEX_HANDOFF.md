@@ -7,7 +7,7 @@
 ## Current Phase
 
 - Phase: release verification of playable prototype v0.4。
-- Status: 正式地圖、施工及存檔遷移已完成；本機完整驗證通過，正在推送及核對公開Pages。
+- Status: 正式地圖、施工及存檔遷移已完成；已部署並核對公開Pages v0.4.0；來源76b65bb2af7ff56f1b3b1efddd8db46f3fd5b4bf。
 
 ## Latest Completed Work
 
@@ -24,11 +24,11 @@ prototypes/browser/map-data.mjs（批准配置）、construction.mjs（建造及
 
 ## Verification
 
-npm test --prefix prototypes/browser：41項通過。實際Chromium腳本 scripts/verify-modular-browser.cjs：14條流程通過（施工／營業／日結、舊檔與離線、390／720／1080觸控、素材失敗），errors=[]，暖機CPU p95 8.3ms。Studio validate 1207項及docs-impact通過；證據production/verification/v0.4。手機主按鈕曾被固定高度column wrap擠出畫面，已以auto height／nowrap修正並真實tap驗證。部署SHA／workflow／公開檢查待上線後補齊。
+npm test --prefix prototypes/browser：41項通過。實際Chromium腳本 scripts/verify-modular-browser.cjs：14條流程通過（施工／營業／日結、舊檔與離線、390／720／1080觸控、素材失敗），errors=[]，暖機CPU p95 8.3ms。Studio validate 1207項及docs-impact通過；證據production/verification/v0.4。手機主按鈕曾被固定高度column wrap擠出畫面，已以auto height／nowrap修正並真實tap驗證。公開6條檢查通過：版號／SHA、單格開局、施工、營業、洗手間右門、舊檔與兩店；errors=[]、failedRequests=[]。公開HTML／模組／圖片均來自保留TLS驗證的即時遠端HTTPS回應。
 
 ## Release / recovery
 
-Repository: jacobmaster-97/-lumen-cinema-repository；Pages: https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。本輪main起點6234b64。沿用Pages workflow，version.json記錄0.4.0與來源SHA。可revert本次功能提交重新部署，不清玩家存檔。歷史未追蹤草稿不屬本輪，不要blanket git add。
+Repository: jacobmaster-97/-lumen-cinema-repository；Pages: https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。本輪main起點6234b64；功能來源76b65bb，測試run43541664436與Pages run43541664482均success；公開version.json的SHA一致，證據production/verification/v0.4/deployment.json、public.json。後續[skip ci]交接提交不改公開功能來源。沿用Pages workflow，version.json記錄0.4.0與來源SHA。可revert本次功能提交重新部署，不清玩家存檔。歷史未追蹤草稿不屬本輪，不要blanket git add。
 
 ## Known Risks / Untested Areas
 
@@ -36,4 +36,4 @@ Repository: jacobmaster-97/-lumen-cinema-repository；Pages: https://jacobmaster
 
 ## Next Safest Task
 
-完成公開版本及CI核對後，讓使用者試玩施工、首日營業與擴建節奏。
+讓使用者於公開網址試玩施工、首日營業與擴建節奏，依回饋調整。

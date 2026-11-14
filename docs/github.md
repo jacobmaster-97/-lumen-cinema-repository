@@ -54,4 +54,4 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 
 `map-data.mjs`同步已確認配置，洗手間向右；新局單格起步、施工後開業。三張整區PNG與地圖幾何／門／座位／導航在遊戲中實際使用，詳細規則見 design/rebuild-v0.4.md。舊v2存檔保留進度轉為已建完整地圖，並備份原始舊檔。
 
-本輪驗證在 production/verification/v0.4：打包後真實Chromium測試、遠端workflow及公開HTTPS版本。version.json為0.4.0並記錄來源SHA；全部相對模組匯入附0.4版號。發布後補上來源及成功workflow，回退revert功能提交重跑相同工作流程。
+本輪驗證在 production/verification/v0.4：打包後真實Chromium測試、遠端workflow及公開HTTPS版本。version.json為0.4.0並記錄來源SHA；全部相對模組匯入附0.4版號。來源76b65bb2af7ff56f1b3b1efddd8db46f3fd5b4bf；測試run43541664436、Pages run43541664482均success，公開version.json同SHA。公開6條流程通過，errors及failedRequests為空。公開瀏覽器以平台CA驗證的HTTPS回應轉交Chromium，沒有停用TLS檢查或用本機檔案替代。回退revert功能提交重跑相同工作流程；後續[skip ci]交接提交不改公開來源。

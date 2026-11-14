@@ -1,14 +1,15 @@
 {
   "repository": "jacobmaster-97/-lumen-cinema-repository",
   "source_pushed": true,
-  "game_commit": "22d9c3585b12ac6debf65b470cea03d3653e45a1",
-  "tests_run": 43176907651,
+  "game_commit": "76b65bb2af7ff56f1b3b1efddd8db46f3fd5b4bf",
+  "tests_run": 43541664436,
   "tests_conclusion": "success",
-  "pages_run": 43176907722,
+  "pages_run": 43541664482,
   "build_conclusion": "success",
   "deploy_conclusion": "success",
   "pages_live": true,
   "pages_url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
-  "http_verification": "200 for game HTML, three JS modules, atlas JSON, both PNGs, and art workbench",
-  "visual_browser_qa": "not completed: cloud browser could not read requirements and native launch produced no Chrome window"
+  "http_verification": "Public 0.4.0 version/SHA and all runtime requests passed; no failed requests",
+  "visual_browser_qa": "Completed: public Chromium UI construction, admissions, right-facing bathroom and legacy two-store migration; CA-verified live HTTPS transport. Evidence production/verification/v0.4/public.json.",
+  "version": "0.4.0"
 }

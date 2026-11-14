@@ -1,0 +1,109 @@
+{
+  "url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "source": "76b65bb2af7ff56f1b3b1efddd8db46f3fd5b4bf",
+  "transport": "CA-verified HTTPS APIRequestContext forwards unmodified live public responses into Chromium. TLS checks remain enabled.",
+  "errors": [],
+  "failedRequests": [],
+  "checks": [
+    "public version and source SHA",
+    "root playable game starts on one approved floor",
+    "public UI builds starter cinema, real navigation and right-facing bathroom",
+    "live public admissions and projected film",
+    "live public migration preserves legacy funds and two stores",
+    "design hub identifies formal map release"
+  ],
+  "release": {
+    "version": "0.4.0",
+    "commit": "76b65bb2af7ff56f1b3b1efddd8db46f3fd5b4bf",
+    "builtAt": "2026-11-14T01:37:24.961Z"
+  },
+  "starter": {
+    "coldCompileMs": 397,
+    "walkers": 4,
+    "version": "0.4.0",
+    "mapGrid": [
+      56,
+      56
+    ],
+    "mapBlocks": [
+      7,
+      7
+    ],
+    "floorBlocks": 12,
+    "builtRooms": [
+      "tickets",
+      "snacks",
+      "toilets",
+      "hall1"
+    ],
+    "roomRects": [
+      {
+        "id": "hall1",
+        "rect": [
+          16,
+          32,
+          16,
+          16
+        ],
+        "door": "east"
+      },
+      {
+        "id": "hall2",
+        "rect": [
+          40,
+          24,
+          16,
+          16
+        ],
+        "door": "west"
+      },
+      {
+        "id": "tickets",
+        "rect": [
+          40,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "snacks",
+        "rect": [
+          48,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "toilets",
+        "rect": [
+          24,
+          48,
+          8,
+          8
+        ],
+        "door": "east"
+      }
+    ],
+    "objects": 48,
+    "seatCounts": [
+      48,
+      0
+    ],
+    "layers": 51,
+    "cacheMiB": 34,
+    "renderP95Ms": 163.3,
+    "pathsReachable": true,
+    "camera": {
+      "zoom": 1,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "admissions": 44,
+  "status": "passed",
+  "finishedAt": "2026-11-14T01:39:23.406Z"
+}
