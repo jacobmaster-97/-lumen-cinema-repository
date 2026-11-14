@@ -62,4 +62,4 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 
 使用者要求第三項「確認後才實裝」，因此/upgrade-art/只提供獨立素材確認及下載。12項裁切由兩張原始ImageGen PNG提供，沒有新增runtime檔案引用，也沒有替換現有房間／座椅素材。確認之後才能拆分前景、校準錨點、驗證腳托佔地及接入升級顯示。
 
-本輪完成後記錄公開SHA／workflow；回退revert功能提交重新部署，先保留玩家v2存檔備份。公開瀏覽器使用平台CA驗證的即時HTTPS回應轉交Chromium，保留TLS驗證，處理雲端Chromium獨立憑證庫限制。
+本輪已發佈來源e5aad16e6f287a5268d489e534bdf6ed1c507102：測試run43549699236、Pages run43549699308均success。公開0.5.0及SHA一致，6項公開檢查通過，errors／failedRequests／runtimeArtRequests為空。後續[skip ci]交接提交不改公開功能來源。回退revert功能提交重新部署，先保留玩家v2存檔備份。公開瀏覽器使用平台CA驗證的即時HTTPS回應轉交Chromium，保留TLS驗證，處理雲端Chromium獨立憑證庫限制。

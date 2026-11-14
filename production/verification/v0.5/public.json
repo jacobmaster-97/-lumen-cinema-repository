@@ -1,0 +1,90 @@
+{
+  "url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "source": "e5aad16e6f287a5268d489e534bdf6ed1c507102",
+  "transport": "CA-verified live HTTPS responses forwarded into Chromium; TLS validation enabled; no local game source substitution.",
+  "checks": [
+    "public version and source SHA",
+    "approved map and starter construction",
+    "live public forecast updates an unsaved price with zero unchanged delta and no mutation",
+    "public staged admissions, actor counts, service panel and pre-flow backup",
+    "pending art excluded from live game requests",
+    "public 12-texture review loads separately and remains awaiting approval"
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "runtimeArtRequests": [],
+  "release": {
+    "version": "0.5.0",
+    "commit": "e5aad16e6f287a5268d489e534bdf6ed1c507102",
+    "builtAt": "2026-11-14T03:04:54.802Z"
+  },
+  "forecast": "排片收益預測\n按現有人手及設施估算\n全日營運淨利\n$7,309\n客流情境 $6,750 至 $7,309\n預計入場／未能服務\n177 / 43 人\n預計售票隊伍最高 44 人\n票房留成＋小食毛利\n$9,909\n再扣人工 $1,220、租金 $1,100、維護 $280\n場次／主要客群\t入座率\t總票房\t片商分帳\t場次毛利\t流失／延誤\n11:15 · 無間打工道\n1號廳 · $78 · 視聽迷、放工客\n\t34 人 · 71%\t$2,652\t$1,273\n48% 抽成\n\t$1,475\n票房留成＋小食毛利\n\t10 人\n14:15 · 飯氣攻心\n1號廳 · $88 · 家庭客、學生客\n\t47 人 · 98%\t$4,136\t$1,737\n42% 抽成\n\t$2,800\n票房留成＋小食毛利\n\t0 人\n17:30 · 午夜尾班車\n1號廳 · $98 · 學生客、約會客\n\t48 人 · 100%\t$4,704\t$2,117\n45% 抽成\n\t$2,970\n票房留成＋小食毛利\n\t2 人\n20:30 · 功夫外賣\n1號廳 · $98 · 放工客、視聽迷\n\t48 人 · 100%\t$4,704\t$2,446\n52% 抽成\n\t$2,664\n票房留成＋小食毛利\n\t31 人\n\n售票隊伍較長，可錯開兩廳開場或增加售票人手。\n\n依現有人手、價格、設備及今日熱度模擬；不含突發事件、貸款還款及新投資。範圍為三種客流情境，不是保證收入。",
+  "operations": {
+    "tickets": 0,
+    "snacks": 0,
+    "arriving": 0,
+    "seated": 34,
+    "departing": 0,
+    "waitingHall": 0,
+    "waitTickets": 0,
+    "waitSnacks": 0,
+    "lost": 10,
+    "snackLost": 0,
+    "losses": {
+      "wait": 3,
+      "capacity": 0,
+      "cancelled": 0,
+      "late": 7
+    },
+    "peak": {
+      "tickets": 44,
+      "snacks": 1
+    },
+    "rates": {
+      "tickets": 3.0555555555555554,
+      "snacks": 1.1666666666666667,
+      "cleaning": 2.7
+    },
+    "support": {
+      "tickets": false,
+      "snacks": false,
+      "cleaning": false
+    },
+    "halls": [
+      {
+        "state": "playing",
+        "show": "s100",
+        "remaining": 0,
+        "total": 0,
+        "until": 133
+      },
+      {
+        "state": "ready",
+        "show": null,
+        "remaining": 0,
+        "total": 0,
+        "until": 0
+      }
+    ],
+    "staff": [
+      {
+        "role": "tickets",
+        "count": 2,
+        "skill": 5
+      },
+      {
+        "role": "snacks",
+        "count": 1,
+        "skill": 3
+      },
+      {
+        "role": "cleaning",
+        "count": 1,
+        "skill": 3
+      }
+    ]
+  },
+  "admissions": 34,
+  "status": "passed",
+  "finishedAt": "2026-11-14T03:05:47.266Z"
+}

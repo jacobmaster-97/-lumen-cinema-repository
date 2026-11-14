@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-operations-forecast-pages-05：使用者要求製作第一項真實客流／排隊／員工服務、第二項排片收益預測，第三項只預製升級貼圖，確認後才接入遊戲。本輪以46d0533為基準，保留已確認的v0.4地圖、建造與財務契約。
+operations-forecast-pages-05：使用者要求製作第一項真實客流／排隊／員工服務、第二項排片收益預測，第三項只預製升級貼圖，確認後才接入遊戲。本輪以46d0533為基準，已發佈並驗證v0.5.0（來源e5aad16e6f287a5268d489e534bdf6ed1c507102），保留已確認地圖、建造及既有進度。
 
 ## Implemented
 
@@ -24,7 +24,7 @@ npm test --prefix prototypes/browser：55項通過。新增14項財務／客流�
 
 ## Release / recovery
 
-沿用jacobmaster-97/-lumen-cinema-repository及Pages workflow，0.5.0統一模組快取版號。功能確認與公開驗證後記錄SHA及workflow。必要時revert功能提交重發，不清存檔；新flow營業中存檔不能直接交舊結算，以免重複計票；UI讀舊檔／首日開業前會留lumen-cinema-v2-before-flow-v1備份。必要回退先保留現存檔並恢復這個升級前備份。
+沿用jacobmaster-97/-lumen-cinema-repository及Pages workflow，0.5.0統一模組快取版號。來源e5aad16e6f287a5268d489e534bdf6ed1c507102，測試43549699236及Pages43549699308均success。公開6項檢查通過，errors及failedRequests為空，runtimeArtRequests為空；公開版號與SHA一致，見deployment.json／public.json。後續[skip ci]文件提交不改公開來源。必要時revert功能提交重發，不清存檔；新flow營業中存檔不能直接交舊結算，以免重複計票；UI讀舊檔／首日開業前會留lumen-cinema-v2-before-flow-v1備份。必要回退先保留現存檔並恢復這個升級前備份。
 
 ## Risks / next safe task
 

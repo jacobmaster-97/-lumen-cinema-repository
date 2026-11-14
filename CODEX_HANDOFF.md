@@ -7,7 +7,7 @@
 ## Current Phase
 
 - Phase: playable prototype v0.5 release verification。
-- Status: 可玩實作及本機驗證通過，正在推送／核對公開版本。基準46d0533，正式地圖及原runtime PNG保持。
+- Status: 可玩實作、本機及公開驗證通過；已部署v0.5.0，來源e5aad16e6f287a5268d489e534bdf6ed1c507102。基準46d0533，正式地圖及原runtime PNG保持。
 
 ## Latest Completed Work
 
@@ -26,11 +26,11 @@ engine.mjs（財務、預測與相容）、operations.mjs（營運）、operatio
 - npm test --prefix prototypes/browser：55／55通過；原41項保留，新14項包含逐分鐘對帳、退款／換片、服務及清潔效果、存檔、預測純度與順序穩定、全部實際路徑。
 - scripts/verify-operations-browser.cjs：15條真實Chromium流程通過，errors=[]；390／720／1080觸控無頁面溢出。首日實際淨利7309.04與預測7309.04一致（交員工處理、無額外事件費用情境）。暖機CPU p95 6.7ms，34MiB首店快取。
 - 新flow存讀檔、離線、舊檔兩店、實際排隊／散場／清潔快照、素材失敗及待確認圖不載入遊戲皆有證據。補充手機捲動提交與原始備份驗證在touch-submit.json。
-- studio validate及docs-impact通過。證據production/verification/v0.5；美術來源規格在design/art/upgrades-v1。公開SHA／workflow待本輪上線後補齊。
+- studio validate及docs-impact通過。證據production/verification/v0.5；美術來源規格在design/art/upgrades-v1。公開6條檢查通過，errors=[]、failedRequests=[]：來源SHA、施工、草案預測不改進度、實際入場／人物及備份、新素材不載入遊戲、12項獨立確認頁。公開證據為保留TLS驗證的即時HTTPS回應，沒有本機遊戲檔案替代。
 
 ## Release / Recovery
 
-jacobmaster-97/-lumen-cinema-repository；https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。原workflow，version.json為0.5.0及來源SHA。若需revert功能提交，先保留當前v2存檔，再恢復before-flow-v1備份；新flow營業中已逐筆計票，不能直接交給0.4舊批次結算。歷史未追蹤草稿不屬本輪，不要blanket git add。
+jacobmaster-97/-lumen-cinema-repository；https://jacobmaster-97.github.io/-lumen-cinema-repository/ 。原workflow，version.json為0.5.0及來源e5aad16e6f287a5268d489e534bdf6ed1c507102。測試run43549699236、Pages run43549699308均success，公開SHA一致；見production/verification/v0.5/deployment.json、public.json。後續[skip ci]交接提交不改公開功能來源。若需revert功能提交，先保留當前v2存檔，再恢復before-flow-v1備份；新flow營業中已逐筆計票，不能直接交給0.4舊批次結算。歷史未追蹤草稿不屬本輪，不要blanket git add。
 
 ## Known Risks / Untested Areas
 
@@ -38,4 +38,4 @@ jacobmaster-97/-lumen-cinema-repository；https://jacobmaster-97.github.io/-lume
 
 ## Next Safest Task
 
-完成公開版本核對；使用者試玩第一、二項並確認第三項12張素材的外觀。沒有第三項實裝授權前不要加入runtime。
+使用者試玩第一、二項，並在/upgrade-art/確認第三項12項素材的外觀。沒有第三項實裝授權前不要加入runtime。
