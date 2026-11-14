@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>光影大亨｜方塊區域貼圖設計確認</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#102630;color:#ecdfc5;font:16px/1.7 system-ui,"Noto Sans CJK TC",sans-serif}main{max-width:1500px;margin:auto;padding:32px}header{display:flex;justify-content:space-between;align-items:center;gap:24px}h1{font-size:30px;margin:0 0 4px}p{margin:4px 0 16px;color:#bed0cc}.badge{color:#f4d79c;border:1px solid #967e51;padding:8px 15px;white-space:nowrap}.controls{display:flex;gap:20px;align-items:center;padding:10px 0}a{color:#a9e0cc}canvas{display:block;width:100%;height:auto;background:#152e38;border:1px solid #35515a}section{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:20px}article{padding:18px;border-top:2px solid #b99b60;background:#19323b}h2{font-size:21px;margin:0 0 8px}article p{font-size:15px;margin:0 0 8px}footer{margin-top:22px;color:#a8bfbc;font-size:14px}@media(max-width:700px){main{padding:16px}header{display:block}h1{font-size:23px}.badge{display:inline-block;margin-bottom:12px}section{grid-template-columns:1fr}canvas{min-width:950px}.board{overflow:auto}}
+</style>
+<main><header><div><h1>光影大亨 · 一體化方塊區域</h1><p>三區採相同 8×8 格正方形底面；等角視角呈完整四邊形。</p></div><span class="badge">設計確認版 v2 · 未實裝</span></header>
+<div class="controls"><label><input type="checkbox" id="grid"> 顯示 8×8 地面格網</label><span>四角對齊預覽 · 固定同一底面比例</span></div>
+<div class="board"><canvas id="board" width="1440" height="620" aria-label="售票區、小食部與洗手間的一體化方塊貼圖對照"></canvas></div>
+<section><article><h2>01 售票區</h2><p>雙服務櫃枱、自助售票機及連續電影燈箱牆。櫃枱與牆面同一套設計，前方留出顧客通道。</p><a href="tickets.png">查看原尺寸 PNG</a></article><article><h2>02 小食部</h2><p>雙服務櫃枱、爆谷、汽水、熱食與冷藏櫃集中在完整後吧；前方保持開放。</p><a href="snacks.png">查看原尺寸 PNG</a></article><article><h2>03 洗手間</h2><p>標準及無障礙廁格、雙洗手盆、鏡面與乾手機一併設計，入口保留遮擋。</p><a href="toilets.png">查看原尺寸 PNG</a></article></section>
+<footer>已刪除後勤室設計。此頁只供確認區域美術與四邊形底面，並非遊戲實裝。確認後才拆分遮擋圖層、清理透明邊緣、配合地圖入口及配置碰撞；線上 Pages 維持原版本。</footer></main>
+<script type="module">
+const specs=[
+ {id:'tickets',name:'售票區',origin:[768,395],right:[1345,684],left:[191,684],outline:[[768,60],[1363,380],[1363,684],[768,992],[171,684],[171,380]]},
+ {id:'snacks',name:'小食部',origin:[768,395],right:[1338,685],left:[198,685],outline:[[768,60],[1339,393],[1339,685],[768,997],[196,685],[196,394]]},
+ {id:'toilets',name:'洗手間',origin:[794,361],right:[1344,663],left:[244,663],outline:[[794,43],[1344,340],[1344,668],[794,970],[239,668],[239,340]]}
+];
+const c=document.querySelector('canvas'),ctx=c.getContext('2d'),errors=[];
+await Promise.all(specs.map(async s=>{s.image=new Image;s.image.src=s.id+'.png';await s.image.decode()}));
+function path(points){ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath()}
+function draw(){
+ ctx.fillStyle='#152e38';ctx.fillRect(0,0,c.width,c.height);ctx.imageSmoothingEnabled=false;
+ specs.forEach((s,i)=>{
+  const center=240+i*480,A=[center,245],B=[center+192,341],D=[center-192,341],F=[center,437];
+  ctx.strokeStyle='#29444b';ctx.lineWidth=1;
+  for(let n=-1;n<=9;n++){const t=n/8;path([[A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t],[D[0]+(B[0]-A[0])*t,D[1]+(B[1]-A[1])*t]]);ctx.stroke();path([[A[0]+(D[0]-A[0])*t,A[1]+(D[1]-A[1])*t],[B[0]+(D[0]-A[0])*t,B[1]+(D[1]-A[1])*t]]);ctx.stroke()}
+  const [sx,sy]=s.origin,ux=s.right[0]-sx,uy=s.right[1]-sy,vx=s.left[0]-sx,vy=s.left[1]-sy,det=ux*vy-vx*uy;
+  const a=(192*vy+192*uy)/det,b=(96*vy-96*uy)/det,d=(-192*vx-192*ux)/det,e=(-96*vx+96*ux)/det;
+  ctx.save();ctx.setTransform(a,b,d,e,A[0]-a*sx-d*sy,A[1]-b*sx-e*sy);path(s.outline);ctx.clip();ctx.drawImage(s.image,0,0);ctx.restore();
+  ctx.strokeStyle='#91c4b3';ctx.lineWidth=1.5;path([A,B,F,D]);
+  // Foreground outline exposes the complete four-corner footprint without drawing through fitted furniture.
+  ctx.beginPath();ctx.moveTo(...D);ctx.lineTo(...F);ctx.lineTo(...B);ctx.stroke();
+  if(document.querySelector('#grid').checked){ctx.save();ctx.globalAlpha=.65;ctx.strokeStyle='#8ec4b3';ctx.lineWidth=1;for(let n=0;n<=8;n++){const t=n/8;ctx.beginPath();ctx.moveTo(A[0]+192*t,A[1]+96*t);ctx.lineTo(D[0]+192*t,D[1]+96*t);ctx.stroke();ctx.beginPath();ctx.moveTo(A[0]-192*t,A[1]+96*t);ctx.lineTo(B[0]-192*t,B[1]+96*t);ctx.stroke()}ctx.restore()}
+  for(const p of [D,F,B]){ctx.fillStyle='#b0e6cd';ctx.fillRect(p[0]-2,p[1]-2,4,4)}
+  ctx.textAlign='center';ctx.fillStyle='#efdfbd';ctx.font='600 25px system-ui';ctx.fillText(`0${i+1} ${s.name}`,center,505);ctx.fillStyle='#9ec3b8';ctx.font='16px system-ui';ctx.fillText('8 × 8 格 · 四邊形底面',center,538);
+ });window.__zonePreview={ready:true,count:specs.length,grid:[8,8],staff:false,errors};
+}
+document.querySelector('#grid').addEventListener('change',draw);draw();
+</script>

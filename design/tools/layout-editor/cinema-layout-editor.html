@@ -1,0 +1,136 @@
+<div id="lumen-map-editor" aria-label="光影大亨地圖編排器">
+  <header class="le-header"><h2>光影大亨 · 地圖編排器</h2><span class="le-caption">規劃位置與開局地板分開設定</span></header>
+  <div class="le-toolbar">
+    <label>操作 <select data-field="tool"><option value="move">拖放區域</option><option value="floor">鋪起始地板</option><option value="erase">擦除地板</option></select></label>
+    <label><input data-field="start-only" type="checkbox"> 只看開局</label>
+    <button type="button" data-action="undo">復原</button><button type="button" data-action="redo">重做</button>
+    <button type="button" data-action="export">匯出／匯入配置</button>
+  </div>
+  <div class="le-workspace">
+    <div class="le-map-column">
+      <div class="le-board" aria-label="7乘7方格地圖；可拖放區域或點選方格" data-board>
+        <div class="le-cells" data-cells></div><div class="le-rooms" data-rooms></div><div class="le-ghost" data-ghost hidden></div>
+      </div>
+      <div class="le-map-meta"><span>每方塊 8×8 格 · 影廳 2×2 塊</span><span data-count></span></div>
+      <div class="le-legend"><span><i class="le-dot le-floor-dot"></i>開局地板／走道</span><span><i class="le-dot le-plan-dot"></i>規劃區域</span><span><i class="le-dot le-initial-dot"></i>開局啟用</span></div>
+    </div>
+    <section class="le-inspector" aria-label="所選區域設定">
+      <h3 data-selection>影廳 1</h3><div class="le-caption" data-dimensions></div>
+      <div class="le-position"><label>行 <input data-field="row" type="number" min="1" max="7" inputmode="numeric"></label><label>列 <input data-field="col" type="number" min="1" max="7" inputmode="numeric"></label></div>
+      <label>入口方向 <select data-field="door"><option value="north">上方</option><option value="east">右方</option><option value="south">下方</option><option value="west">左方</option></select></label>
+      <label class="le-initial"><input data-field="initial" type="checkbox"> 開局啟用此區</label>
+      <div class="le-nudge" aria-label="逐格移動"><button type="button" data-action="up" aria-label="向上移一格">↑</button><button type="button" data-action="left" aria-label="向左移一格">←</button><button type="button" data-action="down" aria-label="向下移一格">↓</button><button type="button" data-action="right" aria-label="向右移一格">→</button></div>
+      <button type="button" data-action="remove">移回待放區</button>
+      <div class="le-caption">啟用區域會補齊其地板；舊位置地板保留為走道。</div>
+    </section>
+  </div>
+  <section class="le-tray-section" aria-label="區域清單"><h3>區域清單</h3><div class="le-tray" data-tray></div></section>
+  <div class="le-status" data-status role="status" aria-live="polite"></div>
+  <div class="le-validation" data-validation aria-live="polite"></div>
+  <section class="le-json" data-json-panel hidden aria-label="配置匯出與匯入">
+    <label>配置 JSON<textarea data-field="json" rows="7" spellcheck="false" aria-label="可複製或貼上匯入的配置 JSON"></textarea></label>
+    <div class="le-toolbar"><button type="button" data-action="copy">複製配置</button><button type="button" data-action="download">下載 JSON</button><button type="button" data-action="import">套用貼上配置</button><button type="button" data-action="handoff" hidden>把配置交給 Codex</button></div>
+  </section>
+</div>
+<style>
+#lumen-map-editor{--le-ink:light-dark(#213b43,#ecdfc5);--le-muted:light-dark(#52676c,#b4c9c3);--le-surface:light-dark(#f4f3ed,#17323c);--le-surface-2:light-dark(#e8ece8,#25434d);--le-line:light-dark(#b2c0ba,#526d6c);--le-floor:light-dark(#e1d5b6,#a99670);--le-floor-ink:#192e37;--le-plan:light-dark(#f0e7e1,#4e3f45);--le-active:light-dark(#d6e7dc,#315348);--le-focus:light-dark(#286554,#a0d5ba);--le-error:light-dark(#a83230,#f0a092);color:var(--le-ink);font:16px/1.5 system-ui,"Noto Sans CJK TC",sans-serif;width:100%;max-width:1100px;margin:auto;touch-action:pan-y}
+#lumen-map-editor *{box-sizing:border-box}#lumen-map-editor h2,#lumen-map-editor h3{margin:0;font-weight:500}#lumen-map-editor h2{font-size:22px}#lumen-map-editor h3{font-size:17px}#lumen-map-editor .le-header{display:flex;flex-direction:column;gap:4px;padding-right:96px;margin-bottom:14px}#lumen-map-editor .le-caption{color:var(--le-muted);font-size:14px}
+#lumen-map-editor button,#lumen-map-editor select,#lumen-map-editor input,#lumen-map-editor textarea{font:inherit;color:var(--le-ink)}#lumen-map-editor button,#lumen-map-editor select,#lumen-map-editor input[type=number]{background:var(--le-surface);border:1px solid var(--le-line);border-radius:5px;min-height:38px}#lumen-map-editor button{padding:6px 10px;cursor:pointer}#lumen-map-editor button:disabled{opacity:.45;cursor:default}#lumen-map-editor button[aria-pressed=true]{background:var(--le-surface-2);outline:2px solid var(--le-focus);outline-offset:-2px}#lumen-map-editor select{padding:5px 7px;max-width:100%}#lumen-map-editor input[type=checkbox]{accent-color:var(--le-focus)}#lumen-map-editor label{display:flex;gap:6px;align-items:center;min-width:0}#lumen-map-editor .le-toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:14px}
+#lumen-map-editor .le-workspace{display:grid;grid-template-columns:minmax(0,1fr) 185px;gap:18px;align-items:start}#lumen-map-editor .le-map-column{min-width:0}#lumen-map-editor .le-board{position:relative;width:100%;aspect-ratio:1;isolation:isolate;touch-action:none;border:1px solid var(--le-line)}#lumen-map-editor .le-cells{position:absolute;inset:0;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr)}
+#lumen-map-editor .le-board{overflow:hidden}#lumen-map-editor .le-cell{border:0;border-right:1px solid var(--le-line);border-bottom:1px solid var(--le-line);border-radius:0;min-height:0;padding:0;background:transparent;font-size:13px;position:relative;touch-action:none}#lumen-map-editor .le-cell.is-floor{background:var(--le-floor);color:var(--le-floor-ink)}#lumen-map-editor .le-cell.is-start{box-shadow:inset 0 0 0 2px var(--le-focus)}#lumen-map-editor .le-cell:disabled{opacity:1}#lumen-map-editor .le-rooms{position:absolute;inset:0;pointer-events:none}
+#lumen-map-editor .le-room{position:absolute;pointer-events:auto;display:flex;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--le-line);border-radius:3px;background:var(--le-plan);font-size:14px;font-weight:500;padding:1px;min-height:0;touch-action:none;cursor:grab;overflow:hidden;overflow-wrap:anywhere}#lumen-map-editor .le-room.is-initial{background:var(--le-active);border-style:solid}#lumen-map-editor .le-room.is-selected{outline:2px solid var(--le-focus);outline-offset:-3px}#lumen-map-editor .le-room.is-dragging{opacity:.35}#lumen-map-editor .le-room[disabled]{pointer-events:none}
+#lumen-map-editor .le-room:disabled{opacity:1;cursor:default}#lumen-map-editor .le-door{position:absolute;background:var(--le-focus);pointer-events:none}#lumen-map-editor .le-door.east{right:0;top:38%;height:24%;width:4px}#lumen-map-editor .le-door.west{left:0;top:38%;height:24%;width:4px}#lumen-map-editor .le-door.north{top:0;left:38%;width:24%;height:4px}#lumen-map-editor .le-door.south{bottom:0;left:38%;width:24%;height:4px}
+#lumen-map-editor .le-ghost{position:absolute;pointer-events:none;border:2px solid var(--le-focus);background:var(--le-active);opacity:.85;display:flex;align-items:center;justify-content:center;z-index:4;font-size:14px}#lumen-map-editor .le-ghost.is-invalid{border-color:var(--le-error);color:var(--le-error)}#lumen-map-editor [hidden]{display:none!important}
+#lumen-map-editor .le-inspector{display:flex;flex-direction:column;gap:12px;min-width:0}#lumen-map-editor .le-position{display:grid;grid-template-columns:1fr 1fr;gap:8px}#lumen-map-editor .le-position input{width:100%;min-width:0;padding:4px}#lumen-map-editor .le-nudge{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}#lumen-map-editor .le-nudge button{padding:4px}#lumen-map-editor .le-initial{flex-wrap:wrap}#lumen-map-editor .le-map-meta,#lumen-map-editor .le-legend{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--le-muted);margin-top:9px}#lumen-map-editor .le-legend{justify-content:flex-start;gap:15px}#lumen-map-editor .le-dot{display:inline-block;width:11px;height:11px;margin-right:4px;vertical-align:middle;border:1px solid var(--le-line)}#lumen-map-editor .le-floor-dot{background:var(--le-floor)}#lumen-map-editor .le-plan-dot{background:var(--le-plan)}#lumen-map-editor .le-initial-dot{background:var(--le-active)}
+#lumen-map-editor .le-tray-section{margin-top:15px}#lumen-map-editor .le-tray{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}#lumen-map-editor .le-tray button{touch-action:none;cursor:grab}#lumen-map-editor .le-tray button small{display:block;font-size:12px;color:var(--le-muted)}#lumen-map-editor .le-status{margin-top:14px;color:var(--le-ink);min-height:1.5em}#lumen-map-editor .le-validation{margin-top:5px;color:var(--le-muted);font-size:14px}#lumen-map-editor .le-validation.has-error{color:var(--le-error)}#lumen-map-editor .le-json{margin-top:14px}#lumen-map-editor .le-json>label{display:flex;flex-direction:column;align-items:stretch;gap:7px}#lumen-map-editor textarea{width:100%;background:var(--le-surface);border:1px solid var(--le-line);padding:10px;resize:vertical;border-radius:5px}#lumen-map-editor .le-json .le-toolbar{margin-top:10px}
+@media(max-width:650px){#lumen-map-editor .le-workspace{grid-template-columns:minmax(0,1fr)}#lumen-map-editor .le-inspector{display:grid;grid-template-columns:1fr 1fr;gap:10px}#lumen-map-editor .le-inspector>.le-caption:last-child{grid-column:1/-1}#lumen-map-editor .le-nudge{grid-template-columns:repeat(2,1fr)}#lumen-map-editor .le-header{padding-right:70px}#lumen-map-editor h2{font-size:19px}#lumen-map-editor .le-room{font-size:13px}#lumen-map-editor .le-toolbar{gap:7px}}
+@media(pointer:coarse){#lumen-map-editor button:not(.le-cell):not(.le-room),#lumen-map-editor select,#lumen-map-editor input[type=number]{min-height:44px}#lumen-map-editor input[type=number]{font-size:16px}}
+</style>
+<script>
+(()=>{
+ 'use strict';
+ const root=document.getElementById('lumen-map-editor');
+ const $=s=>root.querySelector(s),board=$('[data-board]'),storageKey='lumen-cinema-layout-editor-v1';
+ const defs=[{id:'hall1',name:'影廳 1',size:[2,2],door:'east',position:[2,4]},{id:'hall2',name:'影廳 2',size:[2,2],door:'west',position:[5,3]},{id:'tickets',name:'售票區',size:[1,1],door:'south',position:[5,5]},{id:'snacks',name:'小食部',size:[1,1],door:'south',position:[6,5]},{id:'toilets',name:'洗手間',size:[1,1],door:'east',position:[3,6]}];
+ const clone=v=>JSON.parse(JSON.stringify(v));
+ const fresh=()=>({kind:'lumen-cinema-layout-draft',schemaVersion:1,grid:[7,7],blockSize:8,start:[6,6],entranceSide:'east',floors:['6,6'],rooms:defs.map(d=>({...clone(d),initial:false}))});
+ let state=fresh(),selected='hall1',tool='move',startOnly=false,drag=null,paint=null,suppressClick=0,undo=[],redo=[],status='拖動區域到方格；手機亦可先選區域，再點目標方格。';
+ const room=()=>state.rooms.find(r=>r.id===selected),key=(x,y)=>x+','+y;
+ function cells(r,pos=r.position){if(!pos)return [];const out=[];for(let y=0;y<r.size[1];y++)for(let x=0;x<r.size[0];x++)out.push(key(pos[0]+x,pos[1]+y));return out}
+ function positionError(id,pos,s=state){const r=s.rooms.find(a=>a.id===id);if(!r)return '未知區域';if(!Array.isArray(pos)||pos.length!==2||!pos.every(Number.isInteger)||pos[0]<0||pos[1]<0||pos[0]+r.size[0]>7||pos[1]+r.size[1]>7)return '區域超出地圖邊界';const keys=cells(r,pos);if(keys.includes('6,6'))return '右下角起點須保留為入口走道';for(const other of s.rooms)if(other.id!==id&&other.position&&cells(other).some(k=>keys.includes(k)))return '區域不能互相重疊';return ''}
+ function normalize(input){
+  if(!input||input.kind!=='lumen-cinema-layout-draft'||input.schemaVersion!==1||JSON.stringify(input.grid)!=='[7,7]'||input.blockSize!==8)throw Error('配置格式或地圖尺寸不相容');
+  if(!Array.isArray(input.floors)||input.floors.length>49||!Array.isArray(input.rooms)||input.rooms.length!==5)throw Error('配置資料不完整');
+  const next=fresh();next.floors=[...new Set(input.floors)];if(next.floors.some(k=>typeof k!=='string'||!/^([0-6]),([0-6])$/.test(k)))throw Error('地板座標無效');if(!next.floors.includes('6,6'))throw Error('配置必須保留右下角起點地板');
+  for(const d of defs){const matches=input.rooms.filter(r=>r&&r.id===d.id);if(matches.length!==1)throw Error('區域資料重複或缺少');const src=matches[0],r=next.rooms.find(a=>a.id===d.id);if(src.position!==null&&(!Array.isArray(src.position)||src.position.length!==2||!src.position.every(Number.isInteger)))throw Error('區域座標無效');if(!['north','south','east','west'].includes(src.door)||typeof src.initial!=='boolean')throw Error('區域設定無效');r.position=src.position===null?null:src.position.slice();r.door=src.door;r.initial=src.initial;if(r.initial&&!r.position)throw Error('待放區域不能開局啟用')}
+  for(const r of next.rooms){if(r.position){const error=positionError(r.id,r.position,next);if(error)throw Error(error)}if(r.initial&&cells(r).some(k=>!next.floors.includes(k)))throw Error('開局區域缺少地板')}
+  return next;
+ }
+ function doorCell(r){const [x,y]=r.position,[w,h]=r.size;return r.door==='east'?[x+w,y+Math.floor(h/2)]:r.door==='west'?[x-1,y+Math.floor(h/2)]:r.door==='north'?[x+Math.floor(w/2),y-1]:[x+Math.floor(w/2),y+h]}
+ function validate(){
+  const active=state.rooms.filter(r=>r.initial&&r.position),blocked=new Set(active.flatMap(r=>cells(r))),walk=new Set(state.floors.filter(k=>!blocked.has(k))),seen=new Set(),q=[];
+  if(walk.has('6,6')){seen.add('6,6');q.push([6,6])}for(let i=0;i<q.length;i++){const [x,y]=q[i];for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const k=key(x+dx,y+dy);if(walk.has(k)&&!seen.has(k)){seen.add(k);q.push([x+dx,y+dy])}}}
+  const issues=[];if(seen.size!==walk.size)issues.push('部分開局地板未連到右下角起點');for(const r of active){const p=doorCell(r);if(!seen.has(key(...p)))issues.push(r.name+'的入口未接通走道')}
+  return {floorBlocks:state.floors.length,activeRooms:active.map(r=>r.id),plannedRooms:state.rooms.filter(r=>r.position&&!r.initial).map(r=>r.id),walkwayConnected:seen.size===walk.size,issues};
+ }
+ function persist(){
+  const report=validate(),bundle={layout:clone(state),selected,tool,startOnly};try{localStorage.setItem(storageKey,JSON.stringify(bundle))}catch{}
+  const api=window.openai;if(api&&typeof api.setWidgetState==='function')try{Promise.resolve(api.setWidgetState({modelContent:{layout:clone(state),validation:report},privateContent:{selected,tool,startOnly}})).catch(()=>{})}catch{}
+ }
+ function restore(bundle){if(!bundle)return false;try{state=normalize(bundle.layout);if(defs.some(d=>d.id===bundle.selected))selected=bundle.selected;if(['move','floor','erase'].includes(bundle.tool))tool=bundle.tool;startOnly=Boolean(bundle.startOnly);return true}catch{return false}}
+ const host=window.openai?.widgetState;
+ if(!restore(host?.modelContent?{layout:host.modelContent.layout,...host.privateContent}:null)){try{restore(JSON.parse(localStorage.getItem(storageKey)))}catch{}}
+ window.addEventListener('openai:set_globals',e=>{const s=e.detail?.globals?.widgetState;if(s?.modelContent?.layout&&restore({layout:s.modelContent.layout,...s.privateContent})){undo=[];redo=[];render()}});
+ function commit(before,message){if(JSON.stringify(before)!==JSON.stringify(state)){undo.push(before);if(undo.length>50)undo.shift();redo=[];persist()}status=message;render()}
+ function move(id,pos){const error=positionError(id,pos);if(error){status=error;renderStatus();return false}const before=clone(state),r=state.rooms.find(a=>a.id===id);r.position=pos.slice();if(r.initial)state.floors=[...new Set([...state.floors,...cells(r)])];selected=id;commit(before,`${r.name}已移至第 ${pos[1]+1} 行、第 ${pos[0]+1} 列`);return true}
+ function select(id){selected=id;tool='move';status='可拖放、輸入行列，或用方向鍵逐格移動。';render();persist()}
+ function point(e){const r=board.getBoundingClientRect();return {x:Math.floor((e.clientX-r.left)/r.width*7),y:Math.floor((e.clientY-r.top)/r.height*7),inside:e.clientX>=r.left&&e.clientX<r.right&&e.clientY>=r.top&&e.clientY<r.bottom}}
+ function box(el,pos,size){el.style.left=(pos[0]/7*100)+'%';el.style.top=(pos[1]/7*100)+'%';el.style.width=(size[0]/7*100)+'%';el.style.height=(size[1]/7*100)+'%'}
+ function renderStatus(){const r=validate();$('[data-status]').textContent=status;const summary=`開局：${r.floorBlocks} 塊地板、${r.activeRooms.length} 個啟用區域`;const v=$('[data-validation]');v.textContent=r.issues.length?summary+'。'+r.issues.join('；'):summary+'。'+(r.activeRooms.length?'入口與走道已連通。':'目前可維持單塊起步，區域位置只作規劃。');v.classList.toggle('has-error',Boolean(r.issues.length));$('[data-count]').textContent=`已鋪 ${r.floorBlocks} / 49 塊`}
+ function renderInspector(){const r=room();$('[data-selection]').textContent=r.name;$('[data-dimensions]').textContent=`${r.size[0]}×${r.size[1]} 方塊 · ${r.initial?'開局啟用':'規劃位置'}`;for(const [field,value]of [['row',r.position?r.position[1]+1:''],['col',r.position?r.position[0]+1:''],['door',r.door],['tool',tool]])$(`[data-field="${field}"]`).value=value;$('[data-field="initial"]').checked=r.initial;$('[data-field="initial"]').disabled=!r.position;$('[data-field="start-only"]').checked=startOnly;for(const a of ['up','down','left','right','remove'])$(`[data-action="${a}"]`).disabled=!r.position;$('[data-action="undo"]').disabled=!undo.length;$('[data-action="redo"]').disabled=!redo.length}
+ function render(){
+  const floorSet=new Set(state.floors);$('[data-cells]').replaceChildren();for(let y=0;y<7;y++)for(let x=0;x<7;x++){const k=key(x,y),b=document.createElement('button');b.type='button';b.className='le-cell'+(floorSet.has(k)?' is-floor':'')+(k==='6,6'?' is-start':'');b.dataset.cell=k;b.setAttribute('aria-label',`第${y+1}行第${x+1}列，${k==='6,6'?'右下角起點，':''}${floorSet.has(k)?'開局有地板':'未開發'}`);if(k==='6,6')b.textContent='起點';$('[data-cells]').append(b)}
+  $('[data-rooms]').replaceChildren();$('[data-tray]').replaceChildren();for(const r of state.rooms){if(r.position&&(!startOnly||r.initial)){const el=document.createElement('button');el.type='button';el.dataset.room=r.id;el.className='le-room'+(r.initial?' is-initial':'')+(r.id===selected?' is-selected':'');el.textContent=r.name;el.setAttribute('aria-label',`${r.name}，${r.initial?'開局啟用':'規劃'}，第${r.position[1]+1}行第${r.position[0]+1}列；可拖放或用方向鍵移動`);box(el,r.position,r.size);const d=document.createElement('span');d.className='le-door '+r.door;el.append(d);el.disabled=tool!=='move';$('[data-rooms]').append(el)}const b=document.createElement('button');b.type='button';b.dataset.palette=r.id;b.setAttribute('aria-pressed',String(r.id===selected));b.append(document.createTextNode(r.name));const sub=document.createElement('small');sub.textContent=`${r.size[0]}×${r.size[1]} · ${r.position?'已放置':'待放置'}`;b.append(sub);$('[data-tray]').append(b)}
+  renderInspector();renderStatus();$('[data-action="handoff"]').hidden=typeof window.openai?.sendFollowUpMessage!=='function';root.dataset.ready='true';
+ }
+ function paintAt(p){if(!p.inside)return;const k=key(p.x,p.y);if(tool==='floor'){if(!state.floors.includes(k))state.floors.push(k)}else{if(k==='6,6'){status='右下角起點地板會保留';return}if(state.rooms.some(r=>r.initial&&cells(r).includes(k))){status='請先取消該區的開局啟用，再擦除地板';return}state.floors=state.floors.filter(a=>a!==k)}render()}
+ root.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;const target=e.target.closest('[data-room],[data-palette]');
+  if(target&&tool==='move'){const id=target.dataset.room||target.dataset.palette,r=state.rooms.find(a=>a.id===id),p=point(e);selected=id;drag={id,pointer:e.pointerId,startX:e.clientX,startY:e.clientY,moved:false,grab:target.dataset.room?[p.x-r.position[0],p.y-r.position[1]]:[0,0],candidate:null};try{root.setPointerCapture(e.pointerId)}catch{}renderInspector();e.preventDefault();return}
+  if(e.target.closest('[data-board]')&&tool!=='move'){paint={before:clone(state),pointer:e.pointerId};try{root.setPointerCapture(e.pointerId)}catch{}paintAt(point(e));e.preventDefault()}
+ });
+ root.addEventListener('pointermove',e=>{
+  if(paint&&e.pointerId===paint.pointer){paintAt(point(e));return}if(!drag||e.pointerId!==drag.pointer)return;
+  if(Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)>4)drag.moved=true;if(!drag.moved)return;const p=point(e),r=state.rooms.find(a=>a.id===drag.id),g=$('[data-ghost]');drag.candidate=p.inside?[p.x-drag.grab[0],p.y-drag.grab[1]]:null;g.hidden=!drag.candidate;if(drag.candidate){box(g,drag.candidate,r.size);g.textContent=r.name;g.classList.toggle('is-invalid',Boolean(positionError(r.id,drag.candidate)))}const el=$(`[data-room="${drag.id}"]`);if(el)el.classList.add('is-dragging');e.preventDefault();
+ });
+ function endPointer(e,cancel=false){
+  if(paint&&e.pointerId===paint.pointer){const previous=paint.before;paint=null;commit(previous,cancel?'已結束地板編排':'起始地板已更新');suppressClick=Date.now()+300}
+  if(drag&&e.pointerId===drag.pointer){const d=drag;drag=null;$('[data-ghost]').hidden=true;if(!cancel&&d.moved&&d.candidate){if(!move(d.id,d.candidate))render()}else if(!cancel&&!d.moved)select(d.id);else render();if(d.moved)suppressClick=Date.now()+300}
+  try{root.releasePointerCapture(e.pointerId)}catch{}
+ }
+ root.addEventListener('pointerup',e=>endPointer(e));root.addEventListener('pointercancel',e=>endPointer(e,true));
+ root.addEventListener('click',e=>{if(Date.now()<suppressClick)return;const p=e.target.closest('[data-palette]'),r=e.target.closest('[data-room]'),c=e.target.closest('[data-cell]');if(p||r){select((p||r).dataset.palette||(p||r).dataset.room);return}if(c&&tool==='move'&&!startOnly){move(selected,c.dataset.cell.split(',').map(Number))}});
+ root.addEventListener('keydown',e=>{if(!e.target.matches('[data-room],[data-palette]'))return;const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key];if(delta){e.preventDefault();const id=e.target.dataset.room||e.target.dataset.palette,r=state.rooms.find(a=>a.id===id);if(r.position){move(id,[r.position[0]+delta[0],r.position[1]+delta[1]]);($(`[data-room="${id}"]`)||$(`[data-palette="${id}"]`)).focus()}}});
+ $('[data-field="tool"]').addEventListener('change',e=>{tool=e.target.value;startOnly=false;status=tool==='move'?'拖放區域，或先選區域再點目標方格。':tool==='floor'?'拖過方格鋪地板；地板需要連到右下角起點。':'拖過方格擦除地板；起點會保留。';render();persist()});
+ $('[data-field="start-only"]').addEventListener('change',e=>{startOnly=e.target.checked;status=startOnly?'目前只顯示開局已開放的地板及區域。':'目前顯示所有區域的規劃位置。';render();persist()});
+ for(const f of ['row','col'])$(`[data-field="${f}"]`).addEventListener('change',()=>{const row=Number($('[data-field="row"]').value)-1,col=Number($('[data-field="col"]').value)-1;move(selected,[col,row]);renderInspector()});
+ $('[data-field="door"]').addEventListener('change',e=>{const before=clone(state);room().door=e.target.value;commit(before,'入口方向已更新')});
+ $('[data-field="initial"]').addEventListener('change',e=>{const before=clone(state),r=room();r.initial=e.target.checked;if(r.initial)state.floors=[...new Set([...state.floors,...cells(r)])];commit(before,r.initial?'此區已加入開局，請以地板接通入口。':'此區只保留規劃位置，原有地板保留為走道。')});
+ function exportText(){return JSON.stringify({...clone(state),validation:validate()},null,2)}
+ function showExport(){const p=$('[data-json-panel]');p.hidden=false;$('[data-field="json"]').value=exportText()}
+ root.addEventListener('click',async e=>{
+  const a=e.target.closest('[data-action]')?.dataset.action;if(!a)return;
+  if(['up','down','left','right'].includes(a)){const r=room(),d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[a];if(r.position)move(r.id,[r.position[0]+d[0],r.position[1]+d[1]])}
+  if(a==='remove'){const before=clone(state),r=room();r.position=null;r.initial=false;commit(before,r.name+'已移回待放區')}
+  if(a==='undo'&&undo.length){redo.push(clone(state));state=undo.pop();status='已復原';persist();render()}
+  if(a==='redo'&&redo.length){undo.push(clone(state));state=redo.pop();status='已重做';persist();render()}
+  if(a==='export'){showExport();status='可複製、下載，或貼上已儲存的配置再匯入。';renderStatus()}
+  if(a==='copy'){const text=exportText();$('[data-field="json"]').value=text;try{await navigator.clipboard.writeText(text);status='已複製目前配置'}catch{$('[data-field="json"]').focus();$('[data-field="json"]').select();status='配置已選取，可使用複製指令'}renderStatus()}
+  if(a==='download'){const url=URL.createObjectURL(new Blob([exportText()],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='lumen-cinema-layout.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status='已下載目前配置';renderStatus()}
+  if(a==='import'){try{const next=normalize(JSON.parse($('[data-field="json"]').value)),before=clone(state);state=next;commit(before,'配置已匯入')}catch(error){status='未匯入：'+error.message;renderStatus()}}
+  if(a==='handoff'&&typeof window.openai?.sendFollowUpMessage==='function'){try{await window.openai.sendFollowUpMessage({title:'將目前地圖配置交給 Codex',prompt:'這是我在編排器選定的戲院地圖配置。請據此更新設計預覽，仍待我確認後才實裝遊戲或更新 Pages。\n'+exportText()})}catch{status='未送出配置；你仍可複製或下載。';renderStatus()}}
+ });
+ window.__lumenLayoutEditor={getState:()=>clone(state),getReport:()=>clone(validate()),getSelection:()=>selected};
+ render();
+})();
+</script>

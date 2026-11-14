@@ -31,3 +31,17 @@ repository 擁有者已啟用 GitHub Actions 作 Pages 來源。重試 run 43176
 發佈來源 9a55adcf4ab1b4316ecf615668ac23aba1556307：測試 run 43375605633、Pages run 43375605632 均成功，公開 version.json 回傳 v0.3.0 與相同 commit。manifest、六張 runtime PNG 及公開版實際營業驗證通過。
 
 本機真實瀏覽器驗證見 production/verification/v0.3/browser.json；公開驗證見 public.json、public-cinema.png，工作流程見 deployment.json。公開版由保留 TLS 驗證的平台 HTTPS 請求轉交 Chromium 呈現，以處理雲端 Chromium 獨立憑證庫的代理 CA 限制。必要時 revert 發佈 commit 後重新執行相同 workflow，v2 存檔格式不變。
+
+## 地圖設計及編排器
+
+使用者要求接入 GitHub，沿用現有 main 及 Pages workflow 發佈目前已確認配置、預覽及獨立工具：
+
+- `/design/`：設計入口，連到預覽、編排器、JSON 及目前可玩遊戲。
+- `/map-preview/`：selected-layout-v2 的像素預覽，預設洗手間向右；真正開局仍只有一塊地板、零啟用房間。
+- `/map-preview/confirmed-config.json`：已確認配置，房間位置保留。
+- `/layout-editor/`：單檔 HTML，預設採用已確認位置及向右方向；已有的本機編排儲存優先保留。
+- `/design/version.json`：設計修訂及來源 commit，用於核對部署。
+
+build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具；調整發佈副本中的相對匯入，避免暴露或依賴工作區路徑。遊戲主頁增加獨立分頁入口，不改財務、存檔或可玩地圖。新的建造／擴建玩法沒有在此輪實裝。
+
+本機建置與子路徑瀏覽器驗證見 production/verification/design-pages/local.json；遠端部署完成後在同目錄補充工作流程與公開網址證據。回退本輪發佈 commit 可移除設計入口及新工具，既有 v2 存檔不受影響。

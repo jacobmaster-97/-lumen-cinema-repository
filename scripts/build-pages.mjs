@@ -17,6 +17,31 @@ await cp(path.join(root, 'src/assets/cinema'), path.join(output, 'assets'), {
 });
 await cp(path.join(root, 'prototypes/art-pack/lumen-cinema-props-01.zip'), path.join(output, 'assets/lumen-cinema-props-01.zip'));
 await writeFile(path.join(output, '.nojekyll'), '');
+// Publish the approved design independently of the playable game's save/map contracts.
+const designSource=path.join(root,'design/art/selected-layout-v2');
+const mapOutput=path.join(output,'map-preview');
+await mkdir(path.join(mapOutput,'zones'),{recursive:true});
+for(const name of ['layout.json','selected-config.json','confirmed-config.json'])await cp(path.join(designSource,name),path.join(mapOutput,name));
+await cp(path.join(designSource,'preview.html'),path.join(mapOutput,'index.html'));
+let preview=await readFile(path.join(designSource,'preview.mjs'),'utf8');
+for(const [from,to]of [
+  ['../../../prototypes/browser/world.mjs','../world.mjs'],
+  ['../../../src/assets/cinema/runtime/','../assets/runtime/'],
+  ['../integrated-zones-v2/','./zones/'],
+]){
+  if(!preview.includes(from))throw Error('Design preview dependency moved: '+from);
+  preview=preview.replaceAll(from,to);
+}
+await writeFile(path.join(mapOutput,'preview.mjs'),preview);
+for(const name of ['tickets','snacks','toilets'])await cp(path.join(root,'design/art/integrated-zones-v2',name+'.png'),path.join(mapOutput,'zones',name+'.png'));
+await mkdir(path.join(output,'layout-editor'),{recursive:true});
+await cp(path.join(root,'design/tools/layout-editor/index.html'),path.join(output,'layout-editor/index.html'));
+await mkdir(path.join(output,'design'),{recursive:true});
+await cp(path.join(root,'design/tools/design-hub.html'),path.join(output,'design/index.html'));
+const approved=JSON.parse(await readFile(path.join(mapOutput,'confirmed-config.json'),'utf8'));
+if(approved.rooms.find(r=>r.id==='toilets')?.door!=='east')throw Error('Expected confirmed bathroom entry east');
+const designRelease={schemaVersion:1,revision:1,commit:process.env.GITHUB_SHA||null,builtAt:new Date().toISOString(),confirmedConfig:'../map-preview/confirmed-config.json',bathroomDoor:'east'};
+await writeFile(path.join(output,'design/version.json'),JSON.stringify(designRelease,null,2)+'\n');
 const atlas = JSON.parse(await readFile(path.join(output, 'assets/atlas.json'), 'utf8'));
 for (const asset of atlas.assets) {
   for (const name of [asset.file, `props/${asset.id}.tres`]) {

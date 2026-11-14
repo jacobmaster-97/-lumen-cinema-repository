@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "phase": "design-review-only",
+  "sourceSha256": "1cf40f91ef22931f41a230105f435a5e68ecfe7f2c4b8057d6e4bca1c53f8fcb",
+  "sourcePreserved": true,
+  "coordinatesMatched": true,
+  "noOverlap": true,
+  "all49StepsAdjacent": true,
+  "start": {
+    "floorBlocks": 1,
+    "rooms": [],
+    "allInitialFlags": false
+  },
+  "original": {
+    "issue": {
+      "room": "toilets",
+      "kind": "outside-map",
+      "cell": [
+        3,
+        7
+      ]
+    },
+    "reachableRooms": 4
+  },
+  "alternatives": [
+    {
+      "direction": "east",
+      "reachableRooms": 5
+    },
+    {
+      "direction": "west",
+      "reachableRooms": 5
+    }
+  ],
+  "browser": {
+    "desktop": [
+      1640,
+      1200
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "overflow": false,
+    "all49SliderStates": true,
+    "startFullSwitch": true,
+    "zoomGridAndRoutes": true,
+    "errors": []
+  },
+  "limitations": [
+    "Bathroom entry direction awaiting user confirmation",
+    "Block-level routes only; no furniture navigation or game runtime changes"
+  ],
+  "verifiedAt": "2026-11-14T00:07:41.300Z"
+}

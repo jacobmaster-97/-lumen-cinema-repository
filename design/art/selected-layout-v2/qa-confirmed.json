@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "confirmedChange": "toilets.door: south -> east",
+  "otherConfigurationUnchanged": true,
+  "originalSourcePreserved": true,
+  "defaultDirection": "east",
+  "reachableRooms": 5,
+  "entryConflict": null,
+  "initialFloors": [
+    "6,6"
+  ],
+  "initialRooms": [],
+  "gameRuntimeModified": false,
+  "pagesDeployed": false,
+  "errors": [],
+  "verifiedAt": "2026-11-14T00:11:53.206Z"
+}

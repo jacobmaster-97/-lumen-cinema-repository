@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "kind": "design-tool-only",
+  "gameRuntimeModified": false,
+  "pagesDeployed": false,
+  "inlineFragmentBytes": 26397,
+  "browser": {
+    "executable": "/usr/bin/chromium",
+    "desktop": [
+      1100,
+      1100
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "smallWidth": 320,
+    "physicalDevice": false,
+    "flows": [
+      "grid-snapped pointer drag",
+      "overlap rejection",
+      "out-of-bounds rejection",
+      "opening room activation",
+      "continuous floor brush",
+      "entry connectivity validation",
+      "erase and undo",
+      "opening-only view",
+      "JSON export",
+      "keyboard movement",
+      "undo and redo",
+      "tray and tap placement",
+      "numeric positioning",
+      "door change",
+      "invalid import is atomic",
+      "JSON import",
+      "downloaded JSON matches current state",
+      "automatic local restore",
+      "offline editing",
+      "touch select and place; no horizontal overflow",
+      "320px layout fits",
+      "opaque-origin sandbox works without localStorage",
+      "restores host widget state",
+      "saves layout and validation below 16KiB",
+      "handoff preserves design-only confirmation boundary",
+      "global state event restores without resaving",
+      "self-contained standalone document executes offline without server resources",
+      "pointer drag from unplaced tray"
+    ],
+    "errors": [],
+    "flowCount": 28
+  },
+  "environmentLimit": "Direct file:// navigation is blocked by managed Chromium policy ERR_BLOCKED_BY_ADMINISTRATOR. Offline standalone markup execution verified through setContent; no browser security flags changed.",
+  "untested": [
+    "Physical mobile devices",
+    "Final gameplay navigation, expansion economics and save migration"
+  ],
+  "verifiedAt": "2026-11-13T16:21:46.789Z"
+}

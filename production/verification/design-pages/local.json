@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "base": "http://127.0.0.1:8249/pages/",
+  "checks": [
+    "hub and every relative link at repository subpath",
+    "published preview assets, import paths and five door routes",
+    "initial one floor and no rooms",
+    "downloadable confirmed config",
+    "fresh editor defaults equal confirmed map",
+    "editor interaction, JSON export and persistent reload",
+    "game launches and opens design hub in separate tab",
+    "390px layouts on game, hub, preview and editor"
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "verifiedAt": "2026-11-14T00:39:30.997Z"
+}

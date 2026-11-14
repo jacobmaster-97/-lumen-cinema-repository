@@ -1,0 +1,102 @@
+{
+  "kind": "lumen-cinema-layout-draft",
+  "schemaVersion": 1,
+  "grid": [
+    7,
+    7
+  ],
+  "blockSize": 8,
+  "start": [
+    6,
+    6
+  ],
+  "entranceSide": "east",
+  "floors": [
+    "6,6"
+  ],
+  "rooms": [
+    {
+      "id": "hall1",
+      "name": "影廳 1",
+      "size": [
+        2,
+        2
+      ],
+      "door": "east",
+      "position": [
+        2,
+        4
+      ],
+      "initial": false
+    },
+    {
+      "id": "hall2",
+      "name": "影廳 2",
+      "size": [
+        2,
+        2
+      ],
+      "door": "west",
+      "position": [
+        5,
+        3
+      ],
+      "initial": false
+    },
+    {
+      "id": "tickets",
+      "name": "售票區",
+      "size": [
+        1,
+        1
+      ],
+      "door": "south",
+      "position": [
+        5,
+        5
+      ],
+      "initial": false
+    },
+    {
+      "id": "snacks",
+      "name": "小食部",
+      "size": [
+        1,
+        1
+      ],
+      "door": "south",
+      "position": [
+        6,
+        5
+      ],
+      "initial": false
+    },
+    {
+      "id": "toilets",
+      "name": "洗手間",
+      "size": [
+        1,
+        1
+      ],
+      "door": "east",
+      "position": [
+        3,
+        6
+      ],
+      "initial": false
+    }
+  ],
+  "validation": {
+    "floorBlocks": 1,
+    "activeRooms": [],
+    "plannedRooms": [
+      "hall1",
+      "hall2",
+      "tickets",
+      "snacks",
+      "toilets"
+    ],
+    "walkwayConnected": true,
+    "issues": []
+  }
+}

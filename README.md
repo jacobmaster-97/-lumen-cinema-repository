@@ -4,6 +4,10 @@
 
 [立即試玩 · GitHub Pages](https://jacobmaster-97.github.io/-lumen-cinema-repository/) · [遊戲框架](design/gdd.md) · [v0.3 重製說明](design/rebuild-v0.3.md) · [目前交接](CODEX_HANDOFF.md)
 
+[地圖設計入口](https://jacobmaster-97.github.io/-lumen-cinema-repository/design/) · [像素地圖預覽](https://jacobmaster-97.github.io/-lumen-cinema-repository/map-preview/) · [拖放編排器](https://jacobmaster-97.github.io/-lumen-cinema-repository/layout-editor/)
+
+最新規劃為 7×7 方塊，由右下角單塊地板起步，洗手間入口已確認向右。預覽及編排器獨立公開；新的建造／擴建玩法仍待整體設計確認後接入可玩遊戲。編排器新開預設採用已確認配置，可匯出 JSON 或下載單檔 HTML 離線使用。
+
 ![實際營業畫面](docs/screenshots/v0.3-running.png)
 
 ## v0.3 像素重製

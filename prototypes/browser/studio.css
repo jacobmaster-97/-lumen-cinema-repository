@@ -13,5 +13,6 @@ button,input,select{font:inherit}button{border-radius:3px!important;min-height:4
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 @media(min-width:901px){main#main-content{padding-top:20px}.page-heading{margin-bottom:20px}.page-heading h1{font-size:30px;margin:6px 0 8px}.scene-card>.panel-header{padding-top:13px;padding-bottom:13px;min-height:76px}.scene-card>.panel-header .eyebrow{display:none}.scene-wrap{height:clamp(370px,calc(100dvh - 380px),720px)}}
+.design-link{display:inline-block;margin:0 0 16px;color:#315b5b;font-size:14px;text-underline-offset:3px}
 .film-card.unavailable{opacity:1}.film-card.unavailable .poster-wrap canvas{filter:grayscale(.2) saturate(.85);opacity:.85}.new-tag{background:#24463ee8;color:#fff3cf}.film-footer{font-size:13px!important}.film-body p{font-size:13px}
 @media(max-width:620px){.brand>span:last-child{display:block!important}.scene-card>.panel-header .eyebrow,.scene-card>.panel-header p:not(.eyebrow){display:none}.scene-card>.panel-header{min-height:70px}.map-controls button{min-width:44px;min-height:44px}.map-controls button:last-child{min-width:44px}.map-controls span{min-width:28px}}
