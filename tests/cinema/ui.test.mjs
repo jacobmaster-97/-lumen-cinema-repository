@@ -102,6 +102,7 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
     assert.ok(draws > 0, "Real sprite rendering path was exercised");
     assert.deepEqual(save().branches[0].map.floors,['6,6']);
     assert.equal(save().branches[0].map.built.length,0);
+    click('[data-view="investment"]');click('[data-view="investment"][data-section="build"]');
     for(let i=0;i<15;i++)click('[data-action="construction-next"]');
     assert.equal(save().branches[0].map.built.length,4);
     assert.equal(save().cash,37600);
@@ -111,11 +112,12 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
       "staff",
       "snacks",
       "investment",
+      "strategy",
       "report",
       "overview",
     ]) {
       click(`[data-view="${view}"]`);
-      assert.ok(d.querySelector("#view-content").textContent.length > 30);
+      if(view==='overview')assert.ok(d.querySelector('#cinema'));else assert.ok(d.querySelector("#view-content").textContent.length > 30,view);
     }
     click('[data-view="schedule"]');
     click('[data-action="edit-show"]');
@@ -136,7 +138,7 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
     );
     assert.match(d.querySelector("#form-error").textContent, /重疊/);
     close();
-    click('[data-view="snacks"]');
+    click('[data-view="staff"]');click('[data-view="snacks"]');
     change('[data-food-price="0"]', 39);
     assert.equal(save().branches[0].foods[0], 39);
     click('[data-view="staff"]');
@@ -153,6 +155,7 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
     assert.equal(save().branches.length, 2);
     assert.equal(save().branches[1].programme.length, 0);
     assert.deepEqual(save().branches[1].map.floors,['6,6']);
+    click('[data-view="investment"]');click('[data-view="investment"][data-section="build"]');
     for(let i=0;i<15;i++)click('[data-action="construction-next"]');
     click('[data-view="schedule"]');
     click('[data-action="suggest-programme"]');
@@ -248,7 +251,7 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
     const closed = save();
     assert.equal(closed.phase, "closed");
     assert.equal(closed.history.length, 1);
-    click('[data-view="report"]');
+    click('[data-view="strategy"]');click('[data-view="report"]');
     assert.match(d.querySelector("#view-content").textContent, /日終公司現金/);
     click("#main-action");
     assert.equal(save().day, 2);

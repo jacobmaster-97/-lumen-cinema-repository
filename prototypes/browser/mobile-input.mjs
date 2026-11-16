@@ -1,0 +1,22 @@
+// Semantic buttons retain native keyboard/mouse behavior; touch activation owns pointerup.
+export function stepper(label,input,step=5){const off=/\bdisabled\b/.test(input)?'disabled':'';return `<div class="touch-field"><span>${label}</span><div class="touch-stepper" role="group" aria-label="${label}"><button type="button" ${off} data-action="step-value" data-delta="-${step}" aria-label="${label}減${step}">−${step}</button>${input}<button type="button" ${off} data-action="step-value" data-delta="${step}" aria-label="${label}加${step}">＋${step}</button></div></div>`}
+export function installMobileInput(doc){
+ const win=doc.defaultView;let tap=null,hold=null,delay=null,repeat=null,swipe=null,touchUntil=0;
+ const fire=(el,type)=>el.dispatchEvent(new win.Event(type,{bubbles:true}));
+ function adjust(button){const input=button.closest('.touch-stepper')?.querySelector('input');if(!input||input.disabled||button.disabled)return;const delta=Number(button.dataset.delta);if(input.type==='time'){const number=v=>{const [h,m]=v.split(':').map(Number);return h*60+m};const n=Math.max(number(input.min),Math.min(number(input.max),number(input.value)+delta));input.value=String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}else input.value=String(Math.max(Number(input.min),Math.min(Number(input.max),(Number(input.value)||Number(input.min))+delta)));fire(input,'input')}
+ function stop(commit=true){clearTimeout(delay);clearInterval(repeat);delay=null;repeat=null;const previous=hold;hold=null;if(commit&&previous?.input.isConnected&&previous.input.value!==previous.start)fire(previous.input,'change')}
+ doc.addEventListener('click',e=>{if(e.detail!==0&&(e.pointerType==='touch'||e.sourceCapabilities?.firesTouchEvents||!e.pointerType&&Date.now()<touchUntil)){e.preventDefault();e.stopImmediatePropagation()}},true);
+ doc.addEventListener('click',e=>{const b=e.target.closest('[data-action="step-value"]');if(b&&!b.disabled&&e.detail===0){adjust(b);const input=b.closest('.touch-stepper').querySelector('input');fire(input,'change')}});
+ doc.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(b&&!b.disabled){b.classList.add('touch-pressed');if(e.pointerType==='touch'){e.preventDefault();if(b.dataset.action!=='step-value')tap={id:e.pointerId,b,x:e.clientX,y:e.clientY,moved:false}}
+   if(b.dataset.action==='step-value'){e.preventDefault();stop();const input=b.closest('.touch-stepper').querySelector('input');hold={b,input,start:input.value};b.setPointerCapture?.(e.pointerId);adjust(b);delay=setTimeout(()=>repeat=setInterval(()=>hold?.b.isConnected?adjust(hold.b):stop(),95),380)}}
+  const head=e.target.closest('[data-swipe-dismiss]');if(head&&!b){e.preventDefault();head.setPointerCapture?.(e.pointerId);swipe={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,head,panel:head.closest('dialog,.zone-inspector')}}
+ });
+ doc.addEventListener('pointermove',e=>{if(tap&&tap.id===e.pointerId&&Math.hypot(e.clientX-tap.x,e.clientY-tap.y)>8){tap.moved=true;tap.b.classList.remove('touch-pressed')}if(hold){const r=hold.b.getBoundingClientRect();if(e.clientX<r.left-8||e.clientX>r.right+8||e.clientY<r.top-8||e.clientY>r.bottom+8){hold.b.classList.remove('touch-pressed');stop()}}
+  if(swipe&&swipe.id===e.pointerId){if(Math.abs(e.clientY-swipe.y)>70){swipe.panel.style.transform='';swipe=null;return}swipe.dx=Math.max(0,e.clientX-swipe.x);swipe.panel.style.transform=`translateX(${Math.min(160,swipe.dx)}px)`}
+ });
+ function end(e){if(e.pointerType==='touch')touchUntil=Date.now()+450;const selected=tap&&tap.id===e.pointerId?tap:null;if(selected){tap=null;if(e.type==='pointerup'&&!selected.moved&&selected.b.isConnected&&!selected.b.disabled){e.preventDefault();selected.b.click()}}stop();doc.querySelectorAll('.touch-pressed').forEach(b=>b.classList.remove('touch-pressed'));if(swipe&&e.pointerId===swipe.id){const s=swipe;swipe=null;s.panel.style.transform='';if(e.type==='pointerup'&&s.dx>80)s.head.querySelector('[data-action="clear-zone"],[data-action="close"]')?.click()}}
+ doc.addEventListener('pointerup',end);doc.addEventListener('pointercancel',end);
+ doc.addEventListener('visibilitychange',()=>{if(doc.hidden){tap=null;stop();if(swipe){swipe.panel.style.transform='';swipe=null}}});
+ // If another action replaces a held input, release its timer without writing to a detached form.
+ const observer=new win.MutationObserver(()=>{if(hold&&!hold.b.isConnected)stop(false)});observer.observe(doc.body,{childList:true,subtree:true});
+}

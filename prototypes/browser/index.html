@@ -1,128 +1,34 @@
 <!doctype html>
 <html lang="zh-HK">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#142630" />
-    <meta
-      name="description"
-      content="光影大亨：現代香港像素戲院經營。排片、定價、親自救場，買斷物業並經營第二間分店。"
-    />
-    <title>光影大亨 · 戲院經營</title>
-    <link rel="icon" href="favicon.svg" />
-    <link rel="stylesheet" href="game.css?v=0.6.0" />
-    <link rel="stylesheet" href="studio.css?v=0.6.0" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <a class="brand" href="./"
-          ><span class="logo-mark">L<i>▶</i></span
-          ><span>光影大亨<small>LUMEN CINEMA</small></span></a
-        >
-        <div class="sidebar-divider"></div>
-        <span class="nav-overline">戲院管理</span>
-        <nav aria-label="遊戲選單">
-          <button class="nav-item active" data-view="overview">
-            <span>▧</span>戲院總覽<i>01</i>
-          </button>
-          <button class="nav-item" data-view="schedule">
-            <span>▤</span>排片時間表<i>02</i>
-          </button>
-          <button class="nav-item" data-view="movies">
-            <span>▥</span>電影發行庫<i>03</i>
-          </button>
-          <button class="nav-item" data-view="staff">
-            <span>♧</span>員工團隊<i>04</i>
-          </button>
-          <button class="nav-item" data-view="snacks">
-            <span>♜</span>小食與售價<i>05</i>
-          </button>
-          <button class="nav-item" data-view="investment">
-            <span>◇</span>裝修與物業<i>06</i>
-          </button>
-          <button class="nav-item" data-view="strategy"><span>◎</span>口碑與維護<i>07</i></button>
-          <button class="nav-item" data-view="report">
-            <span>▦</span>每日營運報告<i>08</i>
-          </button>
-        </nav>
-        <div class="branch-section">
-          <div class="branch-label">
-            旗下戲院 <span id="branch-count">01 / 02</span>
-          </div>
-          <div id="branch-buttons"></div>
-          <button id="second-branch" class="add-branch">
-            ＋ 開設第二間戲院
-          </button>
-        </div>
-        <div class="sidebar-bottom">
-          <span class="release-mark">CINEMA STRATEGY · 0.6</span><span>香港 · 好戲正在上演</span
-          ><small>方塊擴建 · 正式地圖</small>
-        </div>
-      </aside>
-      <div class="main-shell">
-        <header class="topbar">
-          <div class="day-info">
-            <span class="day-chip" id="day-number">DAY 01</span>
-            <div>
-              <strong id="calendar">第 1 週・星期一</strong
-              ><small id="phase-label">營業前準備</small>
-            </div>
-          </div>
-          <div class="topbar-right">
-            <div class="company-cash">
-              <small>公司現金 <span>HKD</span></small
-              ><strong id="cash">$68,000</strong>
-            </div>
-            <span class="top-divider"></span
-            ><button id="save-button" class="icon-button" title="儲存進度">
-              ↓ <span>存檔</span></button
-            ><button id="load-button" class="icon-button" title="讀取本機存檔">
-              ↺ <span>讀檔</span></button
-            ><button id="sound-button" class="icon-button" aria-label="切換音效" aria-pressed="false" title="開啟音效">♩</button><button id="help-button" class="help-button" aria-label="遊戲說明">
-              ?
-            </button>
-          </div>
-        </header>
-        <main id="main-content">
-          <div class="page-heading">
-            <div>
-              <p class="eyebrow" id="page-eyebrow">YOUR CINEMA, YOUR STORY</p>
-              <h1 id="page-title">大銀幕，小生意。</h1>
-              <p id="page-description">
-                由一間戲院開始，讓每一場好戲都有人欣賞。
-              </p>
-            </div>
-            <span id="property-badge" class="property-badge">租賃物業</span>
-          </div>
-          <a class="design-link" href="./design/" target="_blank" rel="noopener">地圖設計與編排 ↗</a>
-          <div id="view-content"></div>
-        </main>
-        <footer class="operation-bar">
-          <div class="clock-block">
-            <span class="clock-face">◷</span>
-            <div>
-              <b id="game-clock">11:00</b
-              ><small id="time-note">1× 營業日 3 分鐘 · 事件停頓另計</small>
-            </div>
-            <div class="day-progress"><span id="day-progress"></span></div>
-          </div>
-          <div class="operation-controls">
-            <div class="speeds" aria-label="營業速度">
-              <button data-speed="1" class="active">1×</button
-              ><button data-speed="2">2×</button
-              ><button data-speed="4">4×</button>
-            </div>
-            <button id="pause-button" class="secondary" hidden>Ⅱ 暫停</button
-            ><button id="main-action" class="primary">
-              開始第 1 日營業 <span>▶</span>
-            </button>
-          </div>
-        </footer>
-      </div>
-    </div>
-    <div id="toast" role="status" aria-live="polite" hidden></div>
-    <dialog id="modal"><div id="modal-content"></div></dialog>
-    <script src="game.mjs?v=0.6.0" type="module"></script>
-  </body>
-</html>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#152b35">
+<meta name="description" content="光影大亨：香港像素戲院經營。排片、定價、親自救場，逐格擴建，買斷物業並經營分店。">
+<title>光影大亨 · 戲院經營</title><link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="game.css?v=0.7.0"><link rel="stylesheet" href="studio.css?v=0.7.0"><link rel="stylesheet" href="mobile.css?v=0.7.0">
+</head>
+<body>
+<div class="app-shell mobile-game">
+<header class="topbar">
+<span class="mobile-brand" aria-label="光影大亨">L</span>
+<button id="branch-picker" class="branch-picker" aria-label="選擇戲院"><span id="active-branch-name">旺角 · 光影戲院</span>⌄</button>
+<div class="company-cash"><strong id="cash">$68,000</strong></div>
+<div class="mobile-time"><span id="day-number">第1日</span><b id="game-clock">11:00</b></div>
+<button id="cycle-speed" aria-label="切換營業速度">1×</button>
+<button id="pause-button" class="primary" hidden>暫停</button><button id="main-action" class="primary">建造戲院</button>
+<button id="more-button" aria-label="更多選項" aria-expanded="false">⋯</button>
+</header>
+<main id="main-content"><div id="work-header"></div><div id="view-content"></div></main>
+<nav class="bottom-nav" aria-label="戲院工作頁">
+<button data-view="overview" data-group="map" aria-pressed="true">地圖</button><button data-view="schedule" data-group="programme">排片</button><button data-view="staff" data-group="operations">營運</button><button data-view="strategy" data-group="business">經營</button><button data-view="investment" data-group="investment">投資</button>
+</nav>
+<section id="utilities" class="utility-menu" aria-label="更多選項" hidden>
+<button id="save-button">儲存進度</button><button id="load-button">讀取進度</button><button id="sound-button" aria-label="切換音效" aria-pressed="false">音效</button><button id="help-button">操作說明</button><button id="fullscreen-button">全螢幕</button>
+<div class="speeds" aria-label="營業速度"><button data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button></div>
+<small class="release-mark">LUMEN CINEMA · 0.7.0</small>
+</section>
+</div>
+<!-- Existing metadata/update contracts; only actionable information stays on the game HUD. -->
+<div hidden><span id="calendar"></span><span id="phase-label"></span><span id="property-badge"></span><span id="time-note"></span><span id="day-progress"></span><span id="branch-count"></span><div id="branch-buttons"></div><button id="second-branch">開設第二間戲院</button><span id="page-eyebrow"></span><span id="page-title"></span><span id="page-description"></span></div>
+<div id="toast" role="status" aria-live="polite" hidden></div><dialog id="modal"><div id="modal-content"></div></dialog>
+<script src="game.mjs?v=0.7.0" type="module"></script>
+</body></html>

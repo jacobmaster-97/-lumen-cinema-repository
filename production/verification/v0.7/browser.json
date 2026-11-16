@@ -1,0 +1,468 @@
+{
+  "url": "http://127.0.0.1:8340/pages/",
+  "checks": [
+    "one-block start, live full-height canvas, no centre controls or permanent inspector",
+    "investment construction completes 15 funded steps; approved map and east bathroom preserved",
+    "real schedule forecasts, price steps/custom entry, deletion confirmation preserves draft",
+    "food step commits once and staff assignments use the original save model",
+    "maintenance conflict, paid booking/refund and business subtabs",
+    "real branch investment, picker, branch-specific map and property purchase",
+    "native live-canvas two-finger zoom and drag suppress accidental room selection",
+    "all three actual minigames finish through touch and grant real temporary service benefits",
+    "3-minute base day at 4x, real admissions/feedback, day close and next-day transition",
+    "eight viewports preserve full-height live map, 29/30px landscape bars and 44px touch targets",
+    "legacy v2 save, branch/property/capacity and explicit save remain compatible"
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "runtimeArtRequests": [],
+  "sizes": [
+    {
+      "width": 844,
+      "height": 390,
+      "overflow": false,
+      "canvas": [
+        844,
+        331
+      ],
+      "header": 29,
+      "nav": 30,
+      "targets": true
+    },
+    {
+      "width": 932,
+      "height": 430,
+      "overflow": false,
+      "canvas": [
+        932,
+        371
+      ],
+      "header": 29,
+      "nav": 30,
+      "targets": true
+    },
+    {
+      "width": 740,
+      "height": 360,
+      "overflow": false,
+      "canvas": [
+        740,
+        301
+      ],
+      "header": 29,
+      "nav": 30,
+      "targets": true
+    },
+    {
+      "width": 640,
+      "height": 320,
+      "overflow": false,
+      "canvas": [
+        640,
+        261
+      ],
+      "header": 29,
+      "nav": 30,
+      "targets": true
+    },
+    {
+      "width": 320,
+      "height": 720,
+      "overflow": false,
+      "canvas": [
+        320,
+        530
+      ],
+      "header": 100,
+      "nav": 30,
+      "targets": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false,
+      "canvas": [
+        390,
+        530
+      ],
+      "header": 100,
+      "nav": 30,
+      "targets": true
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "overflow": false,
+      "canvas": [
+        720,
+        530
+      ],
+      "header": 29,
+      "nav": 30,
+      "targets": true
+    },
+    {
+      "width": 1080,
+      "height": 2400,
+      "overflow": false,
+      "canvas": [
+        1080,
+        2341
+      ],
+      "header": 29,
+      "nav": 30,
+      "targets": true
+    }
+  ],
+  "starter": {
+    "coldCompileMs": 502,
+    "walkers": 4,
+    "version": "0.7.0",
+    "operations": null,
+    "mapGrid": [
+      56,
+      56
+    ],
+    "mapBlocks": [
+      7,
+      7
+    ],
+    "floorBlocks": 12,
+    "builtRooms": [
+      "tickets",
+      "snacks",
+      "toilets",
+      "hall1"
+    ],
+    "roomRects": [
+      {
+        "id": "hall1",
+        "rect": [
+          16,
+          32,
+          16,
+          16
+        ],
+        "door": "east"
+      },
+      {
+        "id": "hall2",
+        "rect": [
+          40,
+          24,
+          16,
+          16
+        ],
+        "door": "west"
+      },
+      {
+        "id": "tickets",
+        "rect": [
+          40,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "snacks",
+        "rect": [
+          48,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "toilets",
+        "rect": [
+          24,
+          48,
+          8,
+          8
+        ],
+        "door": "east"
+      }
+    ],
+    "objects": 48,
+    "seatCounts": [
+      48,
+      0
+    ],
+    "layers": 51,
+    "cacheMiB": 34,
+    "renderP95Ms": 242.7,
+    "pathsReachable": true,
+    "camera": {
+      "zoom": 1,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "liveDiagnostics": {
+    "coldCompileMs": 0,
+    "patronActors": {
+      "queued": 12,
+      "seated": 4,
+      "walking": 9,
+      "departing": 0
+    },
+    "visiblePatrons": [
+      {
+        "id": 0,
+        "stage": "seated"
+      },
+      {
+        "id": 1,
+        "stage": "seated"
+      },
+      {
+        "id": 2,
+        "stage": "seated"
+      },
+      {
+        "id": 3,
+        "stage": "seated"
+      },
+      {
+        "id": 4,
+        "stage": "to-hall"
+      },
+      {
+        "id": 5,
+        "stage": "to-hall"
+      },
+      {
+        "id": 6,
+        "stage": "to-hall"
+      },
+      {
+        "id": 7,
+        "stage": "to-hall"
+      },
+      {
+        "id": 8,
+        "stage": "to-snacks"
+      },
+      {
+        "id": 9,
+        "stage": "to-hall"
+      },
+      {
+        "id": 10,
+        "stage": "to-hall"
+      },
+      {
+        "id": 11,
+        "stage": "to-snacks"
+      },
+      {
+        "id": 12,
+        "stage": "to-hall"
+      },
+      {
+        "id": 13,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 14,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 15,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 16,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 17,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 18,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 19,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 20,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 21,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 22,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 23,
+        "stage": "ticket-queue"
+      },
+      {
+        "id": 24,
+        "stage": "ticket-queue"
+      }
+    ],
+    "unreachableActors": 0,
+    "walkers": 29,
+    "version": "0.7.0",
+    "operations": {
+      "tickets": 21,
+      "snacks": 0,
+      "arriving": 0,
+      "seated": 4,
+      "departing": 0,
+      "waitingHall": 7,
+      "waitTickets": 3,
+      "waitSnacks": 0,
+      "lost": 0,
+      "snackLost": 0,
+      "losses": {
+        "wait": 0,
+        "capacity": 0,
+        "cancelled": 0,
+        "late": 0
+      },
+      "peak": {
+        "tickets": 34,
+        "snacks": 1
+      },
+      "rates": {
+        "tickets": 3.0555555555555554,
+        "snacks": 1.1666666666666667,
+        "cleaning": 2.7
+      },
+      "support": {
+        "tickets": false,
+        "snacks": false,
+        "cleaning": false
+      },
+      "halls": [
+        {
+          "state": "ready",
+          "show": null,
+          "remaining": 0,
+          "total": 0,
+          "until": 0,
+          "hygiene": 92
+        },
+        {
+          "state": "ready",
+          "show": null,
+          "remaining": 0,
+          "total": 0,
+          "until": 0,
+          "hygiene": 92
+        }
+      ],
+      "staff": [
+        {
+          "role": "tickets",
+          "count": 2,
+          "skill": 5
+        },
+        {
+          "role": "snacks",
+          "count": 1,
+          "skill": 3
+        },
+        {
+          "role": "cleaning",
+          "count": 1,
+          "skill": 3
+        }
+      ]
+    },
+    "mapGrid": [
+      56,
+      56
+    ],
+    "mapBlocks": [
+      7,
+      7
+    ],
+    "floorBlocks": 49,
+    "builtRooms": [
+      "hall1",
+      "hall2",
+      "tickets",
+      "snacks",
+      "toilets"
+    ],
+    "roomRects": [
+      {
+        "id": "hall1",
+        "rect": [
+          16,
+          32,
+          16,
+          16
+        ],
+        "door": "east"
+      },
+      {
+        "id": "hall2",
+        "rect": [
+          40,
+          24,
+          16,
+          16
+        ],
+        "door": "west"
+      },
+      {
+        "id": "tickets",
+        "rect": [
+          40,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "snacks",
+        "rect": [
+          48,
+          40,
+          8,
+          8
+        ],
+        "door": "south"
+      },
+      {
+        "id": "toilets",
+        "rect": [
+          24,
+          48,
+          8,
+          8
+        ],
+        "door": "east"
+      }
+    ],
+    "objects": 88,
+    "seatCounts": [
+      48,
+      40
+    ],
+    "layers": 51,
+    "cacheMiB": 52,
+    "renderP95Ms": 2.4,
+    "pathsReachable": true,
+    "camera": {
+      "zoom": 1,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "status": "passed"
+}

@@ -69,3 +69,7 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 新增strategy／strategy-ui模組及「口碑與維護」，73項Node測試、11條本機Chromium流程通過。預付保養、耗材、實際評價、損耗、停廳與故障接入同一財務及預測規則。保留v2外層，舊營業中資料不重算；下一日啟用flow.strategyVersion1，before-strategy-v1保留原始舊檔。
 
 模組快取統一0.6.0，來源SHA與workflow及公開驗證在production/verification/v0.6。升級美術使用者不滿意，/upgrade-art/改標暫存未採用；原PNG、裁切及runtime.files不改。公開瀏覽器以保留TLS驗證的即時HTTPS回應轉交Chromium，不用本機遊戲檔案替代。已發佈來源7e570aef888892f7809b3a81f2f585acf378d1b3：測試run43553784471、Pages run43553784527均success，公開version.json為0.6.0同SHA；6項公開檢查通過且errors／failedRequests／runtimeArtRequests為空。後續[skip ci]交接提交不改公開功能來源。
+
+## v0.7 手機橫向介面
+
+使用者已確認並授權實裝。新增mobile.css、mobile-input.mjs、touch-map.mjs，build明確複製並統一0.7.0快取。73項測試、11條本機瀏覽器流程及DPR2驗證通過。來源、workflow及公開驗證記錄將存於production/verification/v0.7。維持main原Pages流程；回退revert功能提交再部署，保留玩家v2存檔。未採用升級圖不加入runtime。

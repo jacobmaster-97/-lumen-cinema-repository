@@ -7,9 +7,9 @@ const source = path.join(root, 'prototypes/browser');
 const output = path.join(root, 'dist/pages');
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
-for (const name of ['index.html', 'game.css', 'game.mjs', 'engine.mjs', 'render.mjs', 'world.mjs', 'scene.mjs', 'assets.mjs', 'audio.mjs', 'strategy.mjs','strategy-ui.mjs','operations.mjs','operations-world.mjs','operations-ui.mjs','construction.mjs','construction-ui.mjs','map-data.mjs','map-world.mjs','studio.css', 'art.html', 'art.css', 'art.js']) {
+for (const name of ['index.html', 'game.css', 'game.mjs', 'engine.mjs', 'render.mjs', 'world.mjs', 'scene.mjs', 'assets.mjs', 'audio.mjs', 'strategy.mjs','strategy-ui.mjs','operations.mjs','operations-world.mjs','operations-ui.mjs','construction.mjs','construction-ui.mjs','map-data.mjs','map-world.mjs','studio.css','mobile.css','mobile-input.mjs','touch-map.mjs', 'art.html', 'art.css', 'art.js']) {
   await cp(path.join(source, name), path.join(output, name));
-  if(name.endsWith('.mjs')){const file=path.join(output,name),code=await readFile(file,'utf8');await writeFile(file,code.replace(/(['"])(\.\.?\/[^'"?]+\.mjs)(?:\?v=[^'"]+)?\1/g,(_,q,p)=>q+p+'?v=0.6.0'+q));}
+  if(name.endsWith('.mjs')){const file=path.join(output,name),code=await readFile(file,'utf8');await writeFile(file,code.replace(/(['"])(\.\.?\/[^'"?]+\.mjs)(?:\?v=[^'"]+)?\1/g,(_,q,p)=>q+p+'?v=0.7.0'+q));}
 }
 await cp(path.join(root, 'src/assets/icon.svg'), path.join(output, 'favicon.svg'));
 await cp(path.join(root, 'src/assets/cinema'), path.join(output, 'assets'), {
@@ -51,7 +51,7 @@ for (const asset of atlas.assets) {
     if (!entry.isFile() || entry.isSymbolicLink()) throw Error(`Expected regular asset file: ${name}`);
   }
 }
-const release = {version:'0.6.0',commit:process.env.GITHUB_SHA || null,builtAt:new Date().toISOString()};
+const release = {version:'0.7.0',commit:process.env.GITHUB_SHA || null,builtAt:new Date().toISOString()};
 await writeFile(path.join(output,'version.json'),JSON.stringify(release,null,2)+'\n');
 const runtime=JSON.parse(await readFile(path.join(output,'assets/runtime/manifest.json'),'utf8'));
 for(const file of Object.values(runtime.files)){if(!(await lstat(path.join(output,'assets/runtime',file))).isFile())throw Error('Missing runtime asset: '+file);}

@@ -1,13 +1,16 @@
+import {stepper,installMobileInput} from './mobile-input.mjs';
 import * as E from "./engine.mjs";
 import * as C from "./construction.mjs";
 import {constructionSummary,constructionPanel,roomConstruction} from "./construction-ui.mjs";
 import {operationsPanel,forecastPanel,draftForecast} from './operations-ui.mjs';
 import {strategyView,reviewPanel,cashPanel,maintenanceForm} from './strategy-ui.mjs';
-import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.6.0";
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.7.0";
 import { loadCinemaAssets } from "./assets.mjs";
 import { CinemaAudio } from "./audio.mjs";
 import { hallUnderRepair } from "./world.mjs";
 const audio=new CinemaAudio();
+installMobileInput(document);
+let strategySection="ratings",investmentSection="assets",mapBranch=null,savedCamera=null,deleteDraft=null;
 const $ = (s) => document.querySelector(s),
   esc = (s) =>
     String(s ?? "").replace(
@@ -126,7 +129,10 @@ function openModal(html, { event = false } = {}) {
     state.paused = true;
     updateHeader();
   }
+  $("#utilities").hidden=true;$("#more-button").setAttribute("aria-expanded","false");
   $("#modal-content").innerHTML = html;
+  $("#modal").classList.toggle("programme-modal",html.includes('id="programme-form"'));
+  if($("#programme-form"))$("#programme-form .modal-form").append($(".programme-details"));
   if (!$("#modal").open) $("#modal").showModal();
   hydratePosters($("#modal-content"));
 }
@@ -134,7 +140,7 @@ function closeModal() {
   if ($("#modal").open) $("#modal").close();
 }
 const modalHeader = (eyebrow, title, canClose = true) =>
-  `<div class="modal-header"><div><p class="eyebrow">${eyebrow}</p><h2>${title}</h2></div>${canClose ? '<button class="modal-close" data-action="close" aria-label="關閉">×</button>' : ""}</div>`;
+  `<div class="modal-header" ${canClose?'data-swipe-dismiss':''}><div><p class="eyebrow">${eyebrow}</p><h2>${title}</h2></div>${canClose ? '<button class="modal-close" data-action="close" aria-label="關閉">×</button>' : ""}</div>`;
 function hydratePosters(root = document) {
   for (const c of root.querySelectorAll("canvas[data-movie]")) {
     const m = E.movie(c.dataset.movie);
@@ -153,7 +159,7 @@ function estimateNet(branch) {
 }
 function updateHeader() {
   const v = b();
-  $("#day-number").textContent = "DAY " + String(state.day).padStart(2, "0");
+  $("#day-number").textContent = "第 " + state.day + " 日";
   $("#calendar").textContent =
     `第 ${Math.ceil(state.day / 7)} 週・星期${["一", "二", "三", "四", "五", "六", "日"][(state.day - 1) % 7]}`;
   $("#phase-label").textContent = {
@@ -186,12 +192,11 @@ function updateHeader() {
   $("#pause-button").hidden = state.phase !== "running";
   $("#pause-button").textContent = state.paused ? "▶ 繼續" : "Ⅱ 暫停";
   $("#main-action").hidden = state.phase === "running";
-  $("#main-action").innerHTML =
-    state.phase === "closed"
-      ? `籌備第 ${state.day + 1} 日 <span>→</span>`
-      : state.phase === "event"
-        ? "處理突發事件 <span>!</span>"
-        : state.branches.some(C.operational)?`開始第 ${state.day} 日營業 <span>▶</span>`:C.nextStep(v)?`${C.nextStep(v).label} · ${money(C.nextStep(v).cost)} <span>→</span>`:"先完成首輪建造 <span>→</span>";
+  $('#main-action').textContent=state.phase==='closed'?'翌日準備':state.phase==='event'?'處理事件':state.branches.some(C.operational)?'開始營業':'建造戲院';
+  $('#pause-button').textContent=state.paused?'繼續營業':'暫停';
+  $('#active-branch-name').textContent=v.name;
+  $('#cycle-speed').textContent=state.speed+'×';
+  $('#cycle-speed').setAttribute('aria-label',`營業速度 ${state.speed} 倍，點選切換`);
   for (const button of document.querySelectorAll("[data-speed]"))
     button.classList.toggle(
       "active",
@@ -248,11 +253,15 @@ function zoneInfo() {
   }else description='獨立入口連接大堂，設施與公共通道分開，保持動線暢通。';
   return `<p class="eyebrow">CINEMA OPERATIONS</p><h2>${title}</h2><p>${description}</p>${detail}<button class="primary" data-action="navigate" data-target="${target}">${actionText} →</button><button class="text-button" data-action="clear-zone">返回營運摘要</button>`;
 }
-function selectZone(id){selectedBlock=null;if(id?.startsWith("block:")){selectedBlock=id.slice(6).split(",").map(Number);id=null;}selectedZone=id;if(renderer){renderer.selected=id;renderer.dirty=true;}if($('#zone-inspector'))$('#zone-inspector').innerHTML=zoneInfo();for(const el of document.querySelectorAll('[data-zone]')){el.classList.toggle('active',el.dataset.zone===id);el.setAttribute('aria-pressed',String(el.dataset.zone===id));}}
-function overview() {
-  const v=b();
-  return `<div class="studio-overview"><section class="scene-card"><div class="panel-header"><div><p class="eyebrow">YOUR LITTLE PICTURE HOUSE</p><h2>${esc(v.name)}</h2><p>自動營運 · 每一場好戲，都由你安排</p></div><div class="map-controls" aria-label="地圖視角"><button data-action="zoom-out" aria-label="縮小地圖">−</button><span id="map-zoom">100%</span><button data-action="zoom-in" aria-label="放大地圖">＋</button><button data-action="map-fit">全圖</button><button data-action="map-owned">已建範圍</button></div></div><div class="scene-wrap"><span class="scene-label">${state.phase==='planning'?'開業前準備':state.phase==='closed'?'今日好戲，圓滿散場':'好戲正在上演'}</span><canvas id="cinema" width="1440" height="1000" tabindex="0" aria-label="立體階梯像素戲院；可拖曳移動，使用加減號縮放，亦可用下方按鈕選擇區域"></canvas><span class="scene-tag">拖曳移動 · ＋／－縮放</span></div><div class="zone-tabs" aria-label="選擇戲院區域">${[['hall1','影廳 1'],['hall2','影廳 2'],['tickets','售票'],['snacks','小食'],['toilets','洗手間']].map(([id,name])=>`<button data-action="select-zone" data-id="${id}" data-zone="${id}" aria-pressed="${selectedZone===id}" class="${selectedZone===id?'active':''}">${name}${C.hasRoom(v,id)?'':'（未建）'}</button>`).join('')}</div><div class="scene-bottom"><span>口碑 <b id="reputation">${Math.round(v.reputation)}</b> / 100</span><span>${v.staff.length} 位員工 · ${v.programme.length} 場放映 · ${v.district}</span></div></section><aside class="operations-dock"><section class="panel zone-inspector" id="zone-inspector">${zoneInfo()}</section><section class="panel programme-card"><div class="panel-header"><h2>今日放映</h2><button data-action="navigate" data-target="schedule">完整排片 ↗</button></div><div id="live-show-list" class="show-list">${nowShows()}</div></section></aside></div><div class="metrics"><div class="metric"><label>戲院票房留成</label><strong id="metric-tickets">${money(v.ledger.gross-v.ledger.share)}</strong><span>已扣片商分帳</span></div><div class="metric"><label>小食毛利</label><strong id="metric-food">${money(v.ledger.foodRevenue-v.ledger.foodCost)}</strong><span>已扣食品成本</span></div><div class="metric"><label>今日入場人次</label><strong id="metric-visitors">${v.ledger.admissions}<small> 人</small></strong><span id="metric-seats">已建影廳共 ${v.seats.reduce((n,seats,h)=>n+(C.hasRoom(v,`hall${h+1}`)?seats:0),0)} 席</span></div><div class="metric ${estimateNet(v)>=0?'positive':'negative'}" id="net-card"><label>${state.phase==='closed'?'今日營運淨利':'計入日常開支後'}</label><strong id="metric-net">${money(estimateNet(v))}</strong><span>包括人工、租金及維護</span></div></div><div class="studio-lower"><section class="panel ownership-goal"><p class="eyebrow">MAKE IT YOURS</p><h2>${v.owned?'有間自己嘅戲院。':'由租舖，到擁有。'}</h2><p>${v.owned?'往後免租，繼續用心維護，或為下一間戲院亮燈。':`儲起 ${money(E.PROPERTY_PRICE[v.id])}，買斷後每日免租 ${money(v.rent)}。`}</p><div class="ownership-progress"><span style="width:${v.owned?100:Math.min(100,Math.max(0,state.cash)/E.PROPERTY_PRICE[v.id]*100)}%"></span></div><button class="text-button" data-action="navigate" data-target="investment">裝修、物業與第二分店 →</button></section><section class="panel"><div class="panel-header"><h2>戲院小報</h2><span class="muted">LUMEN DAILY</span></div><div class="news" id="live-news">${newsHTML()}</div></section></div>`;
+function selectZone(id){
+ selectedBlock=null;
+ if(id?.startsWith('block:')){if(view!=='investment')return;selectedBlock=id.slice(6).split(',').map(Number);id=null;}
+ selectedZone=id;if(renderer){renderer.selected=id;renderer.dirty=true;}
+ if(view==='overview'&&$('#zone-inspector')){$('#zone-inspector').outerHTML=zoneDrawer();}
+ if(view==='investment'&&$('#construction-detail'))$('#construction-detail').innerHTML=zoneInfo();
 }
+function zoneDrawer(){const room=C.ROOMS.find(r=>r.id===selectedZone);return `<aside class="zone-inspector" id="zone-inspector" ${!room?'hidden':''}><div class="zone-heading" data-swipe-dismiss><span class="swipe-grip" aria-hidden="true"></span><h2>${room?.name||''}</h2><button data-action="clear-zone" aria-label="關閉區域詳情">×</button></div><div class="zone-body">${room?zoneInfo():''}</div></aside>`}
+function overview(){return `<div class="game-map"><div class="scene-wrap"><canvas id="cinema" width="1440" height="1000" tabindex="0" aria-label="像素戲院地圖，可單指拖動、雙指縮放，點選區域查看詳情"></canvas></div><div class="map-controls" data-map-controls aria-label="地圖縮放"><button data-action="zoom-out" aria-label="縮小地圖">−</button><button data-action="zoom-in" aria-label="放大地圖">＋</button></div>${zoneDrawer()}</div>`}
 function newsHTML() {
   return state.news
     .slice(0, 3)
@@ -266,7 +275,7 @@ function schedule() {
   const v = b(),
     errors = E.validateProgramme(state, v.programme,v.id),
     shows = state.phase === "planning" ? v.programme : v.shows;
-  return `<div class="section-toolbar"><p>11:00–24:00 營業 · 每場預留 15 分鐘清潔<br>點擊場次可更改電影、開場時間及票價。</p><div class="button-row"><button class="secondary small-button" data-action="copy-programme" ${disabled()}>複製昨日</button><button class="secondary small-button" data-action="suggest-programme" ${disabled()}>套用建議排片</button><button class="primary small-button" data-action="add-show" ${disabled()}>＋ 加入場次</button></div></div>${!planning() ? '<div class="notice">營業期間日常排片已鎖定；突發事件仍可透過補救選項換片。</div>' : ""}${errors.length ? `<div class="notice warning">${errors.map(esc).join("<br>")} <button class="text-button" data-action="remove-banned" ${disabled()}>移除停映場次</button></div>` : ""}<section class="panel"><div class="panel-header"><h2>${esc(v.name)}・每日排片</h2><span class="muted" style="font-size:9px">共 ${shows.length} 場</span></div><div class="timeline-panel"><div class="timeline-hours">${Array.from({ length: 14 }, (_, i) => `<span style="left:${(i / 13) * 100}%">${String(11 + i).padStart(2, "0")}:00</span>`).join("")}</div>${[
+  return `<div class="section-toolbar"><div class="button-row"><button class="secondary small-button" data-action="copy-programme" ${disabled()}>複製昨日</button><button class="secondary small-button" data-action="suggest-programme" ${disabled()}>套用建議排片</button><button class="primary small-button" data-action="add-show" ${disabled()}>＋ 加入場次</button></div></div>${!planning() ? '<div class="notice">營業期間日常排片已鎖定；突發事件仍可透過補救選項換片。</div>' : ""}${errors.length ? `<div class="notice warning">${errors.map(esc).join("<br>")} <button class="text-button" data-action="remove-banned" ${disabled()}>移除停映場次</button></div>` : ""}<section class="panel"><div class="panel-header"><h2>${esc(v.name)}・每日排片</h2><span class="muted" style="font-size:9px">共 ${shows.length} 場</span></div><div class="timeline-scroll"><div class="timeline-panel"><div class="timeline-hours">${Array.from({ length: 14 }, (_, i) => `<span style="left:${(i / 13) * 100}%">${String(11 + i).padStart(2, "0")}:00</span>`).join("")}</div>${[
     0, 1,
   ]
     .map(
@@ -281,7 +290,7 @@ function schedule() {
     )
     .join(
       "",
-    )}</div><div class="legend" style="padding-bottom:20px"><span><i></i>電影放映</span><span>▨ 清潔緩衝 15 分鐘</span><span>先處理重疊，先可以開始營業。</span></div></section>`;
+    )}</div></div><div class="legend" style="padding-bottom:20px"><span><i></i>電影放映</span><span>▨ 清潔緩衝 15 分鐘</span><span>先處理重疊，先可以開始營業。</span></div></section>`;
 }
 function films() {
   const pool = E.MOVIES.filter((m) =>
@@ -333,10 +342,12 @@ function staff() {
 }
 function snacks() {
   const v = b();
-  return `<div class="notice">食品自動供貨，沒有手動訂貨或庫存損耗。人手、櫃位產能同售價會影響銷量。</div><div class="food-grid">${E.FOODS.map((f, i) => `<section class="card food-card"><div class="food-art" style="background:${i === 0 ? "#eddfbc" : i === 1 ? "#dce6e0" : "#eddfd1"}">${["🍿", "🥤", "🌭"][i]}</div><p class="eyebrow">${["POPCORN", "SOFT DRINK", "HOT DOG"][i]}</p><h2>${f.name}</h2><p>每份成本 ${money(f.cost)}<br>${v.foodUnlocked[i] ? "供應中・按實際銷量扣成本" : "未解鎖・需加裝食品設備"}</p>${v.foodUnlocked[i] ? `<label class="price-input">HKD<input type="number" min="${f.cost + 1}" max="150" value="${v.foods[i]}" data-food-price="${i}" aria-label="${f.name}售價" ${disabled()}></label><span class="margin-info">每份毛利 ${money(v.foods[i] - f.cost)}</span>` : `<button class="secondary" data-action="unlock-food" ${disabled()}>解鎖供應 · $3,500</button>`}</section>`).join("")}</div><div class="loan-box"><span>今日小食銷量：${v.ledger.snackUnits.map((n, i) => `${E.FOODS[i].name} ${n} 份`).join(" / ")}<br>增加小食員工或升級服務區，可以應付更大人流。</span><button class="text-button" data-action="navigate" data-target="investment">升級服務區 ↗</button></div>`;
+  return `<div class="notice">食品自動供貨，沒有手動訂貨或庫存損耗。人手、櫃位產能同售價會影響銷量。</div><div class="food-grid">${E.FOODS.map((f, i) => `<section class="card food-card"><div class="food-art" style="background:${i === 0 ? "#eddfbc" : i === 1 ? "#dce6e0" : "#eddfd1"}">${["🍿", "🥤", "🌭"][i]}</div><p class="eyebrow">${["POPCORN", "SOFT DRINK", "HOT DOG"][i]}</p><h2>${f.name}</h2><p>每份成本 ${money(f.cost)}<br>${v.foodUnlocked[i] ? "供應中・按實際銷量扣成本" : "未解鎖・需加裝食品設備"}</p>${v.foodUnlocked[i] ? stepper(f.name+'售價',`<input type="number" inputmode="numeric" min="${f.cost+1}" max="150" value="${v.foods[i]}" data-food-price="${i}" aria-label="${f.name}售價" ${disabled()}>`,1) : `<button class="secondary" data-action="unlock-food" ${disabled()}>解鎖供應 · $3,500</button>`}</section>`).join("")}</div><div class="loan-box"><span>今日小食銷量：${v.ledger.snackUnits.map((n, i) => `${E.FOODS[i].name} ${n} 份`).join(" / ")}<br>增加小食員工或升級服務區，可以應付更大人流。</span><button class="text-button" data-action="navigate" data-target="investment">升級服務區 ↗</button></div>`;
 }
 function investment() {
   const v = b();
+  if(investmentSection==='build')return `<section class="construction-guide" id="construction-detail">${zoneInfo()}</section>${constructionPanel(state,v)}`;
+
   return `<div class="investment-grid"><section class="card property-card ${v.owned ? "owned" : ""}"><p class="eyebrow">${esc(v.district)} / PROPERTY</p><span class="property-stamp">${v.owned ? "自置物業" : "租賃中"}</span><h2>${v.owned ? "呢間戲院，屬於你。" : "買斷自己的戲院。"}</h2><p>${v.owned ? "物業已買斷，往後免租。音響、清潔與設備保養仍然需要維護費。" : `目前每日租金 ${money(v.rent)}。買斷後永久免租，保留維護支出；你亦可以先開第二間分店。`}</p><span class="price">${v.owned ? "免租經營" : money(E.PROPERTY_PRICE[v.id])}</span><button class="primary" data-action="buy-property" ${v.owned || !planning() ? "disabled" : ""}>${v.owned ? "物業已買斷" : "買斷物業"}</button></section><section class="card property-card"><p class="eyebrow">KWUN TONG / EXPANSION</p><h2>${state.branches.length > 1 ? "觀塘 · 光影東岸" : "為第二間戲院亮燈。"}</h2><p>${state.branches.length > 1 ? "兩間戲院共用公司資金與日期。排片、票價、人手同收支獨立，由你親自掌握。" : "在觀塘開設新分店，由一塊地板起步及四位員工協助籌備。建好基本設施後才營業，每日租金 $1,550；籌備不阻礙原店營業。"}</p><span class="price">${state.branches.length > 1 ? "第二間分店已開業" : money(E.BRANCH_PRICE)}</span><button class="primary" data-action="${state.branches.length > 1 ? "branch" : "open-branch"}" data-id="1" ${!planning() && state.branches.length < 2 ? "disabled" : ""}>${state.branches.length > 1 ? "切換到觀塘店" : "開設第二間分店"}</button></section></div><div class="section-toolbar" style="margin-top:28px"><p>區域配置 · 各店獨立建造；逐格鋪地，房間成區完成。<br>投資在營業前安排，效果由當日開始。</p></div><div class="upgrade-grid">${Object.entries(
     E.UPGRADES,
   )
@@ -374,6 +385,11 @@ function report() {
     "",
   )}</div></section><section class="panel"><div class="news"><p>未能服務需求包括滿座、人手不足、延誤、停映及維修取消。<br><br>可透過錯開場次、調整票價、配置人手同設備升級改善。</p></div></section></div></div>`;
 }
+const groupFor=v=>['overview'].includes(v)?'map':['schedule','movies'].includes(v)?'programme':['staff','snacks'].includes(v)?'operations':['strategy','report'].includes(v)?'business':'investment';
+function workHeader(){const g=groupFor(view),sets={programme:[['schedule','時間表'],['movies','電影庫']],operations:[['staff','員工'],['snacks','小食售價']],business:[['strategy:ratings','口碑定位'],['strategy:maintenance','設備維護'],['report','收支日報']],investment:[['investment:assets','設施與物業'],['investment:build','擴建與建造']]};
+ return g==='map'?'':`<h1>${{programme:'今日排片',operations:'日常營運',business:'經營狀況',investment:'投資與擴張'}[g]}</h1><div class="work-tabs" aria-label="工作分類">${sets[g].map(([key,text])=>{const [v,section]=key.split(':');const active=v===view&&(!section||section===(v==='strategy'?strategySection:investmentSection));return `<button data-view="${v}" ${section?`data-section="${section}"`:''} aria-pressed="${active}" class="${active?'active':''}">${text}</button>`}).join('')}</div>`}
+function filterStrategy(){if(view!=='strategy')return;for(const el of $('#view-content').children){if(!el.matches('section'))continue;el.hidden=strategySection==='ratings'?el.matches('.strategy-cleaning,.equipment-panel,.strategy-forecast,.cash-planning'):el.matches('.strategy-profile,.review-panel');}}
+function navigate(target,section){view=target;if(view==='strategy')strategySection=section||'ratings';if(view==='investment')investmentSection=section||'assets';$('#utilities').hidden=true;$('#more-button').setAttribute('aria-expanded','false');render();}
 function render() {
   updateHeader();
   const [l, title, description] = labels[view];
@@ -383,7 +399,8 @@ function render() {
   for (const n of document.querySelectorAll("[data-view]"))
     n.classList.toggle("active", n.dataset.view === view);
   const animation = renderer?.animation || 0;
-  const camera = renderer?.camera;
+  if(renderer&&mapBranch===state.activeBranch)savedCamera={...renderer.camera};
+  const camera=mapBranch===state.activeBranch?savedCamera:null;
   renderer?.dispose?.();
   $("#view-content").innerHTML = {
     overview,
@@ -395,16 +412,17 @@ function render() {
     strategy:()=>strategyView(state,b()),
     report,
   }[view]();
-  if(view==="overview"){
-    $('.studio-overview').insertAdjacentHTML('afterend',operationsPanel(state,b()));
-    $("#view-content").insertAdjacentHTML("beforeend",constructionPanel(state,b()));
-  }
-  if(view==='investment')$('#view-content').insertAdjacentHTML('afterbegin',cashPanel(state));
+  $('#main-content').classList.toggle('map-view',view==='overview');
+  $('#work-header').innerHTML=workHeader();$('#work-header').hidden=view==='overview';
+  for(const n of document.querySelectorAll('[data-group]')){const active=n.dataset.group===groupFor(view);n.classList.toggle('active',active);n.setAttribute('aria-pressed',String(active));}
+  if(view==='staff')$('#view-content').insertAdjacentHTML('beforeend',operationsPanel(state,b()));
+  filterStrategy();
+  if(view==='investment'&&investmentSection==='assets')$('#view-content').insertAdjacentHTML('afterbegin',cashPanel(state));
   if(view==='report'&&state.history.length){const row=state.history[Math.min(reportIndex,state.history.length-1)].rows.find(r=>r.id===b().id);if(row?.review)$('#view-content').insertAdjacentHTML('beforeend',reviewPanel(row.review,'本日分項體驗'))}
   if(view==='schedule'&&planning())$('#view-content').insertAdjacentHTML('beforeend',forecastPanel(state,b()));
   if (view === "overview" && atlas) {
     renderer = new CinemaRenderer($("#cinema"), atlas, images, {onSelect: selectZone, camera});
-    renderer.selected=selectedZone;
+    mapBranch=state.activeBranch;renderer.selected=selectedZone;
     if($("#map-zoom"))$("#map-zoom").textContent=Math.round(renderer.camera.zoom*100)+"%";
     renderer.animation = animation;
     renderer.render(state);
@@ -412,29 +430,8 @@ function render() {
   hydratePosters($("#view-content"));
   renderedPhase = state.phase;
 }
-function liveUpdate() {
-  updateHeader();
-  if(view==='strategy'&&state.phase==='running')$('#view-content').innerHTML=strategyView(state,b());
-  if (view === "overview") {
-    $("#metric-tickets").textContent = money(
-      b().ledger.gross - b().ledger.share,
-    );
-    $("#metric-food").textContent = money(
-      b().ledger.foodRevenue - b().ledger.foodCost,
-    );
-    $("#metric-visitors").innerHTML =
-      `${b().ledger.admissions}<small style="font:10px Arial;color:#b4a18d;margin-left:7px">人</small>`;
-    $("#metric-net").textContent = money(estimateNet(b()));
-    $("#net-card").classList.toggle("positive", estimateNet(b()) >= 0);
-    $("#net-card").classList.toggle("negative", estimateNet(b()) < 0);
-    $("#live-show-list").innerHTML = nowShows();
-    $("#live-news").innerHTML = newsHTML();
-    $("#reputation").textContent = Math.round(b().reputation);
-    if(selectedZone)$("#zone-inspector").innerHTML=zoneInfo();
-    if($('#live-operations'))$('#live-operations').outerHTML=operationsPanel(state,b());
-  }
-}
-function showForm(id = null, preferredMovie = null) {
+function liveUpdate(){updateHeader();if(view==='overview'&&selectedZone&&$('#zone-inspector .zone-body'))$('#zone-inspector .zone-body').innerHTML=zoneInfo();if(view==='staff'&&$('#live-operations'))$('#live-operations').outerHTML=operationsPanel(state,b());}
+function showForm(id = null, preferredMovie = null, draft = null) {
   if (!planning()) {
     toast("日常排片只可以喺營業前更改。", true);
     return;
@@ -442,25 +439,20 @@ function showForm(id = null, preferredMovie = null) {
   const existing = b().programme.find((p) => p.id === id);
   const firstHall = [0, 1].find(h => C.hasRoom(b(), `hall${h+1}`));
   if (firstHall === undefined) { toast("先建好影廳，再安排放映場次。", true); return; }
-  const p = existing || {
+  const p = draft || existing || {
     id: null,
     hall: firstHall,
     start: 0,
     movie: preferredMovie || E.availableMovies(state)[0].id,
     price: 88,
   };
-  openModal(
-    `<div class="modal-body">${modalHeader("THE DAILY PROGRAMME", existing ? "調整放映場次" : "加入新場次")}<p>電影片長加 15 分鐘清潔，必須在 11:00–24:00 內完成。不同電影與時段可以定不同票價。</p><form id="programme-form" data-id="${esc(p.id || "")}"><div class="modal-form"><label class="full">電影<select name="movie" required>${E.availableMovies(
-      state,
-    )
-      .map(
-        (m) =>
-          `<option value="${m.id}" ${p.movie === m.id ? "selected" : ""}>${esc(m.title)} · ${m.length} 分鐘 · 抽成 ${Math.round(m.share * 100)}%</option>`,
-      )
-      .join(
-        "",
-      )}</select></label><label>影廳<select name="hall">${[0,1].filter(h=>C.hasRoom(b(),`hall${h+1}`)).map(h=>`<option value="${h}" ${p.hall===h?"selected":""}>${h+1} 號廳 · ${b().seats[h]} 席</option>`).join("")}</select></label><label>開場時間<input name="time" type="time" min="11:00" max="23:00" step="300" value="${clock(p.start)}" required></label><label>票價（HKD）<input name="price" type="number" min="20" max="300" step="1" value="${p.price}" required></label><label>放映格式<select name="format"><option value="2D">普通 2D</option></select></label></div><div id="programme-preview" aria-live="polite"></div><div id="form-error"></div><div class="modal-actions">${existing ? `<button type="button" class="subtle-button danger" data-action="delete-show" data-id="${esc(p.id)}">刪除場次</button>` : ""}<button type="button" class="secondary" data-action="close">取消</button><button class="primary" type="submit">儲存場次</button></div></form></div>`,
-  );
+  openModal(`<div class="modal-body programme-sheet">${modalHeader('排片',existing?'編輯場次':'新增場次')}<form id="programme-form" data-id="${esc(p.id||'')}"><div class="modal-form">
+  <label>電影<select name="movie" required>${E.availableMovies(state).map(m=>`<option value="${m.id}" ${p.movie===m.id?'selected':''}>${esc(m.title)} · ${m.length} 分</option>`).join('')}</select></label>
+  <div class="touch-field"><span>影廳</span><div class="hall-choice" role="group" aria-label="放映影廳"><input type="hidden" name="hall" value="${p.hall}">${[0,1].filter(h=>C.hasRoom(b(),`hall${h+1}`)).map(h=>`<button type="button" data-action="choose-hall" data-id="${h}" aria-pressed="${p.hall===h}" class="${p.hall===h?'primary':'secondary'}">影廳 ${h+1}</button>`).join('')}</div></div>
+  ${stepper('開場時間',`<input name="time" type="time" min="11:00" max="23:00" step="300" value="${clock(p.start)}" required>`,15)}
+  ${stepper('票價（HKD）',`<input name="price" aria-label="票價" type="number" inputmode="numeric" min="20" max="300" step="1" value="${p.price}" required>`,5)}<input type="hidden" name="format" value="2D"></div>
+  <div class="programme-details"><details><summary>預測詳情</summary><div id="programme-preview" aria-live="polite"></div></details><div id="form-error" role="alert"></div></div>
+  <div class="modal-actions">${existing?`<button type="button" class="subtle-button danger" data-action="delete-show" data-id="${esc(p.id)}">刪除</button>`:''}<button type="button" class="secondary" data-action="close">取消</button><button class="primary" type="submit">儲存場次</button></div></form></div>`);
   refreshProgrammePreview();
 }
 let previewTimer=null;
@@ -484,7 +476,7 @@ function movieDetail(id) {
 }
 function help(welcome = false) {
   openModal(
-    `<div class="modal-body">${modalHeader("WELCOME TO LUMEN CINEMA", welcome ? "歡迎做戲院老闆。" : "好戲點樣開始？")}<p>現代香港，一間租用戲院。你負責安排營運，員工負責日常工作，突發時再決定要唔要親自救場。</p><div class="help-steps"><div class="help-step"><b>01</b><span><strong>由右下角地板建造影院</strong>按施工指引逐格鋪地，再建售票、小食、洗手間及影廳；建好的影廳會提供建議排片，可再調整。</span></div><div class="help-step"><b>02</b><span><strong>睇住戲院自己運作</strong>正常速度一日 3 分鐘，可用 2×／4× 加速，不能跳到事件。離開分頁會自動暫停。</span></div><div class="help-step"><b>03</b><span><strong>親自救場，再投資下一步</strong>一般每日每店 0–2 次事件。小遊戲可交員工；儲錢買斷免租，或開設觀塘分店。</span></div></div><p>進度儲存於本機瀏覽器。價格、日長同獎勵目前係試玩設定；可以拖曳及縮放地圖，點選區域查看營運狀態。</p><div class="modal-actions">${welcome && readStored() ? '<button class="secondary" data-action="resume-save">繼續已儲存進度</button>' : ""}${!welcome ? '<button class="subtle-button danger" data-action="reset-prompt">重新開局</button>' : ""}<button class="primary" data-action="close">${welcome ? "開始籌備第一日" : "明白，繼續經營"}</button></div></div>`,
+    `<div class="modal-body">${modalHeader("WELCOME TO LUMEN CINEMA", welcome ? "歡迎做戲院老闆。" : "好戲點樣開始？")}<p>現代香港，一間租用戲院。你負責安排營運，員工負責日常工作，突發時再決定要唔要親自救場。</p><div class="help-steps"><div class="help-step"><b>01</b><span><strong>由右下角地板建造影院</strong>在「投資 → 擴建與建造」逐格鋪地，再建售票、小食、洗手間及影廳；建好的影廳會提供建議排片，可再調整。</span></div><div class="help-step"><b>02</b><span><strong>睇住戲院自己運作</strong>正常速度一日 3 分鐘，可用 2×／4× 加速，不能跳到事件。離開分頁會自動暫停。</span></div><div class="help-step"><b>03</b><span><strong>親自救場，再投資下一步</strong>一般每日每店 0–2 次事件。小遊戲可交員工；儲錢買斷免租，或開設觀塘分店。</span></div></div><p>進度儲存於本機瀏覽器。價格、日長同獎勵目前係試玩設定；可以拖曳及縮放地圖，點選區域查看營運狀態。</p><div class="modal-actions">${welcome && readStored() ? '<button class="secondary" data-action="resume-save">繼續已儲存進度</button>' : ""}${!welcome ? '<button class="subtle-button danger" data-action="reset-prompt">重新開局</button>' : ""}<button class="primary" data-action="close">${welcome ? "開始籌備第一日" : "明白，繼續經營"}</button></div></div>`,
   );
 }
 function showEvent() {
@@ -671,11 +663,11 @@ function action(name, target) {
       closeModal();
       return;
     case "navigate":
-      view = target.dataset.target;
-      render();
+      closeModal();
+      navigate(target.dataset.target);
       return;
     case "branch":
-      state.activeBranch = Number(id);
+      state.activeBranch = Number(id);selectedZone=null;selectedBlock=null;savedCamera=null;mapBranch=null;closeModal();
       render();
       persist();
       return;
@@ -698,7 +690,10 @@ function action(name, target) {
       render();
       showForm(null, id);
       return;
-    case "delete-show":
+    case "choose-hall": {const group=target.closest('.hall-choice');group.querySelector('input').value=id;for(const button of group.querySelectorAll('button')){const active=button===target;button.setAttribute('aria-pressed',String(active));button.className=active?'primary':'secondary'}refreshProgrammePreview();return;}
+    case "delete-show": {const f=new FormData($('#programme-form')),parts=String(f.get('time')).split(':').map(Number);deleteDraft={id,hall:Number(f.get('hall')),movie:f.get('movie'),price:Number(f.get('price')),start:parts[0]*60+parts[1]-660};openModal(`<div class="modal-body">${modalHeader('排片','刪除此場次？',false)}<p>刪除後此時段將留空，預測收入會重新計算。</p><div class="modal-actions"><button class="secondary" data-action="cancel-delete-show">保留場次</button><button class="primary" data-action="commit-delete-show" data-id="${esc(id)}">確認刪除</button></div></div>`);return;}
+    case "cancel-delete-show": showForm(deleteDraft.id,null,deleteDraft);return;
+    case "commit-delete-show":
       if (
         result(
           E.setProgramme(
@@ -794,7 +789,7 @@ function action(name, target) {
         result(E.openBranch(state), "第二間分店開業！先親自排片，再開始營業。")
       ) {
         closeModal();
-        view = "overview";
+        selectedZone=null;selectedBlock=null;savedCamera=null;mapBranch=null;view = "overview";
         render();
       }
       return;
@@ -852,7 +847,7 @@ function action(name, target) {
       );
       return;
     case "commit-reset":
-      state = E.createGame({construction:true});
+      state = E.createGame({construction:true});selectedZone=null;selectedBlock=null;savedCamera=null;mapBranch=null;
       view = "overview";
       mini = null;
       closeModal();
@@ -873,7 +868,7 @@ function loadSaved() {
     if(legacy)try{if(!localStorage.getItem(STORAGE+"-before-map-v1"))localStorage.setItem(STORAGE+"-before-map-v1",raw);}catch{}
     if(JSON.parse(raw).state.branches.some(b=>!b.strategy||b.flow&&!b.flow.strategyVersion))try{if(!localStorage.getItem(STORAGE+'-before-strategy-v1'))localStorage.setItem(STORAGE+'-before-strategy-v1',raw)}catch{}
     if(loaded.branches.every(b=>!b.flow))try{if(!localStorage.getItem(STORAGE+'-before-flow-v1'))localStorage.setItem(STORAGE+'-before-flow-v1',raw)}catch{}
-    state=loaded;selectedZone=null;selectedBlock=null;
+    state=loaded;selectedZone=null;selectedBlock=null;savedCamera=null;mapBranch=null;
     mini = null;
     view = "overview";
     closeModal();
@@ -890,7 +885,7 @@ function loadSaved() {
 }
 function mainAction() {
   if (state.phase === "planning") {
-    if(!state.branches.some(C.operational)){view="overview";selectedZone=null;selectedBlock=null;action("construction-next",{dataset:{}});return;}
+    if(!state.branches.some(C.operational)){selectedZone=null;selectedBlock=null;navigate("investment","build");return;}
     try{if(!localStorage.getItem(STORAGE+'-before-flow-v1'))localStorage.setItem(STORAGE+'-before-flow-v1',E.saveGame(state))}catch{}
     const error = E.startDay(state);
     if (error) {
@@ -918,21 +913,22 @@ $("#pause-button").onclick = () => {
   updateHeader();
   persist();
 };
-$("#save-button").onclick = () => persist(false);
-$("#load-button").onclick = loadSaved;
+$("#save-button").onclick = () => {$("#utilities").hidden=true;$("#more-button").setAttribute("aria-expanded","false");persist(false)};
+$("#load-button").onclick = () => {$("#utilities").hidden=true;$("#more-button").setAttribute("aria-expanded","false");loadSaved()};
 $("#help-button").onclick = () => help();
-$("#sound-button").onclick=()=>{const enabled=audio.toggle();$("#sound-button").textContent=enabled?"♪":"♩";$("#sound-button").setAttribute("aria-pressed",String(enabled));$("#sound-button").title=enabled?"關閉音效":"開啟音效";};
+$("#sound-button").onclick=()=>{const enabled=audio.toggle();$("#sound-button").textContent=enabled?"音效：開":"音效：關";$("#sound-button").setAttribute("aria-pressed",String(enabled));$("#sound-button").title=enabled?"關閉音效":"開啟音效";};
 $("#sound-button").setAttribute("aria-pressed",String(audio.enabled));
+$("#sound-button").textContent=audio.enabled?"音效：開":"音效：關";
 $("#second-branch").onclick = () => {
   view = "investment";
   render();
 };
-for (const n of document.querySelectorAll("[data-view]"))
-  n.onclick = () => {
-    view = n.dataset.view;
-    reportIndex = 0;
-    render();
-  };
+document.addEventListener('click',e=>{const n=e.target.closest('[data-view]');if(n&&!n.disabled){reportIndex=0;navigate(n.dataset.view,n.dataset.section)}});
+$('#cycle-speed').onclick=()=>{state.speed=({1:2,2:4,4:1})[state.speed];updateHeader();persist()};
+$('#more-button').onclick=()=>{const menu=$('#utilities');menu.hidden=!menu.hidden;$('#more-button').setAttribute('aria-expanded',String(!menu.hidden))};
+$('#branch-picker').onclick=()=>openModal(`<div class="modal-body">${modalHeader('戲院','管理戲院')}<div class="branch-menu">${state.branches.map(v=>`<button class="secondary" data-action="branch" data-id="${v.id}">${esc(v.name)}${v.id===state.activeBranch?' · 管理中':''}</button>`).join('')}<button class="secondary" data-action="navigate" data-target="investment">${state.branches.length<2?'開設第二分店':'查看投資'}</button></div></div>`);
+$('#fullscreen-button').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen?.();else $('.app-shell').requestFullscreen?.().catch(()=>toast('此瀏覽器未能開啟全螢幕。'))};
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#utilities,#more-button')){$('#utilities').hidden=true;$('#more-button').setAttribute('aria-expanded','false')}});
 for (const n of document.querySelectorAll("[data-speed]"))
   n.onclick = () => {
     state.speed = Number(n.dataset.speed);

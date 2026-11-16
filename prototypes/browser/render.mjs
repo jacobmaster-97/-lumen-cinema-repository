@@ -1,3 +1,4 @@
+import {createMapTouch} from './touch-map.mjs';
 import { movie, operationsSnapshot } from './engine.mjs';
 import {queuePosition,patronRoute} from './operations-world.mjs';
 import { createCinemaScene } from './scene.mjs';
@@ -18,30 +19,28 @@ export class CinemaRenderer {
   constructor(canvas,manifest,images,{onSelect=()=>{},camera=null}={}) {
     this.canvas=canvas;this.c=canvas.getContext('2d');this.manifest=manifest;this.images=images;this.onSelect=onSelect;
     this.animation=0;this.selected=null;this.camera=camera||{zoom:1,x:0,y:0};this.dirty=true;this.drawElapsed=0;this.timings=[];this.stats={};
-    if(!camera&&canvas.parentElement?.clientWidth>0&&canvas.parentElement.clientWidth<620)this.camera.zoom=1.6;
+
     this.reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
     const resize=()=>{const r=canvas.parentElement?.getBoundingClientRect();if(r?.width>0&&r?.height>0){const dpr=Math.min(typeof devicePixelRatio==='number'?devicePixelRatio:1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);this.dirty=true;}};
     resize();if(typeof ResizeObserver==='function'){this.observer=new ResizeObserver(resize);this.observer.observe(canvas.parentElement);}
     this.bindInput();
   }
-  dispose(){this.observer?.disconnect();}
+  dispose(){this.observer?.disconnect();this.input?.destroy();}
   bindInput(){
     const canvas=this.canvas;
-    canvas.addEventListener('pointerdown',e=>{this.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};canvas.setPointerCapture?.(e.pointerId);});
-    canvas.addEventListener('pointermove',e=>{
-      if(!this.drag)return;const d=this.drag;
-      if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>6)d.moved=true;
-      if(d.moved){const r=canvas.getBoundingClientRect();this.camera.x=clamp(this.camera.x+(e.clientX-d.lastX)*canvas.width/r.width,-canvas.width,canvas.width);this.camera.y=clamp(this.camera.y+(e.clientY-d.lastY)*canvas.height/r.height,-canvas.height,canvas.height);this.dirty=true;}
-      d.lastX=e.clientX;d.lastY=e.clientY;
+    this.input=createMapTouch(canvas,{
+      camera:()=>{const r=canvas.getBoundingClientRect(),ratio=canvas.width/r.width||1;return {zoom:this.camera.zoom,x:this.camera.x/ratio,y:this.camera.y/ratio}},
+      write:p=>{const r=canvas.getBoundingClientRect(),ratio=canvas.width/r.width||1;this.camera={...this.camera,zoom:p.zoom,x:p.x*ratio,y:p.y*ratio};this.dirty=true},
+      onTap:p=>{const r=canvas.getBoundingClientRect();this.pick((p.x-r.left)*canvas.width/r.width,(p.y-r.top)*canvas.height/r.height)},
+      onPress:p=>{const r=canvas.getBoundingClientRect(),pulse=document.createElement('span');pulse.className='map-touch-pulse';pulse.setAttribute('aria-hidden','true');pulse.style.left=(p.x-r.left)+'px';pulse.style.top=(p.y-r.top)+'px';canvas.parentElement.append(pulse);setTimeout(()=>pulse.remove(),350)},
+      reducedMotion:this.reducedMotion
     });
-    canvas.addEventListener('pointerup',e=>{if(this.drag&&!this.drag.moved){const r=canvas.getBoundingClientRect();this.pick((e.clientX-r.left)*canvas.width/r.width,(e.clientY-r.top)*canvas.height/r.height);}this.drag=null;});
-    canvas.addEventListener('pointercancel',()=>this.drag=null);
     canvas.addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();this.zoom(e.deltaY<0?.15:-.15);}},{passive:false});
     canvas.addEventListener('keydown',e=>{const keys={ArrowLeft:[30,0],ArrowRight:[-30,0],ArrowUp:[0,30],ArrowDown:[0,-30]};if(keys[e.key]){e.preventDefault();this.camera.x+=keys[e.key][0];this.camera.y+=keys[e.key][1];this.dirty=true;}if(e.key==='+'||e.key==='=')this.zoom(.2);if(e.key==='-')this.zoom(-.2);if(e.key==='0')this.fit();});
   }
-  zoom(change){this.camera.zoom=clamp(this.camera.zoom+change,.8,2.5);this.dirty=true;}
-  fit(){this.camera={zoom:1,x:0,y:0,scope:'full'};this.dirty=true;}
-  focus(){this.camera={zoom:1,x:0,y:0,scope:'owned'};this.dirty=true;}
+  zoom(change){this.input?.cancel();this.camera.zoom=clamp(this.camera.zoom+change,.7,2.4);this.dirty=true;}
+  fit(){this.input?.cancel();this.camera={zoom:1,x:0,y:0,scope:'full'};this.dirty=true;}
+  focus(){this.input?.cancel();this.camera={zoom:1,x:0,y:0,scope:'owned'};this.dirty=true;}
   view(){let box=this.scene?.layout.bounds||[-474,210,2748,1480];if(this.scene&&this.camera.scope!=='full'){const points=this.scene.layout.floorBlocks.flatMap(k=>{const [x,y]=k.split(',').map(n=>Number(n)*8);return [project(x,y),project(x+8,y),project(x,y+8),project(x+8,y+8)]}).concat(this.scene.layout.rooms.filter(r=>C.hasRoom(this.state.branches.find(b=>b.id===this.state.activeBranch)||this.state.branches[0],r.id)).flatMap(r=>[project(r.rect[0],r.rect[1],5.5),project(r.rect[0]+r.rect[2],r.rect[1],5.5)]));const a=Math.min(...points.map(p=>p[0]))-40,b=Math.min(...points.map(p=>p[1]))-50,w=Math.max(720,Math.max(...points.map(p=>p[0]))-a+40),h=Math.max(520,Math.max(...points.map(p=>p[1]))-b+50);box=[a-(w-(Math.max(...points.map(p=>p[0]))-a+40))/2,b,w,h]};const [L,T,W,H]=box,s=Math.min(this.canvas.width/W,this.canvas.height/H)*.94*this.camera.zoom;return {s,x:this.canvas.width/2+this.camera.x-(L+W/2)*s,y:this.canvas.height/2+this.camera.y-(T+H/2)*s};}
   pick(x,y){
     if(!this.scene)return;const v=this.view(),room=pickRoom(this.scene.layout,(x-v.x)/v.s,(y-v.y)/v.s);
@@ -126,10 +125,6 @@ export class CinemaRenderer {
     c.fillStyle='#10242d';c.fillRect(Math.round(x-w/2),Math.round(y-17),Math.ceil(w),33);c.fillStyle=selected?'#7bc4b5':color;c.fillRect(Math.round(x-w/2),Math.round(y-17),Math.ceil(w),2);c.textAlign='center';c.textBaseline='middle';c.fillText(text,Math.round(x),Math.round(y));
   }
   labels(branch,state){
-    for(const r of this.scene.layout.rooms.filter(r=>C.hasRoom(branch,r.id))){const [x,y,w]=r.rect,p=project(x+w/2,y+.25,r.id.startsWith('hall')?5.5:3.1);this.label(r.name+(r.id.startsWith('hall')?` · ${branch.seats[Number(r.id.slice(-1))-1]} 席`:''),p[0],p[1],{selected:this.selected===r.id});}
-    const P=project(...this.scene.layout.entrance);this.label('入口／起點',P[0],P[1]+18,{color:'#9dd4bf'});
-    for(let h=0;h<2;h++)if(C.hasRoom(branch,`hall${h+1}`)&&hallUnderRepair(branch,state,h)){const r=C.ROOMS.find(r=>r.id===`hall${h+1}`),p=project(r.rect[0]+8,r.rect[1]+8,1.5);this.label('維修中 · 暫停入場',p[0],p[1],{color:'#efb18c'});}
-    const q=operationsSnapshot(state,branch.id);if(q){for(const [id,n]of [['tickets',q.tickets],['snacks',q.snacks]])if(n){const r=C.ROOMS.find(r=>r.id===id),p=project(r.rect[0]+4.25,r.rect[1]+6.25);this.label(`等候 ${n} 人`,p[0],p[1]+20,{color:'#e8cb83'})}q.halls.forEach((h,i)=>{if(['cleaning','maintenance'].includes(h.state)){const r=C.ROOMS.find(r=>r.id===`hall${i+1}`),p=project(r.rect[0]+8,r.rect[1]+8,1.5);this.label(h.state==='maintenance'?'保養中 · 影廳停用':'清潔中 · 暫未開放',p[0],p[1],{color:'#e8cb83'})}})}
     if(this.selected){const room=this.scene.layout.rooms.find(r=>r.id===this.selected);if(room){const [x,y,w,h]=room.rect;this.c.fillStyle='#89d6bd';this.c.globalAlpha=.12;this.c.beginPath();[[x,y],[x+w,y],[x+w,y+h],[x,y+h]].map(([a,b])=>project(a,b)).forEach(([a,b],i)=>i?this.c.lineTo(a,b):this.c.moveTo(a,b));this.c.closePath();this.c.fill();this.c.globalAlpha=1;}}
   }
   render(state,delta=0){
@@ -144,7 +139,7 @@ export class CinemaRenderer {
     for(const layer of this.scene.layers){while(cursor<actors.length&&actors[cursor].depth<layer.depth)actors[cursor++].draw();c.drawImage(layer.canvas,layer.x,layer.y);}
     while(cursor<actors.length)actors[cursor++].draw();this.labels(branch,state);c.setTransform(1,0,0,1,0,0);
     this.timings.push(performance.now()-start);if(this.timings.length>180)this.timings.shift();
-    this.stats={...this.stats,version:'0.6.0',operations:operationsSnapshot(state,branch.id),mapGrid:[56,56],mapBlocks:[7,7],floorBlocks:this.scene.layout.floorBlocks.length,builtRooms:this.scene.layout.built,roomRects:C.ROOMS.map(r=>({id:r.id,rect:r.rect,door:r.door})),objects:this.scene.props.length,seatCounts:[0,1].map(h=>this.scene.props.filter(p=>p.kind==='seat'&&p.room===`hall${h+1}`).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),renderP95Ms:Math.round([...this.timings].sort((a,b)=>a-b)[Math.floor(this.timings.length*.95)]*10)/10,pathsReachable:this.scene.routes.every((p,h)=>!C.hasRoom(branch,`hall${h+1}`)||!C.operational(branch)||p.length>0)};
+    this.stats={...this.stats,version:'0.7.0',operations:operationsSnapshot(state,branch.id),mapGrid:[56,56],mapBlocks:[7,7],floorBlocks:this.scene.layout.floorBlocks.length,builtRooms:this.scene.layout.built,roomRects:C.ROOMS.map(r=>({id:r.id,rect:r.rect,door:r.door})),objects:this.scene.props.length,seatCounts:[0,1].map(h=>this.scene.props.filter(p=>p.kind==='seat'&&p.room===`hall${h+1}`).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),renderP95Ms:Math.round([...this.timings].sort((a,b)=>a-b)[Math.floor(this.timings.length*.95)]*10)/10,pathsReachable:this.scene.routes.every((p,h)=>!C.hasRoom(branch,`hall${h+1}`)||!C.operational(branch)||p.length>0)};
   }
 }
 

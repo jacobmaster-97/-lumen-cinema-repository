@@ -25,5 +25,7 @@ jobs:
           node --check prototypes/browser/engine.mjs
           node --check prototypes/browser/game.mjs
           node --check prototypes/browser/render.mjs
+          node --check prototypes/browser/mobile-input.mjs
+          node --check prototypes/browser/touch-map.mjs
       - name: Run simulation and interface tests
         run: npm test --prefix prototypes/browser
