@@ -2,7 +2,7 @@
 
 ## Goal / phase
 
-使用者已確認手機橫向底部導覽、薄欄、觸控及文字精簡，最後要求「置中圖示按鈕也刪除，然後實裝」。審閱批准已完成，本輪正式接入並部署原GitHub Pages。基準8d1b693；v0.7.0發布核對中。
+使用者已確認手機橫向底部導覽、薄欄、觸控及文字精簡，最後要求「置中圖示按鈕也刪除，然後實裝」。審閱批准已完成，本輪正式接入並部署原GitHub Pages。基準8d1b693；v0.7.0已發布並公開核對。
 
 ## Implemented
 
@@ -19,8 +19,8 @@ Node測試調整至新導航；修復舊置中網頁容器導致canvas零尺寸�
 
 ## Release / recovery
 
-https://jacobmaster-97.github.io/-lumen-cinema-repository/ ，main原workflow。待記錄功能來源與workflow／公開核對；0.7.0模組／CSS快取。必要時revert功能提交重新部署，不刪玩家v2存檔。前一公開來源7e570aef888892f7809b3a81f2f585acf378d1b3（v0.6.0）。歷史未追蹤美術及審閱稿非本輪正式發布檔案，避免blanket git add。
+https://jacobmaster-97.github.io/-lumen-cinema-repository/ ，main原workflow。功能來源9bcbdb7dc2efb811dcae8e2ca34e586fbdaca911；測試run43894336484與Pages run43894335818均success，公開version.json為0.7.0及同SHA。8項公開操作檢查通過，errors／failedRequests／runtimeArtRequests=[]，含真實施工、排片步進、保養退款、實際入場／評價／損耗及舊檔兩店。公開HTTPS由平台CA驗證後原樣轉交Chromium，未停用TLS或以本機檔案替代。證據deployment.json／public.json；0.7.0模組／CSS快取。後續[skip ci]驗證文件提交不改公開功能來源。必要時revert功能提交重新部署，不刪玩家v2存檔。前一公開來源7e570aef888892f7809b3a81f2f585acf378d1b3（v0.6.0）。歷史未追蹤美術及審閱稿非本輪正式發布檔案，避免blanket git add。
 
 ## Risks / next safe task
 
-完成同SHA公開檢查，再讓使用者用真實手機試玩拇指、系統手勢、安全區／軟鍵盤及長時間效能。模擬器不等於真機。升級圖維持未採用。
+同SHA公開檢查已完成，讓使用者用真實手機試玩拇指、系統手勢、安全區／軟鍵盤及長時間效能。模擬器不等於真機。升級圖維持未採用。

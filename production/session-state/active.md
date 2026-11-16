@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-mobile-landscape-pages-07：使用者確認底部導覽、頂底欄減半、地圖無區域文字／整行提示、擴建在投資、四段說明刪除，最後要求置中圖示也刪除並實裝。基準8d1b693；準備發布0.7.0至原Pages。先前審閱階段已結束。
+mobile-landscape-pages-07：使用者確認底部導覽、頂底欄減半、地圖無區域文字／整行提示、擴建在投資、四段說明刪除，最後要求置中圖示也刪除並實裝。基準8d1b693；已發布0.7.0至原Pages，公開核對通過。先前審閱階段已結束。
 
 ## Implemented
 
@@ -20,8 +20,8 @@ index／mobile.css提供29／30px薄欄、五組工作入口、真實分店選�
 
 ## Release / recovery
 
-原jacobmaster-97/-lumen-cinema-repository main Pages，模組及CSS快取0.7.0。發布前基準8d1b693，必要時revert功能提交再部署，不清玩家資料。未採用升級圖維持不加入runtime；歷史未追蹤美術／截圖及審閱稿不應blanket加入。
+原jacobmaster-97/-lumen-cinema-repository main Pages，模組及CSS快取0.7.0。來源9bcbdb7dc2efb811dcae8e2ca34e586fbdaca911，測試43894336484及Pages43894335818均success。公開0.7.0／SHA一致，8項檢查通過，errors／failedRequests／runtimeArtRequests=[]；見deployment.json／public.json。後續[skip ci]驗證提交不改功能來源。發布前基準8d1b693，必要時revert功能提交再部署，不清玩家資料。未採用升級圖維持不加入runtime；歷史未追蹤美術／截圖及審閱稿不應blanket加入。
 
 ## Risks / next safe task
 
-真實手機、iOS／Android系統手勢、安全區／軟鍵盤、拇指舒適度與長時間耗電待試玩；模擬觸控不當成真機證據。下一步部署並核對公開版SHA及功能，再讓使用者試玩。
+真實手機、iOS／Android系統手勢、安全區／軟鍵盤、拇指舒適度與長時間耗電待試玩；模擬觸控不當成真機證據。公開版SHA及功能已核對，下一步讓使用者實機試玩。
