@@ -42,3 +42,5 @@ iPad主迴圈2×／4×的p95由41.3／46.4ms降至14.4／13.9ms。像素預算�
 ## v0.7.3 觸控時間表驗證
 
 新手勢原生測試：初次「未誤開表單」斷言使用form.count，但關閉dialog會保留其表單DOM，已改為檢查dialog.open；沒有為此修改正式邏輯。背景滑動測試起初從棒條旁3px空隙起手，elementFromPoint顯示track但Chromium觸控命中修正將pointerdown轉到鄰近session，預期被棒條拖動接管。記錄pointer target／preventDefault後確認根因；改用60px高時間軸空白區測試，原生橫捲通過，不全面攔截背景手勢。四項模組測試、正式game DOM接線及14條原生流程均通過；沒有尚未處理的拖曳缺陷，Safari實機手感仍待試玩。
+
+0.7.3已發布74236af，兩workflow成功，公開9項常規與14項原生拖動通過，沒有已知未解拖曳錯誤。0.7.2讀檔保護8條回歸及81 Node均通過，沒有重複先前失敗路線或改權威規則。

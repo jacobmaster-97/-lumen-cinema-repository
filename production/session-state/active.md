@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-timetable-touch-073：使用者要求影片棒條觸控拖動。基準b6a8c62，實作與14個拖動流程／81 Node通過，待完整回歸與Pages公開核對。
+timetable-touch-073：使用者要求影片棒條觸控拖動。基準b6a8c62，實作與14個拖動流程／81 Node通過，完整回歸與Pages公開核對完成。
 
 ## Implemented
 
@@ -20,8 +20,8 @@ timetable-touch-073：使用者要求影片棒條觸控拖動。基準b6a8c62，
 
 ## Release / recovery
 
-原main Pages，0.7.3模組快取；待CI／公開同SHA拖動核對。回退功能提交再部署，不清玩家v2或備份。歷史未追蹤美術不加入。
+原main Pages，0.7.3模組快取；來源74236af62e751ed2e337f862be51a2e6be14f893，測試44093826728與Pages44093826904成功；公開0.7.3／同SHA與9項常規、14項原生拖動通過，errors／failedRequests／未採用美術請求為空。公開HTTPS保留CA驗證後原樣轉交Chromium，沒有本機代替／停用TLS。證據deployment.json／public.json／schedule-drag-public.json。後續[skip ci]僅驗證／QA。回退功能提交再部署，不清玩家v2或備份。歷史未追蹤美術不加入。
 
 ## Risks / next safe task
 
-完成公開核對後由使用者iPad Safari試玩；未宣稱真機、輔助閱讀器或商店測量。
+公開核對完成，下一步使用者iPad Safari試玩；未宣稱真機、輔助閱讀器或商店測量。

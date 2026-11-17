@@ -21,3 +21,5 @@ game啟動先恢復現有v2狀態再顯示歡迎；saveReady阻止未載入／�
 ## v0.7.3 時間表拖曳
 
 schedule-drag.mjs只擁有指針／預覽／手勢rAF；game綁定原validateProgramme與setProgramme，合法放手一次寫入及更新預測。重繪前destroy，取消／第二指／隱藏／resize不改權威資料；mobile-input略過棒條並抑制其相容click，鍵盤與原編輯表單保留。build明確複製新模組、0.7.3快取，81 Node與14條原生拖動流程，方法／限制見design/timetable-touch-v0.7.3.md。
+
+0.7.3來源74236af62e751ed2e337f862be51a2e6be14f893，測試44093826728及Pages44093826904均success。公開版本／同SHA的9項常規與14項原生拖動核對通過；證據production/verification/v0.7.3。後續[skip ci]驗證提交不改公開功能來源。

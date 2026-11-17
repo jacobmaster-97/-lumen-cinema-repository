@@ -1,0 +1,40 @@
+{
+  "url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "source": "74236af62e751ed2e337f862be51a2e6be14f893",
+  "transport": "CA-verified unmodified live public HTTPS responses forwarded to Chromium; no local site files or disabled TLS.",
+  "checks": [
+    "public release matches version 0.7.3 and exact functional SHA",
+    "live mobile shell, single-floor start, 29/30px bars and no centre control",
+    "funded real construction remains in investment; approved map and bathroom direction preserved",
+    "public touch price editor saves to the real programme and refreshes forecast",
+    "public maintenance booking debits once and cancellation refunds",
+    "actual live admissions, strategy feedback and equipment wear render on published canvas",
+    "public legacy save and two-branch switching preserve money and progress",
+    "published tablet uses bounded map resolution and memory without resizing the CSS viewport",
+    "unaccepted artwork stays archived; no page errors or failed asset requests"
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "runtimeArtRequests": [],
+  "release": {
+    "version": "0.7.3",
+    "commit": "74236af62e751ed2e337f862be51a2e6be14f893",
+    "builtAt": "2026-11-17T13:33:13.987Z"
+  },
+  "live": {
+    "admissions": 6,
+    "feedback": 6,
+    "condition": 99.84999999999997,
+    "canvasVersion": "0.7.3"
+  },
+  "tablet": {
+    "canvas": [
+      1344,
+      930
+    ],
+    "pixelRatio": 1.3121452438825985,
+    "cacheBytes": 3460720
+  },
+  "status": "passed",
+  "finishedAt": "2026-11-17T13:34:37.817Z"
+}

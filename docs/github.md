@@ -89,3 +89,5 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 ## v0.7.3 觸控排片
 
 沿用原main Pages，快取版號0.7.3；新schedule-drag模組與81項Node隨原CI測試。scripts/verify-schedule-drag.cjs提供原生觸控／滑鼠／鍵盤14流程及公開同SHA核對；證據production/verification/v0.7.3。回退本輪功能提交再部署，不清主存檔或備份。
+
+0.7.3來源74236af62e751ed2e337f862be51a2e6be14f893，測試44093826728及Pages44093826904均success。公開版本／同SHA的9項常規與14項原生拖動核對通過；證據production/verification/v0.7.3。後續[skip ci]驗證提交不改公開功能來源。

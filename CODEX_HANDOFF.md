@@ -2,7 +2,7 @@
 
 ## Goal / phase
 
-使用者要求排片影片棒條可觸控拖曳。基準b6a8c62（公開0.7.2），v0.7.3已實作，待完整回歸、原main Pages與同SHA公開核對。
+使用者要求排片影片棒條可觸控拖曳。基準b6a8c62（公開0.7.2），v0.7.3已發布，完整回歸、原main Pages與同SHA公開核對通過。
 
 ## Implemented
 
@@ -13,14 +13,14 @@
 
 ## Verification
 
-81 Node及14個原生Chromium拖動流程通過，含有效移動／換廳、文字衝突及資金／排片不變、清潔／保養／未建廳、取消／第二指、滑鼠／鍵盤、640×320背景滑動／邊緣捲動與保留視野、營業鎖定。移動中不重算預測，放手後寫入實際v2存檔。errors／failedRequests=[]。預覽截圖已目視核對。完整遊戲、8尺寸、DPR2與舊檔／恢復回歸見production/verification/v0.7.3；契約及UI審核design/timetable-touch-v0.7.3.md。
+81 Node及14個原生Chromium拖動流程通過，含有效移動／換廳、文字衝突及資金／排片不變、清潔／保養／未建廳、取消／第二指、滑鼠／鍵盤、640×320背景滑動／邊緣捲動與保留視野、營業鎖定。移動中不重算預測，放手後寫入實際v2存檔。errors／failedRequests=[]。預覽截圖已目視核對。完整遊戲11流程、8尺寸、DPR2／iPad4項與存檔恢復8項均通過；公開9項常規及14項原生拖動通過，見production/verification/v0.7.3；契約及UI審核design/timetable-touch-v0.7.3.md。
 
 ## Release / recovery
 
-原https://jacobmaster-97.github.io/-lumen-cinema-repository/ main，0.7.3待發布／公開核對。必要時revert本輪功能提交再部署，不刪主檔或備份。原公開0.7.2來源2434fcf437d5cd90180c9a457985c490ce61364c。
+原https://jacobmaster-97.github.io/-lumen-cinema-repository/ main，0.7.3已發布，功能來源74236af62e751ed2e337f862be51a2e6be14f893；測試44093826728及Pages44093826904均success。公開版本／同SHA的9項常規及14項原生拖動通過，errors／failedRequests／未採用美術請求為空。HTTPS以平台CA驗證後原樣轉交Chromium，未停用TLS或用本機代替；證據deployment.json、public.json、schedule-drag-public.json。後續[skip ci]只記錄驗證，不改公開功能來源。必要時revert本輪功能提交再部署，不刪主檔或備份。原公開0.7.2來源2434fcf437d5cd90180c9a457985c490ce61364c。
 
 只stage本輪檔案，歷史未追蹤美術／審閱稿不加入。gdd／timeline更新後refresh-context再validate；docs-impact分類器不識別prototypes/browser，手動記錄擁有文件。後續[skip ci]驗證提交不改公開功能來源。
 
 ## Risks / next safe task
 
-完成完整回歸及同SHA公開拖動核對，再讓用戶iPad Safari試玩；Chromium原生觸控模擬不等同真機，未測實體觸控與輔助閱讀器。
+完整回歸及公開拖動已核對，下一步用戶iPad Safari試玩；Chromium原生觸控模擬不等同真機，未測實體觸控與輔助閱讀器。
