@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-busy-cinema-perf-071：使用者回報iPad2×／4×營業卡頓。基準6abf971；v0.7.1本機驗證完成，待main Pages發布及公開同SHA核對。
+busy-cinema-perf-071：使用者回報iPad2×／4×營業卡頓。基準6abf971；v0.7.1已發布main Pages，CI與公開同SHA核對完成。
 
 ## Implemented
 
@@ -20,8 +20,8 @@ busy-cinema-perf-071：使用者回報iPad2×／4×營業卡頓。基準6abf971�
 
 ## Release / recovery
 
-原main Pages流程，0.7.1快取版號；CI／公開核對待完成，證據deployment.json／public.json。回退本輪功能提交再部署，保留玩家v2檔。歷史未追蹤美術不加入。
+原main Pages流程，0.7.1快取版號；來源605902e5f428f9d005ecfc5bef548314fc2fffc6，測試44040401826及Pages44040401823成功，公開0.7.1／SHA與9項操作通過，DPR2 iPad尺寸的內部畫布1344×930，errors／failedRequests／runtimeArtRequests=[]。公開HTTPS經平台CA驗證後原樣轉交Chromium，沒有本機替代或停用TLS；證據deployment.json／public.json。後續[skip ci]僅驗證文件。回退本輪功能提交再部署，保留玩家v2檔。歷史未追蹤美術不加入。
 
 ## Risks / next safe task
 
-先完成公開同SHA核對，再請使用者iPad試玩2×及4×。Chromium模擬不能代表Safari／長時熱及耗電。
+公開核對已完成，下一步使用者iPad試玩2×及4×。Chromium模擬不能代表Safari／長時熱及耗電。

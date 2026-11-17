@@ -2,7 +2,7 @@
 
 ## Goal / phase
 
-使用者回報iPad在2×／4×營業卡頓，要求解決。本輪基準6abf971；v0.7.1功能完成並通過本機驗證，待發布原GitHub Pages及同SHA公開核對。前版0.7.0來源9bcbdb7。
+使用者回報iPad在2×／4×營業卡頓，要求解決。本輪基準6abf971；v0.7.1已發布原GitHub Pages，CI與公開同SHA核對完成。前版0.7.0來源9bcbdb7。
 
 ## Implemented
 
@@ -19,8 +19,8 @@
 
 ## Release / recovery
 
-原https://jacobmaster-97.github.io/-lumen-cinema-repository/，main既有Pages workflow。待CI／公開同SHA核對；證據production/verification/v0.7.1。回退本輪功能提交再部署，不清玩家v2資料。歷史未追蹤美術／審閱稿不加入本輪。模板context manifest需在更新設計／時間線後refresh-context再validate；docs-impact分類器不識別prototypes/browser，需手動記錄browser擁有文件。
+原https://jacobmaster-97.github.io/-lumen-cinema-repository/，main既有Pages workflow。功能來源605902e5f428f9d005ecfc5bef548314fc2fffc6；測試44040401826及Pages44040401823均success。公開0.7.1／同SHA及9項操作核對通過，含DPR2請求下iPad尺寸1344×930內部畫布；errors／failedRequests／runtimeArtRequests=[]。公開HTTPS保留平台CA驗證，原樣轉交Chromium，沒有本機替代或停用TLS。證據production/verification/v0.7.1/deployment.json及public.json。後續[skip ci]只記錄驗證，不改公開功能來源。回退本輪功能提交再部署，不清玩家v2資料。歷史未追蹤美術／審閱稿不加入本輪。模板context manifest需在更新設計／時間線後refresh-context再validate；docs-impact分類器不識別prototypes/browser，需手動記錄browser擁有文件。
 
 ## Risks / next safe task
 
-iPad Safari實際手感及長時間熱／記憶體表現待使用者試玩；不承諾實機fps。下一步完成原Pages發布及公開版本核對。
+iPad Safari實際手感及長時間熱／記憶體表現待使用者試玩；不承諾實機fps。下一步讓使用者在iPad重新整理頁面，以原存檔試玩2×／4×。

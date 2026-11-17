@@ -1,0 +1,26 @@
+{
+  "version": "0.7.1",
+  "functionalSource": "605902e5f428f9d005ecfc5bef548314fc2fffc6",
+  "url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "pages": {
+    "conclusion": "success",
+    "head_sha": "605902e5f428f9d005ecfc5bef548314fc2fffc6",
+    "html_url": "https://github.com/jacobmaster-97/-lumen-cinema-repository/actions/runs/44040401823",
+    "id": 44040401823,
+    "name": "Publish playable game to Pages",
+    "status": "completed"
+  },
+  "tests": {
+    "conclusion": "success",
+    "head_sha": "605902e5f428f9d005ecfc5bef548314fc2fffc6",
+    "html_url": "https://github.com/jacobmaster-97/-lumen-cinema-repository/actions/runs/44040401826",
+    "id": 44040401826,
+    "name": "Cinema prototype tests",
+    "status": "completed"
+  },
+  "publicStatus": "passed",
+  "publicChecks": 9,
+  "verifiedAt": "2026-11-17T07:42:53.074Z",
+  "transport": "CA-verified unmodified live public HTTPS responses forwarded to Chromium; no local site files or disabled TLS.",
+  "recovery": "Revert functional commit and redeploy; preserve lumen-cinema-v2 player storage."
+}
