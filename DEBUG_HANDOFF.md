@@ -28,3 +28,11 @@ iPad主迴圈2×／4×的p95由41.3／46.4ms降至14.4／13.9ms。像素預算�
 75項Node、完整自然4×日結／翌日、兩店／物業、三種實際小遊戲、舊v2、8尺寸、DPR2深色、iPad尺寸非整數DPR原生雙指通過。baseline與release三案顧客數、stage、可見ID及座位逐項一致；真實canvas驗證狀態JSON不被render改寫、24MiB上限、縮放／分店／容量／resize失效與釋放。errors／failedRequests／未採用美術請求為空。
 
 下一步是使用者iPad試玩2×及4×；若仍卡頓，記錄型號／Safari版本／發生時客流與鏡頭比例，再重現量測，不能直接重複已失敗方案或廣泛重構。無已知未解JS錯誤；實機Safari、長時熱／耗電與系統記憶體壓力未實測。
+
+## 新事件：v0.7.2 讀檔後要求重建
+
+使用者明確按「繼續已儲存進度」。普通engine save/load於規劃、營業、日結可完整保留起始地圖。已重現另一條根因：boot先建立暫時空白state，尚未按歡迎繼續時再次reload，pagehide無條件persist覆寫主檔；其後繼續即讀到空白檔。原版實際4區域→0、44792.04→68000、日期2→1，production/verification/v0.7.2/baseline.json。未存取用戶iPad原檔，不宣稱已確定其實際受損路徑。
+
+最小修正game啟動先還原、saveReady保護自動／離頁儲存；錯誤檔原樣保留，開業／繼續停用。提供現有合法較早備份預覽及明確確認恢復，取消不改資料；恢復／新局前先備份，寫入失敗不執行重設。無有效備份不捏造最新進度。
+
+77 Node及8個真實存檔流程通過。調查測試曾因運行中loadGame回復paused後未取消暫停而無法日結、測試在離頁前直接注入錯誤檔會被既有合法頁面正常儲存取代，以及about:blank執行fixture初始化觸發Storage SecurityError；均修正測試情境（正式邏輯不繞過驗證）：明確resume、在下一頁初始化錯誤檔、fixture只在HTTP(S)注入。未反覆修改引擎或放寬檔案驗證。證據save-reopen.json、node-tests.txt。

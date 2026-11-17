@@ -2,25 +2,27 @@
 
 ## Goal / phase
 
-使用者回報iPad在2×／4×營業卡頓，要求解決。本輪基準6abf971；v0.7.1已發布原GitHub Pages，CI與公開同SHA核對完成。前版0.7.0來源9bcbdb7。
+使用者回報按「繼續已儲存進度」後需要重建戲院。維護修正，基準5c6a46c（公開0.7.1）。v0.7.2本機存檔回歸通過；待完整流程、CI及原Pages同SHA核對。
 
 ## Implemented
 
-- render：當前scene／scale的靜態深度圖層顯示快取，最多24MiB；鏡頭穩定150ms後每次最多2層，4ms為層與層之間軟截止。超額／context不可用就原繪圖。平移重用；縮放、resize、換店、施工／容量變動及dispose釋放舊顯示canvas。人物／電影投映仍即時、原深度排序；高密度地圖約125萬像素預算、DPR1至2，CSS文字／觸控不變。
-- operations-world／world：按scene弱索引座位；Navigation快取拼接路徑。靜態診斷換scene才重建、營運快照及p95按需讀取，避免逐幀工作。
-- gameplay／財務引擎、實際顧客數、日長、地圖座標、東向洗手間、PNG、v2存檔與已確認手機UI保持；未採用升級圖不引用。人物預縮小兩種方案無可靠收益，已撤回，詳DEBUG_HANDOFF。
-- profile-cinema／profile-live-cinema／verify-render-cache提供可重跑量測及真實canvas驗證；cache版號0.7.1。
+- game：啟動先還原現有檔案；saveReady阻止尚未讀檔或讀檔失敗時的pagehide／自動存檔以暫時新局覆蓋原檔。讀取失敗停用開業／繼續；成功載入營業中資料仍暫停，不跳時間。
+- 歡迎視窗提供正確的繼續入口；有合法較早備份可先預覽日期／資金／建築、確認才恢復。恢復及確認重新開局前先備份原始檔，備份寫入失敗取消操作。取消預覽不寫入。沒有備份不虛構進度。
+- 引擎／經濟／v2格式、已確認地圖／美術、未採用圖邊界與0.7.1高密度畫布／靜態快取不改。0.7.2模組快取。
+- 新scripts/verify-save-reopen.cjs及兩項construction回歸。來源與約束詳docs/save-recovery-v0.7.2.md。
 
 ## Verification
 
-75／75 Node。11條完整Chromium流程含自然4×日結／翌日、真實施工／財務／排片／保養／物業／兩店／三種小遊戲／舊v2，8尺寸、DPR2深色及原生多指通過。真實canvas快取上限、失效、釋放、顧客ID／stage相同、完整狀態不被render改寫通過。errors／failedRequests／runtimeArtRequests=[]。
+原版真實瀏覽器重現：已建4區域→0、資金44792.04→68000、日期2→1。原因是歡迎畫面再重載觸發pagehide儲存空白暫時狀態，不是一般map序列化遺失；未讀到用戶iPad實際檔案，不把重現當作已確定其資料現況。
 
-844×390／DPR2／CPU4倍節流，同場cached/direct/direct/cached滿座p95 6.8／15.4／16.9／5.8ms，約60%下降，30fps預算33.3ms。iPad1024×768主迴圈2×／4×滿座，最終p95 14.4／13.9ms（原41.3／46.4ms），高密度畫布像素預算是關鍵。最終重跑數字見production/verification/v0.7.1/profile-release.json及profile-live-ipad-final.json，方法與限制design/performance-v0.7.1.md。證據非Safari／實體iPad／長時熱與耗電。靜態像素最近鄰差異1.6%滿刻度，背景遮罩差0.066%，滿座截圖目視通過。
+77項Node、8項實際存檔流程通過（重開／營業中／素材載入中離頁／錯誤檔保留／預覽取消／恢復／備份寫入失敗／確認新局）。完整遊戲及裝置流程結果見production/verification/v0.7.2。Safari實機、用戶當前檔案與最後一刻可恢復性未測。DEBUG_HANDOFF新增本次根因。
 
 ## Release / recovery
 
-原https://jacobmaster-97.github.io/-lumen-cinema-repository/，main既有Pages workflow。功能來源605902e5f428f9d005ecfc5bef548314fc2fffc6；測試44040401826及Pages44040401823均success。公開0.7.1／同SHA及9項操作核對通過，含DPR2請求下iPad尺寸1344×930內部畫布；errors／failedRequests／runtimeArtRequests=[]。公開HTTPS保留平台CA驗證，原樣轉交Chromium，沒有本機替代或停用TLS。證據production/verification/v0.7.1/deployment.json及public.json。後續[skip ci]只記錄驗證，不改公開功能來源。回退本輪功能提交再部署，不清玩家v2資料。歷史未追蹤美術／審閱稿不加入本輪。模板context manifest需在更新設計／時間線後refresh-context再validate；docs-impact分類器不識別prototypes/browser，需手動記錄browser擁有文件。
+原https://jacobmaster-97.github.io/-lumen-cinema-repository/ main，待發布0.7.2；workflow及公開來源見production/verification/v0.7.2/deployment.json。必要時revert功能提交重跑工作流程，保留主檔與所有備份。前版來源605902e5f428f9d005ecfc5bef548314fc2fffc6。
+
+歷史未追蹤美術／審閱稿不加入；只stage本輪檔案。更新gdd／timeline後refresh-context再validate。docs-impact分類器不識別prototypes/browser，需手動記錄擁有文件。後續驗證文件[skip ci]不改公開功能來源。
 
 ## Risks / next safe task
 
-iPad Safari實際手感及長時間熱／記憶體表現待使用者試玩；不承諾實機fps。下一步讓使用者在iPad重新整理頁面，以原存檔試玩2×／4×。
+完成公開版本及真實存檔流程核對；讓用戶重新整理後按繼續，若主檔已空白，查看可用較早備份預覽，不能保證所有失去的最新進度可還原。

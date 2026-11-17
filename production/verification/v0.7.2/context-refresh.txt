@@ -1,0 +1,3 @@
+Refreshed context manifest for Lumen Cinema
+/workspace/codex-game-studio/.codex/context-manifest.json
+/workspace/codex-game-studio/.codex/context-manifest.meta.json

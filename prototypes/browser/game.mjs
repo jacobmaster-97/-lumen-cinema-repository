@@ -4,7 +4,7 @@ import * as C from "./construction.mjs";
 import {constructionSummary,constructionPanel,roomConstruction} from "./construction-ui.mjs";
 import {operationsPanel,forecastPanel,draftForecast} from './operations-ui.mjs';
 import {strategyView,reviewPanel,cashPanel,maintenanceForm} from './strategy-ui.mjs';
-import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.7.1";
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.7.2";
 import { loadCinemaAssets } from "./assets.mjs";
 import { CinemaAudio } from "./audio.mjs";
 import { hallUnderRepair } from "./world.mjs";
@@ -39,6 +39,7 @@ const clock = (n) => {
 const STORAGE = "lumen-cinema-v2";
 let selectedZone = null;
 let selectedBlock=null;
+let saveReady=false,lastLoadError='',pendingRecovery=null;
 let state = E.createGame({construction:true}),
   view = "overview",
   filmFilter = "available",
@@ -107,11 +108,15 @@ function readStored() {
   }
 }
 function persist(silent = true) {
+  // The temporary boot state must never replace an existing, unread save.
+  if(!saveReady){if(!silent)toast('請先讀取原有進度，或確認重新開局。原存檔未被覆蓋。',true);return false;}
   try {
     localStorage.setItem(STORAGE, E.saveGame(state));
     if (!silent) toast("進度已儲存在呢個瀏覽器。");
+    return true;
   } catch {
     if (!silent) toast("瀏覽器未能儲存；請檢查儲存空間或私隱設定。", true);
+    return false;
   }
 }
 function result(error, message) {
@@ -193,6 +198,8 @@ function updateHeader() {
   $("#pause-button").textContent = state.paused ? "▶ 繼續" : "Ⅱ 暫停";
   $("#main-action").hidden = state.phase === "running";
   $('#main-action').textContent=state.phase==='closed'?'翌日準備':state.phase==='event'?'處理事件':state.branches.some(C.operational)?'開始營業':'建造戲院';
+  $('#main-action').disabled=!saveReady;
+  $('#pause-button').disabled=!saveReady;
   $('#pause-button').textContent=state.paused?'繼續營業':'暫停';
   $('#active-branch-name').textContent=v.name;
   $('#cycle-speed').textContent=state.speed+'×';
@@ -475,9 +482,29 @@ function movieDetail(id) {
   );
 }
 function help(welcome = false) {
+  if(!saveReady&&readStored())welcome=true;
+  if(welcome&&readStored()){
+    const backup=recoveryCandidate();
+    openModal(`<div class="modal-body">${modalHeader('LUMEN CINEMA',saveReady?'歡迎返嚟。':'存檔未能讀取')}${saveReady?`<p>第 ${state.day} 日 · ${esc(b().name)}。已還原建築、排片及資金${state.phase==='running'?'，營業已暫停':''}。</p>`:`<p role="alert">${esc(lastLoadError)}。原存檔會保留，不會以新局覆蓋。</p>`}<div class="modal-actions"><button class="primary" data-action="resume-save">${saveReady?'繼續已儲存進度':'重試讀取'}</button>${backup?'<button class="secondary" data-action="recover-save">查看較早備份</button>':''}<button class="subtle-button danger" data-action="reset-prompt">重新開局</button></div></div>`);
+    return;
+  }
   openModal(
     `<div class="modal-body">${modalHeader("WELCOME TO LUMEN CINEMA", welcome ? "歡迎做戲院老闆。" : "好戲點樣開始？")}<p>現代香港，一間租用戲院。你負責安排營運，員工負責日常工作，突發時再決定要唔要親自救場。</p><div class="help-steps"><div class="help-step"><b>01</b><span><strong>由右下角地板建造影院</strong>在「投資 → 擴建與建造」逐格鋪地，再建售票、小食、洗手間及影廳；建好的影廳會提供建議排片，可再調整。</span></div><div class="help-step"><b>02</b><span><strong>睇住戲院自己運作</strong>正常速度一日 3 分鐘，可用 2×／4× 加速，不能跳到事件。離開分頁會自動暫停。</span></div><div class="help-step"><b>03</b><span><strong>親自救場，再投資下一步</strong>一般每日每店 0–2 次事件。小遊戲可交員工；儲錢買斷免租，或開設觀塘分店。</span></div></div><p>進度儲存於本機瀏覽器。價格、日長同獎勵目前係試玩設定；可以拖曳及縮放地圖，點選區域查看營運狀態。</p><div class="modal-actions">${welcome && readStored() ? '<button class="secondary" data-action="resume-save">繼續已儲存進度</button>' : ""}${!welcome ? '<button class="subtle-button danger" data-action="reset-prompt">重新開局</button>' : ""}<button class="primary" data-action="close">${welcome ? "開始籌備第一日" : "明白，繼續經營"}</button></div></div>`,
   );
+}
+function recoveryCandidate(){
+  const candidates=[];
+  for(const suffix of ['before-flow-v1','before-strategy-v1','before-map-v1','before-reset','before-recovery'])try{
+    const raw=localStorage.getItem(`${STORAGE}-${suffix}`);if(!raw)continue;
+    const saved=E.loadGame(raw);if(!saved.branches.some(v=>v.map.floors.length>1||v.map.built.length))continue;
+    candidates.push({raw,state:saved,time:Number(JSON.parse(raw).savedAt)||0});
+  }catch{}
+  return candidates.sort((a,b)=>b.state.day-a.state.day||b.time-a.time)[0]||null;
+}
+function showRecovery(){
+  const candidate=recoveryCandidate();if(!candidate){toast('未找到可讀取的較早備份。',true);return;}
+  pendingRecovery=candidate.raw;const s=candidate.state;
+  openModal(`<div class="modal-body">${modalHeader('SAVE RECOVERY','恢復較早備份？')}<p>第 ${s.day} 日 · 資金 ${money(s.cash)}</p><p>${s.branches.map(v=>`${esc(v.name)}：${v.map.built.length} 個區域、${v.map.floors.length} 塊地板`).join('<br>')}</p><p>這是較早的進度，恢復後會回到該時間點。現有存檔會先另存備份。</p><div class="modal-actions"><button class="secondary" data-action="close">取消</button><button class="primary" data-action="commit-recovery">恢復這份備份</button></div></div>`);
 }
 function showEvent() {
   const e = E.currentEvent(state);
@@ -647,6 +674,7 @@ function confirmInvestment(kind) {
   );
 }
 function action(name, target) {
+  if(!saveReady&&!['close','resume-save','reset-prompt','commit-reset','recover-save','commit-recovery'].includes(name)){help(true);return;}
   const id = target?.dataset.id;
   switch (name) {
     case "select-zone": selectZone(id); return;
@@ -841,13 +869,21 @@ function action(name, target) {
     case "resume-save":
       loadSaved();
       return;
+    case "recover-save": showRecovery(); return;
+    case "commit-recovery": {
+      if(!pendingRecovery)return;
+      try{const old=readStored();if(old)localStorage.setItem(STORAGE+'-before-recovery',old);}catch{toast('未能備份現有存檔，恢復未有執行。',true);return;}
+      if(loadSaved(pendingRecovery)){pendingRecovery=null;persist(false);}return;
+    }
     case "reset-prompt":
       openModal(
         `<div class="modal-body">${modalHeader("NEW BEGINNING", "重新開局？")}<p>會開始一間新戲院。現有本機存檔在你儲存新進度時才會被取代。</p><div class="modal-actions"><button class="secondary" data-action="close">取消</button><button class="primary" data-action="commit-reset">開始新一局</button></div></div>`,
       );
       return;
     case "commit-reset":
+      try{const old=readStored();if(old)localStorage.setItem(STORAGE+'-before-reset',old);}catch{toast('未能備份原有存檔，尚未重新開局。',true);return;}
       state = E.createGame({construction:true});selectedZone=null;selectedBlock=null;savedCamera=null;mapBranch=null;
+      saveReady=true;lastLoadError='';pendingRecovery=null;
       view = "overview";
       mini = null;
       closeModal();
@@ -856,19 +892,18 @@ function action(name, target) {
       return;
   }
 }
-function loadSaved() {
+function loadSaved(raw=readStored()) {
   try {
-    const raw = readStored();
     if (!raw) {
       toast("未有本機存檔。", true);
-      return;
+      return false;
     }
     const legacy=JSON.parse(raw)?.state?.branches?.some(b=>!b.map);
     const loaded=E.loadGame(raw);
     if(legacy)try{if(!localStorage.getItem(STORAGE+"-before-map-v1"))localStorage.setItem(STORAGE+"-before-map-v1",raw);}catch{}
     if(JSON.parse(raw).state.branches.some(b=>!b.strategy||b.flow&&!b.flow.strategyVersion))try{if(!localStorage.getItem(STORAGE+'-before-strategy-v1'))localStorage.setItem(STORAGE+'-before-strategy-v1',raw)}catch{}
     if(loaded.branches.every(b=>!b.flow))try{if(!localStorage.getItem(STORAGE+'-before-flow-v1'))localStorage.setItem(STORAGE+'-before-flow-v1',raw)}catch{}
-    state=loaded;selectedZone=null;selectedBlock=null;savedCamera=null;mapBranch=null;
+    state=loaded;saveReady=true;lastLoadError='';selectedZone=null;selectedBlock=null;savedCamera=null;mapBranch=null;
     mini = null;
     view = "overview";
     closeModal();
@@ -879,8 +914,13 @@ function loadSaved() {
         ? "已讀取進度，按「繼續」恢復營業。"
         : "已讀取本機進度。",
     );
+    return true;
   } catch (error) {
+    saveReady=false;lastLoadError=error.message;
+    if(state.phase==='running')state.paused=true;
+    updateHeader();
     toast("未能讀取：" + error.message, true);
+    return false;
   }
 }
 function mainAction() {
@@ -1026,6 +1066,7 @@ try {
   $('#view-content').innerHTML='<section class="panel load-failure"><h2>戲院素材未能載入</h2><p>請檢查連線，再重新載入。已儲存的進度會保留。</p><button class="primary" onclick="location.reload()">重新載入</button></section>';
   $('#main-action').disabled=true;console.error(error);throw error;
 }
+if(readStored())loadSaved();else saveReady=true;
 render();
 help(true);
 let previous = performance.now(),

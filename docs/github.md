@@ -79,3 +79,7 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 原main Pages流程，0.7.1模組／CSS快取。新增有上限的靜態深度圖層顯示快取，重用座位／路徑，保留真實顧客與營運。測試、效能、發布及公開同SHA核對證據：production/verification/v0.7.1；取樣方法及限制：design/performance-v0.7.1.md。回退本輪功能提交再部署，不清玩家存檔。歷史未追蹤美術不加入本輪。
 
 0.7.1發布來源605902e5f428f9d005ecfc5bef548314fc2fffc6；測試44040401826及Pages44040401823均success，公開版本／SHA與9項操作核對通過，含Retina iPad尺寸畫布預算。公開HTTPS保留CA驗證，未用本機檔案替代；deployment.json／public.json記錄結果。後續[skip ci]驗證文件不改公開來源。
+
+## v0.7.2 存檔重開修正
+
+原main Pages流程，0.7.2快取。修正boot尚未讀檔時pagehide儲存空白新局，加入較早備份預覽／確認恢復及重設前備份。77項Node及真實重開、載入中離頁／錯誤檔保留驗證；發布與公開同SHA證據production/verification/v0.7.2。回退revert功能提交，不刪任何玩家存檔／備份。

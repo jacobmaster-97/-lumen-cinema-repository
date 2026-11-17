@@ -1,0 +1,19 @@
+{
+  "url": "http://127.0.0.1:8350/pages/",
+  "checks": [],
+  "errors": [],
+  "failedRequests": [],
+  "reopen": {
+    "expectedRooms": [
+      "tickets",
+      "snacks",
+      "toilets",
+      "hall1"
+    ],
+    "actualRooms": [],
+    "expectedCash": 44792.04000000007,
+    "actualCash": 68000,
+    "day": 1
+  },
+  "status": "reproduced"
+}

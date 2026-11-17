@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import * as E from "../../prototypes/browser/engine.mjs";
+import * as C from "../../prototypes/browser/construction.mjs";
 const require = createRequire(
   new URL("../../prototypes/browser/package.json", import.meta.url),
 );
@@ -26,6 +27,12 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
   });
   const w = dom.window,
     d = w.document;
+  const existing=E.createGame({construction:true});
+  while(!C.operational(existing.branches[0])){
+    const step=C.nextStep(existing.branches[0]);
+    assert.equal(step.kind==='floor'?E.buildFloor(existing,0,step.x,step.y):E.constructRoom(existing,0,step.id),null);
+  }
+  const bootRaw=E.saveGame(existing);w.localStorage.setItem('lumen-cinema-v2',bootRaw);
   let nextFrame = null,
     now = 0,
     draws = 0;
@@ -61,7 +68,12 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
       height=1254;
       async decode() {}
     },
-    fetch: async () => ({ ok: true, json: async () => atlas }),
+    fetch: async () => {
+      // The page can leave while assets are pending, before its old save loads.
+      w.dispatchEvent(new w.Event('pagehide'));
+      assert.equal(w.localStorage.getItem('lumen-cinema-v2'),bootRaw,'unread save must survive early pagehide');
+      return { ok: true, json: async () => atlas };
+    },
     requestAnimationFrame: (fn) => (nextFrame = fn),
   });
   const timers = [],
@@ -98,6 +110,13 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
   try {
     await import("../../prototypes/browser/game.mjs?integration");
     assert.ok(d.querySelector("#modal").open);
+    click('[data-action="resume-save"]');
+    assert.deepEqual(w.__lumen.getState().branches[0].map,existing.branches[0].map);
+    assert.equal(w.__lumen.getState().cash,existing.cash);
+    assert.equal(d.querySelector('#main-action').textContent,'開始營業');
+    click('#help-button');click('[data-action="reset-prompt"]');click('[data-action="commit-reset"]');
+    assert.equal(w.localStorage.getItem('lumen-cinema-v2-before-reset'),bootRaw);
+    click('#help-button');
     close();
     assert.ok(draws > 0, "Real sprite rendering path was exercised");
     assert.deepEqual(save().branches[0].map.floors,['6,6']);
