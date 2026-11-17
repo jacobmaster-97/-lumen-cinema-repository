@@ -1,0 +1,38 @@
+{
+  "url": "https://jacobmaster-97.github.io/-lumen-cinema-repository/",
+  "checks": [
+    "repeated page reload before Continue preserves completed starter, day, money and schedule",
+    "active operating save reopens paused with the same buildings and finances",
+    "closing during asset loading preserves the unread campaign byte-for-byte",
+    "unreadable save survives reload and pagehide byte-for-byte",
+    "backup preview and cancel do not change the current save",
+    "explicit recovery restores earlier built cinema and backs up the replaced file",
+    "backup write failure cancels reset and preserves the active campaign",
+    "only confirmed new game resets construction; the replaced campaign remains recoverable"
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "release": {
+    "version": "0.7.2",
+    "commit": "2434fcf437d5cd90180c9a457985c490ce61364c",
+    "builtAt": "2026-11-17T08:47:06.438Z"
+  },
+  "reopen": {
+    "expectedRooms": [
+      "tickets",
+      "snacks",
+      "toilets",
+      "hall1"
+    ],
+    "actualRooms": [
+      "tickets",
+      "snacks",
+      "toilets",
+      "hall1"
+    ],
+    "expectedCash": 44792.04000000007,
+    "actualCash": 44792.04000000007,
+    "day": 2
+  },
+  "status": "passed"
+}

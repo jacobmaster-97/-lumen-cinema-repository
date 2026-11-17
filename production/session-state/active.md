@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-save-reopen-072：使用者按繼續後需要重建。基準5c6a46c，已重現歡迎畫面重載會pagehide覆寫主檔；v0.7.2修正待發布。
+save-reopen-072：使用者按繼續後需要重建。基準5c6a46c，已重現歡迎畫面重載會pagehide覆寫主檔；v0.7.2已發布並核對公開版本及同SHA。
 
 ## Implemented
 
@@ -20,8 +20,8 @@ save-reopen-072：使用者按繼續後需要重建。基準5c6a46c，已重現�
 
 ## Release / recovery
 
-原main Pages，0.7.2快取版號，待CI／公開同SHA驗證。回退revert功能提交再發布，保留lumen-cinema-v2及所有備份。歷史未追蹤美術不加入。
+原main Pages，0.7.2快取版號，來源2434fcf437d5cd90180c9a457985c490ce61364c，測試44049651507及Pages44049651443成功。公開0.7.2／SHA一致，9項常規與8項存檔流程通過；HTTPS經平台CA驗證後原樣轉交Chromium，未停用TLS、未以本機替代。證據deployment.json／public.json／save-reopen-public.json。後續[skip ci]僅驗證與QA文件，不改公開功能來源。回退revert功能提交再發布，保留lumen-cinema-v2及所有備份。歷史未追蹤美術不加入。
 
 ## Risks / next safe task
 
-先完成公開存檔恢復流程核對。使用者iPad既有資料是否已覆蓋未知，較早備份只能恢復該時間點；無有效備份不自動重建或補錢。
+公開存檔流程已核對，下一步用戶iPad試玩。使用者iPad既有資料是否已覆蓋未知，較早備份只能恢復該時間點；無有效備份不自動重建或補錢。

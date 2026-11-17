@@ -15,3 +15,5 @@ Capture game architecture decisions here.
 ## v0.7.2 啟動與存檔保護
 
 game啟動先恢復現有v2狀態再顯示歡迎；saveReady阻止未載入／失敗時自動儲存暫時空白新局。備份恢復需預覽並明確確認，恢復及重新開局前保留原始主檔，備份寫入失敗取消操作。引擎及序列化格式不改，0.7.1效能限制保持。重現／驗證及資料恢復界線見docs/save-recovery-v0.7.2.md、production/verification/v0.7.2。
+
+0.7.2功能來源2434fcf437d5cd90180c9a457985c490ce61364c；測試44049651507及Pages44049651443均success。公開0.7.2／同SHA的9項常規及8項存檔恢復檢查通過；證據production/verification/v0.7.2。後續[skip ci]驗證提交不改功能來源。
