@@ -1,0 +1,31 @@
+{
+  "checks": [
+    "static layers warm on the actual canvas",
+    "scaled cache stays within 24MiB",
+    "fixture includes real visible customers",
+    "cache toggle preserves every visible patron ID and stage",
+    "panning reuses scale cache",
+    "zoom releases prior canvas backing stores",
+    "maximum zoom has bounded cache with direct-draw fallback",
+    "branch switch invalidates display cache",
+    "capacity change rebuilds scene, seats and layer cache",
+    "all render operations leave authoritative game state unchanged",
+    "tablet raster budget caps Retina workload without shrinking CSS viewport",
+    "DPR2 resize invalidates cache; disposal releases current cache"
+  ],
+  "cacheBytes": 24934768,
+  "visiblePatrons": 42,
+  "tablet": [
+    1291,
+    968
+  ],
+  "resize": {
+    "canvas": [
+      1280,
+      640
+    ],
+    "disposed": true
+  },
+  "errors": [],
+  "status": "passed"
+}

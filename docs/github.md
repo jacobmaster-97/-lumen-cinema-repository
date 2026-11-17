@@ -73,3 +73,7 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 ## v0.7 手機橫向介面
 
 使用者已確認並授權實裝。新增mobile.css、mobile-input.mjs、touch-map.mjs，build明確複製並統一0.7.0快取。73項測試、11條本機瀏覽器流程及DPR2驗證通過。來源9bcbdb7dc2efb811dcae8e2ca34e586fbdaca911，測試run43894336484及Pages run43894335818均success；公開0.7.0／SHA一致，8項操作核對通過，errors／failedRequests／runtimeArtRequests=[]。證據production/verification/v0.7。公開測試以保留TLS驗證的即時HTTPS回應轉交Chromium，沒有本機替代。後續[skip ci]驗證文件提交不改功能來源。維持main原Pages流程；回退revert功能提交再部署，保留玩家v2存檔。未採用升級圖不加入runtime。
+
+## v0.7.1 營業畫面效能
+
+原main Pages流程，0.7.1模組／CSS快取。新增有上限的靜態深度圖層顯示快取，重用座位／路徑，保留真實顧客與營運。測試、效能、發布及公開同SHA核對證據：production/verification/v0.7.1；取樣方法及限制：design/performance-v0.7.1.md。回退本輪功能提交再部署，不清玩家存檔。歷史未追蹤美術不加入本輪。

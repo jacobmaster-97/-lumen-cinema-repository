@@ -29,7 +29,7 @@
       "status": "selected",
       "statusReason": "selected within budget",
       "safety": "safe",
-      "chars": 4446
+      "chars": 4767
     },
     {
       "sourcePath": "production/timeline.md",
@@ -38,7 +38,7 @@
       "status": "selected",
       "statusReason": "selected within budget",
       "safety": "safe",
-      "chars": 1427
+      "chars": 1801
     },
     {
       "sourcePath": "docs/market-overview.md",
@@ -91,6 +91,6 @@
     "maxChars": 48000,
     "maxEntryChars": 16000,
     "usedFiles": 9,
-    "usedChars": 17481
+    "usedChars": 18176
   }
 }

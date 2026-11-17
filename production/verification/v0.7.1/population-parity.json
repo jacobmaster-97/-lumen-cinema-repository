@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "checks": [
+    "same 587 true patron records per scenario",
+    "same stages, seated/queue/walker counts and visible IDs in all three cases",
+    "same hall seat counts; authoritative economic modules unchanged"
+  ],
+  "baseSource": {
+    "render.mjs": "8967bb1e543245d4c4febea3587f5b9f08508e720fe06560ed1086b0da06eac8",
+    "operations-world.mjs": "019755b828766a91e2c4545ea67ba396b93015b895a3615d6d0a4574158fe580",
+    "world.mjs": "cf8314559ed919cf15cbf656803b5b5d0b7d62623b3b6d2586e39b0acc4f4b03",
+    "scene.mjs": "91be07ed3d817204f66b95443dad2c15556aed00100ee1e447e796334b40ef74",
+    "game.mjs": "0773916eb17598e1bd8f058ab34c448ab438d903d55867e419efc3e6520cf74b"
+  },
+  "finalSource": {
+    "render.mjs": "a806116dac7e663284844ea4162c14eaf285955efec2447edd8ffb2db97ab201",
+    "operations-world.mjs": "3924947bfb079972b2e8e0e4e92977c8870b5adedffe88c599ca73ef5a87c902",
+    "world.mjs": "47d28baa0e5ffe00608b00c57142393ab0810ee8b5eed44f3265674471cda64b",
+    "scene.mjs": "91be07ed3d817204f66b95443dad2c15556aed00100ee1e447e796334b40ef74",
+    "game.mjs": "61d2c40956a324806f9ca849c327bc01fb41e2298efa7bf2dd52fbbdf8e26fb7"
+  }
+}

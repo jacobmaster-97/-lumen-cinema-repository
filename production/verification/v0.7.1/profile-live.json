@@ -1,0 +1,1456 @@
+{
+  "cpuThrottle": 4,
+  "viewport": [
+    844,
+    390
+  ],
+  "dpr": 2,
+  "scenarios": [
+    {
+      "speed": 2,
+      "phase": "running",
+      "elapsed": 105.25607692307648,
+      "cash": 258828.1999999957,
+      "admissions": 369,
+      "diagnostics": {
+        "coldCompileMs": 494,
+        "patronActors": {
+          "queued": 0,
+          "seated": 136,
+          "walking": 0,
+          "departing": 0
+        },
+        "visiblePatrons": [
+          {
+            "id": 233,
+            "stage": "seated"
+          },
+          {
+            "id": 234,
+            "stage": "seated"
+          },
+          {
+            "id": 236,
+            "stage": "seated"
+          },
+          {
+            "id": 237,
+            "stage": "seated"
+          },
+          {
+            "id": 238,
+            "stage": "seated"
+          },
+          {
+            "id": 239,
+            "stage": "seated"
+          },
+          {
+            "id": 241,
+            "stage": "seated"
+          },
+          {
+            "id": 242,
+            "stage": "seated"
+          },
+          {
+            "id": 243,
+            "stage": "seated"
+          },
+          {
+            "id": 247,
+            "stage": "seated"
+          },
+          {
+            "id": 248,
+            "stage": "seated"
+          },
+          {
+            "id": 249,
+            "stage": "seated"
+          },
+          {
+            "id": 250,
+            "stage": "seated"
+          },
+          {
+            "id": 251,
+            "stage": "seated"
+          },
+          {
+            "id": 252,
+            "stage": "seated"
+          },
+          {
+            "id": 253,
+            "stage": "seated"
+          },
+          {
+            "id": 254,
+            "stage": "seated"
+          },
+          {
+            "id": 255,
+            "stage": "seated"
+          },
+          {
+            "id": 257,
+            "stage": "seated"
+          },
+          {
+            "id": 258,
+            "stage": "seated"
+          },
+          {
+            "id": 259,
+            "stage": "seated"
+          },
+          {
+            "id": 260,
+            "stage": "seated"
+          },
+          {
+            "id": 261,
+            "stage": "seated"
+          },
+          {
+            "id": 262,
+            "stage": "seated"
+          },
+          {
+            "id": 263,
+            "stage": "seated"
+          },
+          {
+            "id": 264,
+            "stage": "seated"
+          },
+          {
+            "id": 265,
+            "stage": "seated"
+          },
+          {
+            "id": 266,
+            "stage": "seated"
+          },
+          {
+            "id": 268,
+            "stage": "seated"
+          },
+          {
+            "id": 269,
+            "stage": "seated"
+          },
+          {
+            "id": 270,
+            "stage": "seated"
+          },
+          {
+            "id": 272,
+            "stage": "seated"
+          },
+          {
+            "id": 273,
+            "stage": "seated"
+          },
+          {
+            "id": 276,
+            "stage": "seated"
+          },
+          {
+            "id": 279,
+            "stage": "seated"
+          },
+          {
+            "id": 281,
+            "stage": "seated"
+          },
+          {
+            "id": 282,
+            "stage": "seated"
+          },
+          {
+            "id": 283,
+            "stage": "seated"
+          },
+          {
+            "id": 285,
+            "stage": "seated"
+          },
+          {
+            "id": 286,
+            "stage": "seated"
+          },
+          {
+            "id": 288,
+            "stage": "seated"
+          },
+          {
+            "id": 289,
+            "stage": "seated"
+          },
+          {
+            "id": 290,
+            "stage": "seated"
+          },
+          {
+            "id": 291,
+            "stage": "seated"
+          },
+          {
+            "id": 292,
+            "stage": "seated"
+          },
+          {
+            "id": 294,
+            "stage": "seated"
+          },
+          {
+            "id": 295,
+            "stage": "seated"
+          },
+          {
+            "id": 296,
+            "stage": "seated"
+          },
+          {
+            "id": 297,
+            "stage": "seated"
+          },
+          {
+            "id": 298,
+            "stage": "seated"
+          },
+          {
+            "id": 299,
+            "stage": "seated"
+          },
+          {
+            "id": 301,
+            "stage": "seated"
+          },
+          {
+            "id": 302,
+            "stage": "seated"
+          },
+          {
+            "id": 304,
+            "stage": "seated"
+          },
+          {
+            "id": 305,
+            "stage": "seated"
+          },
+          {
+            "id": 306,
+            "stage": "seated"
+          },
+          {
+            "id": 307,
+            "stage": "seated"
+          },
+          {
+            "id": 308,
+            "stage": "seated"
+          },
+          {
+            "id": 310,
+            "stage": "seated"
+          },
+          {
+            "id": 312,
+            "stage": "seated"
+          },
+          {
+            "id": 315,
+            "stage": "seated"
+          },
+          {
+            "id": 316,
+            "stage": "seated"
+          },
+          {
+            "id": 318,
+            "stage": "seated"
+          },
+          {
+            "id": 319,
+            "stage": "seated"
+          },
+          {
+            "id": 320,
+            "stage": "seated"
+          },
+          {
+            "id": 321,
+            "stage": "seated"
+          },
+          {
+            "id": 323,
+            "stage": "seated"
+          },
+          {
+            "id": 325,
+            "stage": "seated"
+          },
+          {
+            "id": 326,
+            "stage": "seated"
+          },
+          {
+            "id": 327,
+            "stage": "seated"
+          },
+          {
+            "id": 331,
+            "stage": "seated"
+          },
+          {
+            "id": 332,
+            "stage": "seated"
+          },
+          {
+            "id": 333,
+            "stage": "seated"
+          },
+          {
+            "id": 334,
+            "stage": "seated"
+          },
+          {
+            "id": 335,
+            "stage": "seated"
+          },
+          {
+            "id": 336,
+            "stage": "seated"
+          },
+          {
+            "id": 338,
+            "stage": "seated"
+          },
+          {
+            "id": 339,
+            "stage": "seated"
+          },
+          {
+            "id": 340,
+            "stage": "seated"
+          },
+          {
+            "id": 341,
+            "stage": "seated"
+          },
+          {
+            "id": 342,
+            "stage": "seated"
+          },
+          {
+            "id": 343,
+            "stage": "seated"
+          },
+          {
+            "id": 344,
+            "stage": "seated"
+          },
+          {
+            "id": 345,
+            "stage": "seated"
+          },
+          {
+            "id": 346,
+            "stage": "seated"
+          },
+          {
+            "id": 347,
+            "stage": "seated"
+          },
+          {
+            "id": 348,
+            "stage": "seated"
+          },
+          {
+            "id": 349,
+            "stage": "seated"
+          },
+          {
+            "id": 350,
+            "stage": "seated"
+          },
+          {
+            "id": 351,
+            "stage": "seated"
+          },
+          {
+            "id": 352,
+            "stage": "seated"
+          },
+          {
+            "id": 353,
+            "stage": "seated"
+          },
+          {
+            "id": 354,
+            "stage": "seated"
+          },
+          {
+            "id": 355,
+            "stage": "seated"
+          },
+          {
+            "id": 356,
+            "stage": "seated"
+          },
+          {
+            "id": 357,
+            "stage": "seated"
+          },
+          {
+            "id": 358,
+            "stage": "seated"
+          },
+          {
+            "id": 361,
+            "stage": "seated"
+          },
+          {
+            "id": 362,
+            "stage": "seated"
+          },
+          {
+            "id": 363,
+            "stage": "seated"
+          },
+          {
+            "id": 366,
+            "stage": "seated"
+          },
+          {
+            "id": 367,
+            "stage": "seated"
+          },
+          {
+            "id": 368,
+            "stage": "seated"
+          },
+          {
+            "id": 369,
+            "stage": "seated"
+          },
+          {
+            "id": 370,
+            "stage": "seated"
+          },
+          {
+            "id": 373,
+            "stage": "seated"
+          },
+          {
+            "id": 374,
+            "stage": "seated"
+          },
+          {
+            "id": 375,
+            "stage": "seated"
+          },
+          {
+            "id": 376,
+            "stage": "seated"
+          },
+          {
+            "id": 377,
+            "stage": "seated"
+          },
+          {
+            "id": 378,
+            "stage": "seated"
+          },
+          {
+            "id": 379,
+            "stage": "seated"
+          },
+          {
+            "id": 380,
+            "stage": "seated"
+          },
+          {
+            "id": 384,
+            "stage": "seated"
+          },
+          {
+            "id": 385,
+            "stage": "seated"
+          },
+          {
+            "id": 386,
+            "stage": "seated"
+          },
+          {
+            "id": 387,
+            "stage": "seated"
+          },
+          {
+            "id": 388,
+            "stage": "seated"
+          },
+          {
+            "id": 389,
+            "stage": "seated"
+          },
+          {
+            "id": 390,
+            "stage": "seated"
+          },
+          {
+            "id": 392,
+            "stage": "seated"
+          },
+          {
+            "id": 394,
+            "stage": "seated"
+          },
+          {
+            "id": 397,
+            "stage": "seated"
+          },
+          {
+            "id": 399,
+            "stage": "seated"
+          },
+          {
+            "id": 401,
+            "stage": "seated"
+          },
+          {
+            "id": 402,
+            "stage": "seated"
+          },
+          {
+            "id": 403,
+            "stage": "seated"
+          },
+          {
+            "id": 404,
+            "stage": "seated"
+          },
+          {
+            "id": 407,
+            "stage": "seated"
+          },
+          {
+            "id": 408,
+            "stage": "seated"
+          },
+          {
+            "id": 410,
+            "stage": "seated"
+          },
+          {
+            "id": 411,
+            "stage": "seated"
+          },
+          {
+            "id": 415,
+            "stage": "seated"
+          },
+          {
+            "id": 416,
+            "stage": "seated"
+          },
+          {
+            "id": 418,
+            "stage": "seated"
+          },
+          {
+            "id": 419,
+            "stage": "seated"
+          }
+        ],
+        "unreachableActors": 0,
+        "walkers": 193,
+        "version": "0.7.1",
+        "mapGrid": [
+          56,
+          56
+        ],
+        "mapBlocks": [
+          7,
+          7
+        ],
+        "floorBlocks": 49,
+        "builtRooms": [
+          "hall1",
+          "hall2",
+          "tickets",
+          "snacks",
+          "toilets"
+        ],
+        "roomRects": [
+          {
+            "id": "hall1",
+            "rect": [
+              16,
+              32,
+              16,
+              16
+            ],
+            "door": "east"
+          },
+          {
+            "id": "hall2",
+            "rect": [
+              40,
+              24,
+              16,
+              16
+            ],
+            "door": "west"
+          },
+          {
+            "id": "tickets",
+            "rect": [
+              40,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "snacks",
+            "rect": [
+              48,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "toilets",
+            "rect": [
+              24,
+              48,
+              8,
+              8
+            ],
+            "door": "east"
+          }
+        ],
+        "objects": 136,
+        "seatCounts": [
+          72,
+          64
+        ],
+        "layers": 51,
+        "cacheMiB": 52,
+        "pathsReachable": true,
+        "operations": {
+          "tickets": 0,
+          "snacks": 0,
+          "arriving": 0,
+          "seated": 136,
+          "departing": 0,
+          "waitingHall": 0,
+          "waitTickets": 0,
+          "waitSnacks": 0,
+          "lost": 52,
+          "snackLost": 0,
+          "losses": {
+            "wait": 0,
+            "capacity": 52,
+            "cancelled": 0,
+            "late": 0
+          },
+          "peak": {
+            "tickets": 16,
+            "snacks": 9
+          },
+          "rates": {
+            "tickets": 13.055555555555555,
+            "snacks": 7.777777777777778,
+            "cleaning": 13.5
+          },
+          "support": {
+            "tickets": false,
+            "snacks": false,
+            "cleaning": false
+          },
+          "halls": [
+            {
+              "state": "playing",
+              "show": "live-0-2",
+              "remaining": 0,
+              "total": 33.15,
+              "until": 546,
+              "hygiene": 92
+            },
+            {
+              "state": "playing",
+              "show": "live-1-2",
+              "remaining": 0,
+              "total": 31.95,
+              "until": 546,
+              "hygiene": 92
+            }
+          ],
+          "staff": [
+            {
+              "role": "tickets",
+              "count": 5,
+              "skill": 25
+            },
+            {
+              "role": "snacks",
+              "count": 4,
+              "skill": 20
+            },
+            {
+              "role": "cleaning",
+              "count": 3,
+              "skill": 15
+            }
+          ]
+        },
+        "renderP95Ms": 27.7,
+        "scaledLayerCacheBytes": 10139036,
+        "scaledLayersReady": 51,
+        "camera": {
+          "zoom": 1,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "renderMs": {
+        "p50": 4.199999995529652,
+        "p95": 13.899999998509884,
+        "p99": 27.69999999552965
+      },
+      "samples": 120
+    },
+    {
+      "speed": 4,
+      "phase": "running",
+      "elapsed": 116.85587692307693,
+      "cash": 258828.1999999957,
+      "admissions": 369,
+      "diagnostics": {
+        "coldCompileMs": 408,
+        "patronActors": {
+          "queued": 0,
+          "seated": 136,
+          "walking": 0,
+          "departing": 0
+        },
+        "visiblePatrons": [
+          {
+            "id": 233,
+            "stage": "seated"
+          },
+          {
+            "id": 234,
+            "stage": "seated"
+          },
+          {
+            "id": 236,
+            "stage": "seated"
+          },
+          {
+            "id": 237,
+            "stage": "seated"
+          },
+          {
+            "id": 238,
+            "stage": "seated"
+          },
+          {
+            "id": 239,
+            "stage": "seated"
+          },
+          {
+            "id": 241,
+            "stage": "seated"
+          },
+          {
+            "id": 242,
+            "stage": "seated"
+          },
+          {
+            "id": 243,
+            "stage": "seated"
+          },
+          {
+            "id": 247,
+            "stage": "seated"
+          },
+          {
+            "id": 248,
+            "stage": "seated"
+          },
+          {
+            "id": 249,
+            "stage": "seated"
+          },
+          {
+            "id": 250,
+            "stage": "seated"
+          },
+          {
+            "id": 251,
+            "stage": "seated"
+          },
+          {
+            "id": 252,
+            "stage": "seated"
+          },
+          {
+            "id": 253,
+            "stage": "seated"
+          },
+          {
+            "id": 254,
+            "stage": "seated"
+          },
+          {
+            "id": 255,
+            "stage": "seated"
+          },
+          {
+            "id": 257,
+            "stage": "seated"
+          },
+          {
+            "id": 258,
+            "stage": "seated"
+          },
+          {
+            "id": 259,
+            "stage": "seated"
+          },
+          {
+            "id": 260,
+            "stage": "seated"
+          },
+          {
+            "id": 261,
+            "stage": "seated"
+          },
+          {
+            "id": 262,
+            "stage": "seated"
+          },
+          {
+            "id": 263,
+            "stage": "seated"
+          },
+          {
+            "id": 264,
+            "stage": "seated"
+          },
+          {
+            "id": 265,
+            "stage": "seated"
+          },
+          {
+            "id": 266,
+            "stage": "seated"
+          },
+          {
+            "id": 268,
+            "stage": "seated"
+          },
+          {
+            "id": 269,
+            "stage": "seated"
+          },
+          {
+            "id": 270,
+            "stage": "seated"
+          },
+          {
+            "id": 272,
+            "stage": "seated"
+          },
+          {
+            "id": 273,
+            "stage": "seated"
+          },
+          {
+            "id": 276,
+            "stage": "seated"
+          },
+          {
+            "id": 279,
+            "stage": "seated"
+          },
+          {
+            "id": 281,
+            "stage": "seated"
+          },
+          {
+            "id": 282,
+            "stage": "seated"
+          },
+          {
+            "id": 283,
+            "stage": "seated"
+          },
+          {
+            "id": 285,
+            "stage": "seated"
+          },
+          {
+            "id": 286,
+            "stage": "seated"
+          },
+          {
+            "id": 288,
+            "stage": "seated"
+          },
+          {
+            "id": 289,
+            "stage": "seated"
+          },
+          {
+            "id": 290,
+            "stage": "seated"
+          },
+          {
+            "id": 291,
+            "stage": "seated"
+          },
+          {
+            "id": 292,
+            "stage": "seated"
+          },
+          {
+            "id": 294,
+            "stage": "seated"
+          },
+          {
+            "id": 295,
+            "stage": "seated"
+          },
+          {
+            "id": 296,
+            "stage": "seated"
+          },
+          {
+            "id": 297,
+            "stage": "seated"
+          },
+          {
+            "id": 298,
+            "stage": "seated"
+          },
+          {
+            "id": 299,
+            "stage": "seated"
+          },
+          {
+            "id": 301,
+            "stage": "seated"
+          },
+          {
+            "id": 302,
+            "stage": "seated"
+          },
+          {
+            "id": 304,
+            "stage": "seated"
+          },
+          {
+            "id": 305,
+            "stage": "seated"
+          },
+          {
+            "id": 306,
+            "stage": "seated"
+          },
+          {
+            "id": 307,
+            "stage": "seated"
+          },
+          {
+            "id": 308,
+            "stage": "seated"
+          },
+          {
+            "id": 310,
+            "stage": "seated"
+          },
+          {
+            "id": 312,
+            "stage": "seated"
+          },
+          {
+            "id": 315,
+            "stage": "seated"
+          },
+          {
+            "id": 316,
+            "stage": "seated"
+          },
+          {
+            "id": 318,
+            "stage": "seated"
+          },
+          {
+            "id": 319,
+            "stage": "seated"
+          },
+          {
+            "id": 320,
+            "stage": "seated"
+          },
+          {
+            "id": 321,
+            "stage": "seated"
+          },
+          {
+            "id": 323,
+            "stage": "seated"
+          },
+          {
+            "id": 325,
+            "stage": "seated"
+          },
+          {
+            "id": 326,
+            "stage": "seated"
+          },
+          {
+            "id": 327,
+            "stage": "seated"
+          },
+          {
+            "id": 331,
+            "stage": "seated"
+          },
+          {
+            "id": 332,
+            "stage": "seated"
+          },
+          {
+            "id": 333,
+            "stage": "seated"
+          },
+          {
+            "id": 334,
+            "stage": "seated"
+          },
+          {
+            "id": 335,
+            "stage": "seated"
+          },
+          {
+            "id": 336,
+            "stage": "seated"
+          },
+          {
+            "id": 338,
+            "stage": "seated"
+          },
+          {
+            "id": 339,
+            "stage": "seated"
+          },
+          {
+            "id": 340,
+            "stage": "seated"
+          },
+          {
+            "id": 341,
+            "stage": "seated"
+          },
+          {
+            "id": 342,
+            "stage": "seated"
+          },
+          {
+            "id": 343,
+            "stage": "seated"
+          },
+          {
+            "id": 344,
+            "stage": "seated"
+          },
+          {
+            "id": 345,
+            "stage": "seated"
+          },
+          {
+            "id": 346,
+            "stage": "seated"
+          },
+          {
+            "id": 347,
+            "stage": "seated"
+          },
+          {
+            "id": 348,
+            "stage": "seated"
+          },
+          {
+            "id": 349,
+            "stage": "seated"
+          },
+          {
+            "id": 350,
+            "stage": "seated"
+          },
+          {
+            "id": 351,
+            "stage": "seated"
+          },
+          {
+            "id": 352,
+            "stage": "seated"
+          },
+          {
+            "id": 353,
+            "stage": "seated"
+          },
+          {
+            "id": 354,
+            "stage": "seated"
+          },
+          {
+            "id": 355,
+            "stage": "seated"
+          },
+          {
+            "id": 356,
+            "stage": "seated"
+          },
+          {
+            "id": 357,
+            "stage": "seated"
+          },
+          {
+            "id": 358,
+            "stage": "seated"
+          },
+          {
+            "id": 361,
+            "stage": "seated"
+          },
+          {
+            "id": 362,
+            "stage": "seated"
+          },
+          {
+            "id": 363,
+            "stage": "seated"
+          },
+          {
+            "id": 366,
+            "stage": "seated"
+          },
+          {
+            "id": 367,
+            "stage": "seated"
+          },
+          {
+            "id": 368,
+            "stage": "seated"
+          },
+          {
+            "id": 369,
+            "stage": "seated"
+          },
+          {
+            "id": 370,
+            "stage": "seated"
+          },
+          {
+            "id": 373,
+            "stage": "seated"
+          },
+          {
+            "id": 374,
+            "stage": "seated"
+          },
+          {
+            "id": 375,
+            "stage": "seated"
+          },
+          {
+            "id": 376,
+            "stage": "seated"
+          },
+          {
+            "id": 377,
+            "stage": "seated"
+          },
+          {
+            "id": 378,
+            "stage": "seated"
+          },
+          {
+            "id": 379,
+            "stage": "seated"
+          },
+          {
+            "id": 380,
+            "stage": "seated"
+          },
+          {
+            "id": 384,
+            "stage": "seated"
+          },
+          {
+            "id": 385,
+            "stage": "seated"
+          },
+          {
+            "id": 386,
+            "stage": "seated"
+          },
+          {
+            "id": 387,
+            "stage": "seated"
+          },
+          {
+            "id": 388,
+            "stage": "seated"
+          },
+          {
+            "id": 389,
+            "stage": "seated"
+          },
+          {
+            "id": 390,
+            "stage": "seated"
+          },
+          {
+            "id": 392,
+            "stage": "seated"
+          },
+          {
+            "id": 394,
+            "stage": "seated"
+          },
+          {
+            "id": 397,
+            "stage": "seated"
+          },
+          {
+            "id": 399,
+            "stage": "seated"
+          },
+          {
+            "id": 401,
+            "stage": "seated"
+          },
+          {
+            "id": 402,
+            "stage": "seated"
+          },
+          {
+            "id": 403,
+            "stage": "seated"
+          },
+          {
+            "id": 404,
+            "stage": "seated"
+          },
+          {
+            "id": 407,
+            "stage": "seated"
+          },
+          {
+            "id": 408,
+            "stage": "seated"
+          },
+          {
+            "id": 410,
+            "stage": "seated"
+          },
+          {
+            "id": 411,
+            "stage": "seated"
+          },
+          {
+            "id": 415,
+            "stage": "seated"
+          },
+          {
+            "id": 416,
+            "stage": "seated"
+          },
+          {
+            "id": 418,
+            "stage": "seated"
+          },
+          {
+            "id": 419,
+            "stage": "seated"
+          }
+        ],
+        "unreachableActors": 0,
+        "walkers": 193,
+        "version": "0.7.1",
+        "mapGrid": [
+          56,
+          56
+        ],
+        "mapBlocks": [
+          7,
+          7
+        ],
+        "floorBlocks": 49,
+        "builtRooms": [
+          "hall1",
+          "hall2",
+          "tickets",
+          "snacks",
+          "toilets"
+        ],
+        "roomRects": [
+          {
+            "id": "hall1",
+            "rect": [
+              16,
+              32,
+              16,
+              16
+            ],
+            "door": "east"
+          },
+          {
+            "id": "hall2",
+            "rect": [
+              40,
+              24,
+              16,
+              16
+            ],
+            "door": "west"
+          },
+          {
+            "id": "tickets",
+            "rect": [
+              40,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "snacks",
+            "rect": [
+              48,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "toilets",
+            "rect": [
+              24,
+              48,
+              8,
+              8
+            ],
+            "door": "east"
+          }
+        ],
+        "objects": 136,
+        "seatCounts": [
+          72,
+          64
+        ],
+        "layers": 51,
+        "cacheMiB": 52,
+        "pathsReachable": true,
+        "operations": {
+          "tickets": 0,
+          "snacks": 0,
+          "arriving": 0,
+          "seated": 136,
+          "departing": 0,
+          "waitingHall": 0,
+          "waitTickets": 0,
+          "waitSnacks": 0,
+          "lost": 52,
+          "snackLost": 0,
+          "losses": {
+            "wait": 0,
+            "capacity": 52,
+            "cancelled": 0,
+            "late": 0
+          },
+          "peak": {
+            "tickets": 16,
+            "snacks": 9
+          },
+          "rates": {
+            "tickets": 13.055555555555555,
+            "snacks": 7.777777777777778,
+            "cleaning": 13.5
+          },
+          "support": {
+            "tickets": false,
+            "snacks": false,
+            "cleaning": false
+          },
+          "halls": [
+            {
+              "state": "playing",
+              "show": "live-0-2",
+              "remaining": 0,
+              "total": 33.15,
+              "until": 546,
+              "hygiene": 92
+            },
+            {
+              "state": "playing",
+              "show": "live-1-2",
+              "remaining": 0,
+              "total": 31.95,
+              "until": 546,
+              "hygiene": 92
+            }
+          ],
+          "staff": [
+            {
+              "role": "tickets",
+              "count": 5,
+              "skill": 25
+            },
+            {
+              "role": "snacks",
+              "count": 4,
+              "skill": 20
+            },
+            {
+              "role": "cleaning",
+              "count": 3,
+              "skill": 15
+            }
+          ]
+        },
+        "renderP95Ms": 26.1,
+        "scaledLayerCacheBytes": 10139036,
+        "scaledLayersReady": 51,
+        "camera": {
+          "zoom": 1,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "renderMs": {
+        "p50": 3.7000000029802322,
+        "p95": 9.899999998509884,
+        "p99": 19.30000000447035
+      },
+      "samples": 126
+    }
+  ],
+  "errors": [],
+  "status": "passed"
+}

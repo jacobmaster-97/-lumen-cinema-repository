@@ -105,7 +105,13 @@ export class Navigation {
     if(parent[b]===-1)return [];
     const route=[];for(let n=b;;n=parent[n]){route.push(this.point(n));if(n===a)break;}route.reverse();this.cache.set(key,route);return route;
   }
-  through(points){const out=[];for(let i=0;i<points.length-1;i++){const leg=this.route(points[i],points[i+1]);if(!leg.length)return [];out.push(...leg.slice(i?1:0));}return out;}
+  through(points){
+    // A Navigation belongs to one immutable scene; reuse joined paths as well as their legs.
+    const key='via:'+points.map(p=>this.node(p)).join(':');
+    if(this.cache.has(key))return this.cache.get(key);
+    const out=[];for(let i=0;i<points.length-1;i++){const leg=this.route(points[i],points[i+1]);if(!leg.length){this.cache.set(key,[]);return this.cache.get(key)}out.push(...leg.slice(i?1:0));}
+    this.cache.set(key,out);return out;
+  }
 }
 
 export function sampleRoute(route,progress) {

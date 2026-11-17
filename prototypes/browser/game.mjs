@@ -4,7 +4,7 @@ import * as C from "./construction.mjs";
 import {constructionSummary,constructionPanel,roomConstruction} from "./construction-ui.mjs";
 import {operationsPanel,forecastPanel,draftForecast} from './operations-ui.mjs';
 import {strategyView,reviewPanel,cashPanel,maintenanceForm} from './strategy-ui.mjs';
-import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.7.0";
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.7.1";
 import { loadCinemaAssets } from "./assets.mjs";
 import { CinemaAudio } from "./audio.mjs";
 import { hallUnderRepair } from "./world.mjs";
@@ -1071,4 +1071,4 @@ function frame(now) {
 requestAnimationFrame(frame);
 
 // Read-only diagnostics for repeatable browser QA. No game-state mutation API.
-window.__lumen=Object.freeze({getState:()=>JSON.parse(E.saveGame(state)).state,getDiagnostics:()=>renderer?{...renderer.stats,camera:{...renderer.camera}}:null});
+window.__lumen=Object.freeze({getState:()=>JSON.parse(E.saveGame(state)).state,getDiagnostics:()=>renderer?renderer.getDiagnostics():null});

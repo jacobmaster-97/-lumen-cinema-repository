@@ -53,6 +53,19 @@ test('navigation does not teleport through furniture or directly down a two-metr
   assert.ok(path.length>55);assert.ok(path.some(p=>p[0]>14&&p[1]<6));
 });
 
+test('composed routes reuse immutable geometry without changing waypoints or leaking between maps',()=>{
+  const nav=new Navigation(layout,worldObjects(layout,E.branch(0)),assets);
+  const points=[layout.entrance,layout.destinations['ticket-service'],layout.destinations['hall1-rear']];
+  const expected=nav.route(points[0],points[1]).concat(nav.route(points[1],points[2]).slice(1));
+  const first=nav.through(points);assert.ok(first.length>50);assert.deepEqual(first,expected);
+  const route=nav.route;let calls=0;nav.route=function(...args){calls++;return route.apply(this,args)};
+  assert.equal(nav.through(structuredClone(points)),first);assert.equal(calls,0);
+  const blocked=[layout.entrance,[9.25,23.25],layout.destinations['ticket-service']];
+  assert.deepEqual(nav.through(blocked),[]);calls=0;assert.deepEqual(nav.through(blocked),[]);assert.equal(calls,0);
+  const next=new Navigation(layout,worldObjects(layout,E.branch(1)),assets);
+  assert.deepEqual(next.through(points),expected);assert.notEqual(next.through(points),first);
+});
+
 test('actual runtime PNGs and frame metadata stay within their source images',async()=>{
   const headers={};for(const [key,file]of Object.entries(manifest.files)){const raw=await readFile(new URL('../../src/assets/cinema/runtime/'+file,import.meta.url));assert.equal(raw.subarray(1,4).toString(),'PNG');headers[key]=[raw.readUInt32BE(16),raw.readUInt32BE(20)];}
   assert.equal(manifest.actors.frames.length,16);assert.equal(manifest.posters.film_ids.length,E.MOVIES.length);

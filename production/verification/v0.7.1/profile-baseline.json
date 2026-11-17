@@ -1,0 +1,1440 @@
+{
+  "label": "baseline",
+  "budget": {
+    "targetFps": 30,
+    "frameBudgetMs": 33.3,
+    "cpuThrottle": 4,
+    "viewport": [
+      844,
+      390
+    ],
+    "dpr": 2
+  },
+  "cases": [
+    {
+      "name": "walking",
+      "minute": 546,
+      "patrons": 587,
+      "counts": {
+        "gone": 285,
+        "exiting": 136,
+        "upcoming": 166
+      },
+      "renderMs": {
+        "p50": 10.900000005960464,
+        "p95": 15.800000004470348,
+        "p99": 21.700000002980232
+      },
+      "rafMs": {
+        "p50": 16.699999999999818,
+        "p95": 33.399999999999636
+      },
+      "calls": {
+        "sceneFor": 150,
+        "view": 150,
+        "route": 16200,
+        "through": 5400,
+        "operationalActors": 150,
+        "dynamic": 150,
+        "actor": 6750
+      },
+      "times": {
+        "sceneFor": 2.799999989569187,
+        "view": 40.50000000745058,
+        "route": 28.799999989569187,
+        "through": 73.1000000089407,
+        "operationalActors": 117.80000003427267,
+        "dynamic": 132.40000001341105,
+        "actor": 1440.9999999403954
+      },
+      "stats": {
+        "coldCompileMs": 1643,
+        "patronActors": {
+          "queued": 0,
+          "seated": 0,
+          "walking": 36,
+          "departing": 36
+        },
+        "visiblePatrons": [
+          {
+            "id": 233,
+            "stage": "exiting"
+          },
+          {
+            "id": 234,
+            "stage": "exiting"
+          },
+          {
+            "id": 236,
+            "stage": "exiting"
+          },
+          {
+            "id": 237,
+            "stage": "exiting"
+          },
+          {
+            "id": 238,
+            "stage": "exiting"
+          },
+          {
+            "id": 239,
+            "stage": "exiting"
+          },
+          {
+            "id": 241,
+            "stage": "exiting"
+          },
+          {
+            "id": 242,
+            "stage": "exiting"
+          },
+          {
+            "id": 243,
+            "stage": "exiting"
+          },
+          {
+            "id": 247,
+            "stage": "exiting"
+          },
+          {
+            "id": 248,
+            "stage": "exiting"
+          },
+          {
+            "id": 249,
+            "stage": "exiting"
+          },
+          {
+            "id": 250,
+            "stage": "exiting"
+          },
+          {
+            "id": 251,
+            "stage": "exiting"
+          },
+          {
+            "id": 252,
+            "stage": "exiting"
+          },
+          {
+            "id": 253,
+            "stage": "exiting"
+          },
+          {
+            "id": 254,
+            "stage": "exiting"
+          },
+          {
+            "id": 255,
+            "stage": "exiting"
+          },
+          {
+            "id": 257,
+            "stage": "exiting"
+          },
+          {
+            "id": 258,
+            "stage": "exiting"
+          },
+          {
+            "id": 259,
+            "stage": "exiting"
+          },
+          {
+            "id": 260,
+            "stage": "exiting"
+          },
+          {
+            "id": 261,
+            "stage": "exiting"
+          },
+          {
+            "id": 262,
+            "stage": "exiting"
+          },
+          {
+            "id": 263,
+            "stage": "exiting"
+          },
+          {
+            "id": 264,
+            "stage": "exiting"
+          },
+          {
+            "id": 265,
+            "stage": "exiting"
+          },
+          {
+            "id": 266,
+            "stage": "exiting"
+          },
+          {
+            "id": 268,
+            "stage": "exiting"
+          },
+          {
+            "id": 269,
+            "stage": "exiting"
+          },
+          {
+            "id": 270,
+            "stage": "exiting"
+          },
+          {
+            "id": 272,
+            "stage": "exiting"
+          },
+          {
+            "id": 273,
+            "stage": "exiting"
+          },
+          {
+            "id": 276,
+            "stage": "exiting"
+          },
+          {
+            "id": 279,
+            "stage": "exiting"
+          },
+          {
+            "id": 281,
+            "stage": "exiting"
+          }
+        ],
+        "unreachableActors": 0,
+        "walkers": 45,
+        "version": "0.7.0",
+        "operations": {
+          "tickets": 0,
+          "snacks": 0,
+          "arriving": 0,
+          "seated": 0,
+          "departing": 136,
+          "waitingHall": 0,
+          "waitTickets": 0,
+          "waitSnacks": 0,
+          "lost": 52,
+          "snackLost": 0,
+          "losses": {
+            "wait": 0,
+            "capacity": 52,
+            "cancelled": 0,
+            "late": 0
+          },
+          "peak": {
+            "tickets": 16,
+            "snacks": 9
+          },
+          "rates": {
+            "tickets": 13.055555555555555,
+            "snacks": 7.777777777777778,
+            "cleaning": 13.5
+          },
+          "support": {
+            "tickets": false,
+            "snacks": false,
+            "cleaning": false
+          },
+          "halls": [
+            {
+              "state": "exiting",
+              "show": "stress-0-2",
+              "remaining": 0,
+              "total": 33.15,
+              "until": 550,
+              "hygiene": 92
+            },
+            {
+              "state": "exiting",
+              "show": "stress-1-2",
+              "remaining": 0,
+              "total": 31.95,
+              "until": 550,
+              "hygiene": 92
+            }
+          ],
+          "staff": [
+            {
+              "role": "tickets",
+              "count": 5,
+              "skill": 25
+            },
+            {
+              "role": "snacks",
+              "count": 4,
+              "skill": 20
+            },
+            {
+              "role": "cleaning",
+              "count": 3,
+              "skill": 15
+            }
+          ]
+        },
+        "mapGrid": [
+          56,
+          56
+        ],
+        "mapBlocks": [
+          7,
+          7
+        ],
+        "floorBlocks": 49,
+        "builtRooms": [
+          "hall1",
+          "hall2",
+          "tickets",
+          "snacks",
+          "toilets"
+        ],
+        "roomRects": [
+          {
+            "id": "hall1",
+            "rect": [
+              16,
+              32,
+              16,
+              16
+            ],
+            "door": "east"
+          },
+          {
+            "id": "hall2",
+            "rect": [
+              40,
+              24,
+              16,
+              16
+            ],
+            "door": "west"
+          },
+          {
+            "id": "tickets",
+            "rect": [
+              40,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "snacks",
+            "rect": [
+              48,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "toilets",
+            "rect": [
+              24,
+              48,
+              8,
+              8
+            ],
+            "door": "east"
+          }
+        ],
+        "objects": 136,
+        "seatCounts": [
+          72,
+          64
+        ],
+        "layers": 51,
+        "cacheMiB": 52,
+        "renderP95Ms": 20,
+        "pathsReachable": true
+      },
+      "frameCount": 130
+    },
+    {
+      "name": "seated",
+      "minute": 407,
+      "patrons": 587,
+      "counts": {
+        "gone": 248,
+        "seated": 136,
+        "leaving": 37,
+        "upcoming": 166
+      },
+      "renderMs": {
+        "p50": 13.5,
+        "p95": 18,
+        "p99": 19.100000001490116
+      },
+      "rafMs": {
+        "p50": 33.19999999999891,
+        "p95": 33.400000000000546
+      },
+      "calls": {
+        "sceneFor": 150,
+        "view": 150,
+        "route": 5400,
+        "operationalActors": 150,
+        "dynamic": 150,
+        "actor": 27150
+      },
+      "times": {
+        "sceneFor": 9.400000005960464,
+        "view": 46.100000001490116,
+        "route": 15.30000003427267,
+        "operationalActors": 286.6000000536442,
+        "dynamic": 318.90000005066395,
+        "actor": 1542.6000000610948
+      },
+      "stats": {
+        "coldCompileMs": 1940,
+        "patronActors": {
+          "queued": 0,
+          "seated": 136,
+          "walking": 36,
+          "departing": 36
+        },
+        "visiblePatrons": [
+          {
+            "id": 233,
+            "stage": "seated"
+          },
+          {
+            "id": 234,
+            "stage": "seated"
+          },
+          {
+            "id": 235,
+            "stage": "leaving"
+          },
+          {
+            "id": 236,
+            "stage": "seated"
+          },
+          {
+            "id": 237,
+            "stage": "seated"
+          },
+          {
+            "id": 238,
+            "stage": "seated"
+          },
+          {
+            "id": 239,
+            "stage": "seated"
+          },
+          {
+            "id": 240,
+            "stage": "leaving"
+          },
+          {
+            "id": 241,
+            "stage": "seated"
+          },
+          {
+            "id": 242,
+            "stage": "seated"
+          },
+          {
+            "id": 243,
+            "stage": "seated"
+          },
+          {
+            "id": 246,
+            "stage": "leaving"
+          },
+          {
+            "id": 247,
+            "stage": "seated"
+          },
+          {
+            "id": 248,
+            "stage": "seated"
+          },
+          {
+            "id": 249,
+            "stage": "seated"
+          },
+          {
+            "id": 250,
+            "stage": "seated"
+          },
+          {
+            "id": 251,
+            "stage": "seated"
+          },
+          {
+            "id": 252,
+            "stage": "seated"
+          },
+          {
+            "id": 253,
+            "stage": "seated"
+          },
+          {
+            "id": 254,
+            "stage": "seated"
+          },
+          {
+            "id": 255,
+            "stage": "seated"
+          },
+          {
+            "id": 256,
+            "stage": "leaving"
+          },
+          {
+            "id": 257,
+            "stage": "seated"
+          },
+          {
+            "id": 258,
+            "stage": "seated"
+          },
+          {
+            "id": 259,
+            "stage": "seated"
+          },
+          {
+            "id": 260,
+            "stage": "seated"
+          },
+          {
+            "id": 261,
+            "stage": "seated"
+          },
+          {
+            "id": 262,
+            "stage": "seated"
+          },
+          {
+            "id": 263,
+            "stage": "seated"
+          },
+          {
+            "id": 264,
+            "stage": "seated"
+          },
+          {
+            "id": 265,
+            "stage": "seated"
+          },
+          {
+            "id": 266,
+            "stage": "seated"
+          },
+          {
+            "id": 267,
+            "stage": "leaving"
+          },
+          {
+            "id": 268,
+            "stage": "seated"
+          },
+          {
+            "id": 269,
+            "stage": "seated"
+          },
+          {
+            "id": 270,
+            "stage": "seated"
+          },
+          {
+            "id": 272,
+            "stage": "seated"
+          },
+          {
+            "id": 273,
+            "stage": "seated"
+          },
+          {
+            "id": 274,
+            "stage": "leaving"
+          },
+          {
+            "id": 276,
+            "stage": "seated"
+          },
+          {
+            "id": 277,
+            "stage": "leaving"
+          },
+          {
+            "id": 278,
+            "stage": "leaving"
+          },
+          {
+            "id": 279,
+            "stage": "seated"
+          },
+          {
+            "id": 280,
+            "stage": "leaving"
+          },
+          {
+            "id": 281,
+            "stage": "seated"
+          },
+          {
+            "id": 282,
+            "stage": "seated"
+          },
+          {
+            "id": 283,
+            "stage": "seated"
+          },
+          {
+            "id": 284,
+            "stage": "leaving"
+          },
+          {
+            "id": 285,
+            "stage": "seated"
+          },
+          {
+            "id": 286,
+            "stage": "seated"
+          },
+          {
+            "id": 287,
+            "stage": "leaving"
+          },
+          {
+            "id": 288,
+            "stage": "seated"
+          },
+          {
+            "id": 289,
+            "stage": "seated"
+          },
+          {
+            "id": 290,
+            "stage": "seated"
+          },
+          {
+            "id": 291,
+            "stage": "seated"
+          },
+          {
+            "id": 292,
+            "stage": "seated"
+          },
+          {
+            "id": 293,
+            "stage": "leaving"
+          },
+          {
+            "id": 294,
+            "stage": "seated"
+          },
+          {
+            "id": 295,
+            "stage": "seated"
+          },
+          {
+            "id": 296,
+            "stage": "seated"
+          },
+          {
+            "id": 297,
+            "stage": "seated"
+          },
+          {
+            "id": 298,
+            "stage": "seated"
+          },
+          {
+            "id": 299,
+            "stage": "seated"
+          },
+          {
+            "id": 300,
+            "stage": "leaving"
+          },
+          {
+            "id": 301,
+            "stage": "seated"
+          },
+          {
+            "id": 302,
+            "stage": "seated"
+          },
+          {
+            "id": 303,
+            "stage": "leaving"
+          },
+          {
+            "id": 304,
+            "stage": "seated"
+          },
+          {
+            "id": 305,
+            "stage": "seated"
+          },
+          {
+            "id": 306,
+            "stage": "seated"
+          },
+          {
+            "id": 307,
+            "stage": "seated"
+          },
+          {
+            "id": 308,
+            "stage": "seated"
+          },
+          {
+            "id": 310,
+            "stage": "seated"
+          },
+          {
+            "id": 311,
+            "stage": "leaving"
+          },
+          {
+            "id": 312,
+            "stage": "seated"
+          },
+          {
+            "id": 313,
+            "stage": "leaving"
+          },
+          {
+            "id": 314,
+            "stage": "leaving"
+          },
+          {
+            "id": 315,
+            "stage": "seated"
+          },
+          {
+            "id": 316,
+            "stage": "seated"
+          },
+          {
+            "id": 317,
+            "stage": "leaving"
+          },
+          {
+            "id": 318,
+            "stage": "seated"
+          },
+          {
+            "id": 319,
+            "stage": "seated"
+          },
+          {
+            "id": 320,
+            "stage": "seated"
+          },
+          {
+            "id": 321,
+            "stage": "seated"
+          },
+          {
+            "id": 322,
+            "stage": "leaving"
+          },
+          {
+            "id": 323,
+            "stage": "seated"
+          },
+          {
+            "id": 324,
+            "stage": "leaving"
+          },
+          {
+            "id": 325,
+            "stage": "seated"
+          },
+          {
+            "id": 326,
+            "stage": "seated"
+          },
+          {
+            "id": 327,
+            "stage": "seated"
+          },
+          {
+            "id": 328,
+            "stage": "leaving"
+          },
+          {
+            "id": 330,
+            "stage": "leaving"
+          },
+          {
+            "id": 331,
+            "stage": "seated"
+          },
+          {
+            "id": 332,
+            "stage": "seated"
+          },
+          {
+            "id": 333,
+            "stage": "seated"
+          },
+          {
+            "id": 334,
+            "stage": "seated"
+          },
+          {
+            "id": 335,
+            "stage": "seated"
+          },
+          {
+            "id": 336,
+            "stage": "seated"
+          },
+          {
+            "id": 337,
+            "stage": "leaving"
+          },
+          {
+            "id": 338,
+            "stage": "seated"
+          },
+          {
+            "id": 339,
+            "stage": "seated"
+          },
+          {
+            "id": 340,
+            "stage": "seated"
+          },
+          {
+            "id": 341,
+            "stage": "seated"
+          },
+          {
+            "id": 342,
+            "stage": "seated"
+          },
+          {
+            "id": 343,
+            "stage": "seated"
+          },
+          {
+            "id": 344,
+            "stage": "seated"
+          },
+          {
+            "id": 345,
+            "stage": "seated"
+          },
+          {
+            "id": 346,
+            "stage": "seated"
+          },
+          {
+            "id": 347,
+            "stage": "seated"
+          },
+          {
+            "id": 348,
+            "stage": "seated"
+          },
+          {
+            "id": 349,
+            "stage": "seated"
+          },
+          {
+            "id": 350,
+            "stage": "seated"
+          },
+          {
+            "id": 351,
+            "stage": "seated"
+          },
+          {
+            "id": 352,
+            "stage": "seated"
+          },
+          {
+            "id": 353,
+            "stage": "seated"
+          },
+          {
+            "id": 354,
+            "stage": "seated"
+          },
+          {
+            "id": 355,
+            "stage": "seated"
+          },
+          {
+            "id": 356,
+            "stage": "seated"
+          },
+          {
+            "id": 357,
+            "stage": "seated"
+          },
+          {
+            "id": 358,
+            "stage": "seated"
+          },
+          {
+            "id": 360,
+            "stage": "leaving"
+          },
+          {
+            "id": 361,
+            "stage": "seated"
+          },
+          {
+            "id": 362,
+            "stage": "seated"
+          },
+          {
+            "id": 363,
+            "stage": "seated"
+          },
+          {
+            "id": 364,
+            "stage": "leaving"
+          },
+          {
+            "id": 365,
+            "stage": "leaving"
+          },
+          {
+            "id": 366,
+            "stage": "seated"
+          },
+          {
+            "id": 367,
+            "stage": "seated"
+          },
+          {
+            "id": 368,
+            "stage": "seated"
+          },
+          {
+            "id": 369,
+            "stage": "seated"
+          },
+          {
+            "id": 370,
+            "stage": "seated"
+          },
+          {
+            "id": 373,
+            "stage": "seated"
+          },
+          {
+            "id": 374,
+            "stage": "seated"
+          },
+          {
+            "id": 375,
+            "stage": "seated"
+          },
+          {
+            "id": 376,
+            "stage": "seated"
+          },
+          {
+            "id": 377,
+            "stage": "seated"
+          },
+          {
+            "id": 378,
+            "stage": "seated"
+          },
+          {
+            "id": 379,
+            "stage": "seated"
+          },
+          {
+            "id": 380,
+            "stage": "seated"
+          },
+          {
+            "id": 381,
+            "stage": "leaving"
+          },
+          {
+            "id": 382,
+            "stage": "leaving"
+          },
+          {
+            "id": 383,
+            "stage": "leaving"
+          },
+          {
+            "id": 384,
+            "stage": "seated"
+          },
+          {
+            "id": 385,
+            "stage": "seated"
+          },
+          {
+            "id": 386,
+            "stage": "seated"
+          },
+          {
+            "id": 387,
+            "stage": "seated"
+          },
+          {
+            "id": 388,
+            "stage": "seated"
+          },
+          {
+            "id": 389,
+            "stage": "seated"
+          },
+          {
+            "id": 390,
+            "stage": "seated"
+          },
+          {
+            "id": 392,
+            "stage": "seated"
+          },
+          {
+            "id": 393,
+            "stage": "leaving"
+          },
+          {
+            "id": 394,
+            "stage": "seated"
+          },
+          {
+            "id": 395,
+            "stage": "leaving"
+          },
+          {
+            "id": 397,
+            "stage": "seated"
+          },
+          {
+            "id": 399,
+            "stage": "seated"
+          },
+          {
+            "id": 401,
+            "stage": "seated"
+          },
+          {
+            "id": 402,
+            "stage": "seated"
+          },
+          {
+            "id": 403,
+            "stage": "seated"
+          },
+          {
+            "id": 404,
+            "stage": "seated"
+          },
+          {
+            "id": 405,
+            "stage": "leaving"
+          },
+          {
+            "id": 406,
+            "stage": "leaving"
+          },
+          {
+            "id": 407,
+            "stage": "seated"
+          },
+          {
+            "id": 408,
+            "stage": "seated"
+          },
+          {
+            "id": 409,
+            "stage": "leaving"
+          },
+          {
+            "id": 410,
+            "stage": "seated"
+          },
+          {
+            "id": 411,
+            "stage": "seated"
+          },
+          {
+            "id": 412,
+            "stage": "leaving"
+          },
+          {
+            "id": 413,
+            "stage": "leaving"
+          },
+          {
+            "id": 415,
+            "stage": "seated"
+          },
+          {
+            "id": 416,
+            "stage": "seated"
+          },
+          {
+            "id": 418,
+            "stage": "seated"
+          },
+          {
+            "id": 419,
+            "stage": "seated"
+          }
+        ],
+        "unreachableActors": 0,
+        "walkers": 181,
+        "version": "0.7.0",
+        "operations": {
+          "tickets": 0,
+          "snacks": 0,
+          "arriving": 0,
+          "seated": 136,
+          "departing": 37,
+          "waitingHall": 0,
+          "waitTickets": 0,
+          "waitSnacks": 0,
+          "lost": 52,
+          "snackLost": 0,
+          "losses": {
+            "wait": 0,
+            "capacity": 52,
+            "cancelled": 0,
+            "late": 0
+          },
+          "peak": {
+            "tickets": 16,
+            "snacks": 9
+          },
+          "rates": {
+            "tickets": 13.055555555555555,
+            "snacks": 7.777777777777778,
+            "cleaning": 13.5
+          },
+          "support": {
+            "tickets": false,
+            "snacks": false,
+            "cleaning": false
+          },
+          "halls": [
+            {
+              "state": "ready",
+              "show": "stress-0-1",
+              "remaining": 0,
+              "total": 33.15,
+              "until": 372,
+              "hygiene": 92
+            },
+            {
+              "state": "ready",
+              "show": "stress-1-1",
+              "remaining": 0,
+              "total": 31.95,
+              "until": 372,
+              "hygiene": 92
+            }
+          ],
+          "staff": [
+            {
+              "role": "tickets",
+              "count": 5,
+              "skill": 25
+            },
+            {
+              "role": "snacks",
+              "count": 4,
+              "skill": 20
+            },
+            {
+              "role": "cleaning",
+              "count": 3,
+              "skill": 15
+            }
+          ]
+        },
+        "mapGrid": [
+          56,
+          56
+        ],
+        "mapBlocks": [
+          7,
+          7
+        ],
+        "floorBlocks": 49,
+        "builtRooms": [
+          "hall1",
+          "hall2",
+          "tickets",
+          "snacks",
+          "toilets"
+        ],
+        "roomRects": [
+          {
+            "id": "hall1",
+            "rect": [
+              16,
+              32,
+              16,
+              16
+            ],
+            "door": "east"
+          },
+          {
+            "id": "hall2",
+            "rect": [
+              40,
+              24,
+              16,
+              16
+            ],
+            "door": "west"
+          },
+          {
+            "id": "tickets",
+            "rect": [
+              40,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "snacks",
+            "rect": [
+              48,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "toilets",
+            "rect": [
+              24,
+              48,
+              8,
+              8
+            ],
+            "door": "east"
+          }
+        ],
+        "objects": 136,
+        "seatCounts": [
+          72,
+          64
+        ],
+        "layers": 51,
+        "cacheMiB": 52,
+        "renderP95Ms": 19,
+        "pathsReachable": true
+      },
+      "frameCount": 130
+    },
+    {
+      "name": "cleaning",
+      "minute": 190,
+      "patrons": 587,
+      "counts": {
+        "gone": 119,
+        "upcoming": 468
+      },
+      "renderMs": {
+        "p50": 10.300000004470348,
+        "p95": 13.399999998509884,
+        "p99": 15.400000005960464
+      },
+      "rafMs": {
+        "p50": 16.699999999999818,
+        "p95": 33.399999999999636
+      },
+      "calls": {
+        "sceneFor": 150,
+        "view": 150,
+        "operationalActors": 150,
+        "route": 900,
+        "through": 450,
+        "dynamic": 150,
+        "actor": 1350
+      },
+      "times": {
+        "sceneFor": 1.2999999895691872,
+        "view": 38.69999995827675,
+        "operationalActors": 34.0000000372529,
+        "route": 11.299999989569187,
+        "through": 17.19999996572733,
+        "dynamic": 88.50000002235174,
+        "actor": 24.49999999254942
+      },
+      "stats": {
+        "coldCompileMs": 2692,
+        "patronActors": {
+          "queued": 0,
+          "seated": 0,
+          "walking": 0,
+          "departing": 0
+        },
+        "visiblePatrons": [],
+        "unreachableActors": 0,
+        "walkers": 9,
+        "version": "0.7.0",
+        "operations": {
+          "tickets": 0,
+          "snacks": 0,
+          "arriving": 0,
+          "seated": 0,
+          "departing": 0,
+          "waitingHall": 0,
+          "waitTickets": 0,
+          "waitSnacks": 0,
+          "lost": 0,
+          "snackLost": 0,
+          "losses": {
+            "wait": 0,
+            "capacity": 0,
+            "cancelled": 0,
+            "late": 0
+          },
+          "peak": {
+            "tickets": 13,
+            "snacks": 7
+          },
+          "rates": {
+            "tickets": 13.055555555555555,
+            "snacks": 7.777777777777778,
+            "cleaning": 13.5
+          },
+          "support": {
+            "tickets": false,
+            "snacks": false,
+            "cleaning": false
+          },
+          "halls": [
+            {
+              "state": "cleaning",
+              "show": "stress-0-0",
+              "remaining": 20.25,
+              "total": 33.75,
+              "until": 192,
+              "hygiene": 92
+            },
+            {
+              "state": "cleaning",
+              "show": "stress-1-0",
+              "remaining": 18.6,
+              "total": 32.1,
+              "until": 192,
+              "hygiene": 92
+            }
+          ],
+          "staff": [
+            {
+              "role": "tickets",
+              "count": 5,
+              "skill": 25
+            },
+            {
+              "role": "snacks",
+              "count": 4,
+              "skill": 20
+            },
+            {
+              "role": "cleaning",
+              "count": 3,
+              "skill": 15
+            }
+          ]
+        },
+        "mapGrid": [
+          56,
+          56
+        ],
+        "mapBlocks": [
+          7,
+          7
+        ],
+        "floorBlocks": 49,
+        "builtRooms": [
+          "hall1",
+          "hall2",
+          "tickets",
+          "snacks",
+          "toilets"
+        ],
+        "roomRects": [
+          {
+            "id": "hall1",
+            "rect": [
+              16,
+              32,
+              16,
+              16
+            ],
+            "door": "east"
+          },
+          {
+            "id": "hall2",
+            "rect": [
+              40,
+              24,
+              16,
+              16
+            ],
+            "door": "west"
+          },
+          {
+            "id": "tickets",
+            "rect": [
+              40,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "snacks",
+            "rect": [
+              48,
+              40,
+              8,
+              8
+            ],
+            "door": "south"
+          },
+          {
+            "id": "toilets",
+            "rect": [
+              24,
+              48,
+              8,
+              8
+            ],
+            "door": "east"
+          }
+        ],
+        "objects": 136,
+        "seatCounts": [
+          72,
+          64
+        ],
+        "layers": 51,
+        "cacheMiB": 52,
+        "renderP95Ms": 14,
+        "pathsReachable": true
+      },
+      "frameCount": 130
+    }
+  ],
+  "errors": [],
+  "source": {
+    "render.mjs": "8967bb1e543245d4c4febea3587f5b9f08508e720fe06560ed1086b0da06eac8",
+    "operations-world.mjs": "019755b828766a91e2c4545ea67ba396b93015b895a3615d6d0a4574158fe580",
+    "world.mjs": "cf8314559ed919cf15cbf656803b5b5d0b7d62623b3b6d2586e39b0acc4f4b03",
+    "scene.mjs": "91be07ed3d817204f66b95443dad2c15556aed00100ee1e447e796334b40ef74",
+    "game.mjs": "0773916eb17598e1bd8f058ab34c448ab438d903d55867e419efc3e6520cf74b"
+  }
+}

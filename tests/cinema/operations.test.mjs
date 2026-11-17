@@ -5,10 +5,17 @@ import * as E from '../../prototypes/browser/engine.mjs';
 import * as C from '../../prototypes/browser/construction.mjs';
 import {modularLayout} from '../../prototypes/browser/map-world.mjs';
 import {Navigation,placement} from '../../prototypes/browser/world.mjs';
-import {queuePosition,patronRoute} from '../../prototypes/browser/operations-world.mjs';
+import {queuePosition,patronRoute,sceneSeats} from '../../prototypes/browser/operations-world.mjs';
 const finish=s=>{E.advance(s,180);assert.equal(s.phase,'closed');return s};
 const start=s=>{assert.equal(E.startDay(s),null);s.events=[];return s};
 const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-5,`${a} versus ${b}`);
+test('seat lookup preserves source order and updates for a replacement scene or upgraded props',()=>{
+ const a={kind:'seat',room:'hall1',id:'a'},b={kind:'seat',room:'hall2',id:'b'},c={kind:'seat',room:'hall1',id:'c'};
+ const scene={props:[a,b,{kind:'screen',room:'hall1'},c]},seats=sceneSeats(scene,0);
+ assert.deepEqual(seats,[a,c]);assert.equal(sceneSeats(scene,0),seats);assert.deepEqual(sceneSeats(scene,1),[b]);
+ const other={props:[c]};assert.deepEqual(sceneSeats(other,0),[c]);assert.equal(sceneSeats(scene,0),seats);
+ scene.props=[c,a];assert.deepEqual(sceneSeats(scene,0),[c,a]);assert.deepEqual(sceneSeats(scene,1),[]);
+});
 test('each minute reconciles real ticket holders, admissions, food and company money',()=>{
  const s=start(E.createGame()),b=s.branches[0],cash=s.cash,stages=new Set();let transactions=0;
  for(let n=0;n<=780;n++){

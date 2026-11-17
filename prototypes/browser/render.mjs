@@ -1,6 +1,6 @@
 import {createMapTouch} from './touch-map.mjs';
 import { movie, operationsSnapshot } from './engine.mjs';
-import {queuePosition,patronRoute} from './operations-world.mjs';
+import {queuePosition,patronRoute,sceneSeats} from './operations-world.mjs';
 import { createCinemaScene } from './scene.mjs';
 import { project, unproject, pickRoom, sampleRoute, hallUnderRepair } from './world.mjs';
 import * as C from './construction.mjs';
@@ -16,16 +16,22 @@ export function setPosterAssets(images,manifest){
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 
 export class CinemaRenderer {
-  constructor(canvas,manifest,images,{onSelect=()=>{},camera=null}={}) {
+  constructor(canvas,manifest,images,{onSelect=()=>{},camera=null,cacheLayers=true}={}) {
     this.canvas=canvas;this.c=canvas.getContext('2d');this.manifest=manifest;this.images=images;this.onSelect=onSelect;
-    this.animation=0;this.selected=null;this.camera=camera||{zoom:1,x:0,y:0};this.dirty=true;this.drawElapsed=0;this.timings=[];this.stats={};
+    this.animation=0;this.selected=null;this.camera=camera||{zoom:1,x:0,y:0};this.dirty=true;this.drawElapsed=0;this.timings=[];this.stats={};this.useLayerCache=cacheLayers;
 
     this.reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const resize=()=>{const r=canvas.parentElement?.getBoundingClientRect();if(r?.width>0&&r?.height>0){const dpr=Math.min(typeof devicePixelRatio==='number'?devicePixelRatio:1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);this.dirty=true;}};
+    const resize=()=>{
+      const r=canvas.parentElement?.getBoundingClientRect();if(!(r?.width>0&&r?.height>0))return;
+      // Bound high-density map raster work on tablets. CSS layout and touch
+      // coordinates stay unchanged; pixel art retains nearest-neighbour display.
+      const dpr=Math.min(typeof devicePixelRatio==='number'?devicePixelRatio:1,2,Math.max(1,Math.sqrt(1250000/(r.width*r.height))));
+      canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);this.pixelRatio=dpr;this.dirty=true;
+    };
     resize();if(typeof ResizeObserver==='function'){this.observer=new ResizeObserver(resize);this.observer.observe(canvas.parentElement);}
     this.bindInput();
   }
-  dispose(){this.observer?.disconnect();this.input?.destroy();}
+  dispose(){this.observer?.disconnect();this.input?.destroy();this.clearLayerCache();}
   bindInput(){
     const canvas=this.canvas;
     this.input=createMapTouch(canvas,{
@@ -71,7 +77,7 @@ export class CinemaRenderer {
       const p=byId.get(c.show);if(!p)continue;let pos=null,seated=false,moving=false;
       if(c.stage in queues){const index=queues[c.stage]++;if(index>=12)continue;const xy=queuePosition(scene.layout,c.stage==='ticket-queue'?'tickets':'snacks',index);pos={x:xy[0],y:xy[1],z:0,dx:0,dy:-1};counts.queued++}
       else if(c.stage==='seated'){
-        const seat=scene.props.filter(o=>o.kind==='seat'&&o.room===`hall${p.hall+1}`)[c.seat];if(!seat)continue;const [x,y,w,h]=seat.footprint;pos={x:x+w/2,y:y+h/2,z:seat.elevation_m,dx:0,dy:-1};seated=true;counts.seated++;
+        const seat=sceneSeats(scene,p.hall)[c.seat];if(!seat)continue;const [x,y,w,h]=seat.footprint;pos={x:x+w/2,y:y+h/2,z:seat.elevation_m,dx:0,dy:-1};seated=true;counts.seated++;
       }else{
         if(counts.walking>=36)continue;const route=patronRoute(scene,c,p,branch.flow.halls[p.hall]);pos=sampleRoute(route,Math.max(0,Math.min(1,(time-c.at)/Math.max(1,c.until-c.at))));if(!pos){unreachable++;continue}moving=state.phase==='running'&&!state.paused;counts.walking++;if(['exiting','leaving'].includes(c.stage))counts.departing++;
       }
@@ -102,7 +108,7 @@ export class CinemaRenderer {
         const p=sampleRoute(route,progress);actors.push({depth:p.x+p.y+.32,draw:()=>this.actor(p.x,p.y,p.z,{dx:p.dx*(forward?1:-1),dy:p.dy*(forward?1:-1),index:i,moving:state.phase==='running'&&!state.paused})});
       }
       for(let h=0;h<2;h++)if(shows[h]){
-        const seats=scene.props.filter(p=>p.kind==='seat'&&p.room===`hall${h+1}`),filled=Math.min(shows[h].served,seats.length);
+        const seats=sceneSeats(scene,h),filled=Math.min(shows[h].served,seats.length);
         for(let i=0;i<filled;i++){const p=seats[i],[x,y,w,d]=p.footprint;actors.push({depth:p.depth+.3,draw:()=>this.actor(x+w/2,y+d/2,p.elevation_m,{seated:true,moving:false,index:i})});}
       }
     }
@@ -120,6 +126,31 @@ export class CinemaRenderer {
     });
     this.stats.walkers=actors.length;return actors.sort((a,b)=>a.depth-b.depth);
   }
+  clearLayerCache(){
+    if(this.layerCache)for(const image of this.layerCache.images.values()){image.width=0;image.height=0}
+    this.layerCache=null;
+  }
+  prepareLayerCache(scale){
+    if(this.layerCache?.scene===this.scene&&this.layerCache.scale===scale)return;
+    this.clearLayerCache();this.layerCache={scene:this.scene,scale,images:new Map(),next:0,bytes:0,changedAt:performance.now()};
+  }
+  warmLayerCache(cameraDirty){
+    // Only the current scene/scale is retained. Wait for the gesture to settle,
+    // then build at most two layers per draw; uncached layers use the original.
+    const cache=this.layerCache;if(!this.useLayerCache||!cache||cameraDirty||performance.now()-cache.changedAt<150)return;
+    const start=performance.now();let count=0;
+    while(cache.next<this.scene.layers.length&&count<2){
+      const layer=this.scene.layers[cache.next++],width=layer.canvas.width*cache.scale,height=layer.canvas.height*cache.scale;
+      const bytes=Math.ceil(width)*Math.ceil(height)*4;count++;
+      if(cache.bytes+bytes>24*1024*1024)continue;
+      const image=document.createElement('canvas');image.width=Math.ceil(width);image.height=Math.ceil(height);
+      const c=image.getContext('2d');if(!c){image.width=0;image.height=0;continue;}
+      c.imageSmoothingEnabled=false;
+      c.drawImage(layer.canvas,0,0,layer.canvas.width,layer.canvas.height,0,0,width,height);
+      cache.images.set(layer,image);cache.bytes+=bytes;
+      if(performance.now()-start>=4)break;
+    }
+  }
   label(text,x,y,{color='#e8d2a3',selected=false}={}){
     const c=this.c;c.font='600 19px "Noto Sans CJK HK","Noto Sans CJK TC",sans-serif';const w=c.measureText(text).width+24;
     c.fillStyle='#10242d';c.fillRect(Math.round(x-w/2),Math.round(y-17),Math.ceil(w),33);c.fillStyle=selected?'#7bc4b5':color;c.fillRect(Math.round(x-w/2),Math.round(y-17),Math.ceil(w),2);c.textAlign='center';c.textBaseline='middle';c.fillText(text,Math.round(x),Math.round(y));
@@ -131,15 +162,20 @@ export class CinemaRenderer {
     this.state=state;const branch=state.branches.find(b=>b.id===state.activeBranch)||state.branches[0],live=state.phase==='running'&&!state.paused;
     if(live)this.animation+=delta*state.speed;
     this.drawElapsed+=delta;if(delta && this.drawElapsed<(live?1/30:1/12)&&!this.dirty)return;
-    const compileStart=performance.now();this.drawElapsed=0;this.dirty=false;this.scene=this.sceneFor(branch);
+    const cameraDirty=this.dirty,compileStart=performance.now();this.drawElapsed=0;this.dirty=false;this.scene=this.sceneFor(branch);
     this.stats.coldCompileMs=Math.max(this.stats.coldCompileMs||0,Math.round(performance.now()-compileStart));const start=performance.now();
     const c=this.c;c.setTransform(1,0,0,1,0,0);c.imageSmoothingEnabled=false;c.fillStyle='#142630';c.fillRect(0,0,this.canvas.width,this.canvas.height);
-    const view=this.view();c.setTransform(view.s,0,0,view.s,view.x,view.y);
+    const view=this.view();this.prepareLayerCache(view.s);c.setTransform(view.s,0,0,view.s,view.x,view.y);
     const actors=this.dynamic(branch,state);let cursor=0;
-    for(const layer of this.scene.layers){while(cursor<actors.length&&actors[cursor].depth<layer.depth)actors[cursor++].draw();c.drawImage(layer.canvas,layer.x,layer.y);}
+    for(const layer of this.scene.layers){while(cursor<actors.length&&actors[cursor].depth<layer.depth)actors[cursor++].draw();const image=this.useLayerCache?this.layerCache.images.get(layer):null;if(image)c.drawImage(image,0,0,layer.canvas.width*view.s,layer.canvas.height*view.s,layer.x,layer.y,layer.canvas.width,layer.canvas.height);else c.drawImage(layer.canvas,layer.x,layer.y);}
     while(cursor<actors.length)actors[cursor++].draw();this.labels(branch,state);c.setTransform(1,0,0,1,0,0);
+    this.warmLayerCache(cameraDirty);
     this.timings.push(performance.now()-start);if(this.timings.length>180)this.timings.shift();
-    this.stats={...this.stats,version:'0.7.0',operations:operationsSnapshot(state,branch.id),mapGrid:[56,56],mapBlocks:[7,7],floorBlocks:this.scene.layout.floorBlocks.length,builtRooms:this.scene.layout.built,roomRects:C.ROOMS.map(r=>({id:r.id,rect:r.rect,door:r.door})),objects:this.scene.props.length,seatCounts:[0,1].map(h=>this.scene.props.filter(p=>p.kind==='seat'&&p.room===`hall${h+1}`).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),renderP95Ms:Math.round([...this.timings].sort((a,b)=>a-b)[Math.floor(this.timings.length*.95)]*10)/10,pathsReachable:this.scene.routes.every((p,h)=>!C.hasRoom(branch,`hall${h+1}`)||!C.operational(branch)||p.length>0)};
+    if(this.diagnosticScene!==this.scene){this.diagnosticScene=this.scene;this.stats={...this.stats,version:'0.7.1',mapGrid:[56,56],mapBlocks:[7,7],floorBlocks:this.scene.layout.floorBlocks.length,builtRooms:this.scene.layout.built,roomRects:C.ROOMS.map(r=>({id:r.id,rect:r.rect,door:r.door})),objects:this.scene.props.length,seatCounts:[0,1].map(h=>sceneSeats(this.scene,h).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),pathsReachable:this.scene.routes.every((p,h)=>!C.hasRoom(branch,`hall${h+1}`)||!C.operational(branch)||p.length>0)};}
+  }
+  getDiagnostics(){
+    const branch=this.state?.branches.find(b=>b.id===this.state.activeBranch)||this.state?.branches[0],sorted=[...this.timings].sort((a,b)=>a-b);
+    return {...this.stats,operations:branch?operationsSnapshot(this.state,branch.id):null,renderP95Ms:Math.round((sorted[Math.floor(sorted.length*.95)]||0)*10)/10,scaledLayerCacheBytes:this.layerCache?.bytes||0,scaledLayersReady:this.layerCache?.images.size||0,canvasPixels:[this.canvas.width,this.canvas.height],pixelRatio:this.pixelRatio,camera:{...this.camera}};
   }
 }
 

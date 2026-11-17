@@ -1,0 +1,53 @@
+{
+  "status": "passed",
+  "errors": [],
+  "tablet": {
+    "canvas": [
+      1344,
+      930
+    ],
+    "pixelRatio": 1.3121452438825985,
+    "pinchZoom": 1.875
+  },
+  "dpr": 2,
+  "canvasPixels": 1688,
+  "pinchZoom": 1.5,
+  "controls": [
+    {
+      "text": "影廳 1",
+      "width": 141.5,
+      "height": 52.203125
+    },
+    {
+      "text": "影廳 2",
+      "width": 133.5,
+      "height": 52.203125
+    },
+    {
+      "text": "−15",
+      "width": 58,
+      "height": 48
+    },
+    {
+      "text": "＋15",
+      "width": 58,
+      "height": 48
+    },
+    {
+      "text": "−5",
+      "width": 58,
+      "height": 48
+    },
+    {
+      "text": "＋5",
+      "width": 58,
+      "height": 48
+    }
+  ],
+  "checks": [
+    "DPR2 canvas and CSS-coordinate pinch agree",
+    "native dark mode map/editor and 48px edit actions",
+    "small landscape construction scrolls within viewport",
+    "tablet raster budget and fractional-DPR native pinch preserve CSS coordinates"
+  ]
+}

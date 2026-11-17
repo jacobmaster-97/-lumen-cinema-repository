@@ -2,26 +2,26 @@
 
 ## Current milestone
 
-mobile-landscape-pages-07：使用者確認底部導覽、頂底欄減半、地圖無區域文字／整行提示、擴建在投資、四段說明刪除，最後要求置中圖示也刪除並實裝。基準8d1b693；已發布0.7.0至原Pages，公開核對通過。先前審閱階段已結束。
+busy-cinema-perf-071：使用者回報iPad2×／4×營業卡頓。基準6abf971；v0.7.1本機驗證完成，待main Pages發布及公開同SHA核對。
 
 ## Implemented
 
-index／mobile.css提供29／30px薄欄、五組工作入口、真實分店選擇及更多選單；game保留既有引擎及存檔、把施工移到投資、表單長按步進及影廳選項、刪除確認／草稿保留。mobile-input處理觸控按鈕、長按與標題滑動，touch-map處理單指／慣性／雙指／取消，renderer用DPR adapter接回即時地圖。移除區域文字、置中按鈕與指定說明，保留原地圖座標及東向洗手間。全部正式小遊戲、財務、維護、分店及存讀檔接線，非示範狀態。
+靜態深度圖層按當前scene／scale快取，最多24MiB、手勢穩定後分批建立、超額回原繪圖，失效／dispose釋放。按scene座位索引及拼接路徑快取；診斷按需。大Retina地圖新增約125萬像素預算（DPR1至2），介面文字／CSS大小／觸控座標保持。真實人流、收入、營業日長、原地圖／PNG、v2及已確認手機介面不改；未採用升級圖不實裝。
 
 ## Verification
 
-73／73 Node測試；scripts/verify-mobile-browser.cjs 11流程、8尺寸通過，errors／failedRequests／runtimeArtRequests=[]。實際15步施工扣款、排片預測、售價／崗位、保養衝突／退款、物業／分店、原生多指、三種小遊戲、自然日結及v2存讀檔。verify-mobile-device.cjs 驗證DPR2縮放、深色與48px控制。實際營運取樣p95 2.4ms／完整店快取52MiB，不代表真機效能。模板validate通過。證據production/verification/v0.7。
+75／75 Node，11條實際Chromium流程、自然4×日結及舊v2／兩店／三種小遊戲、8尺寸、DPR2深色／多指通過。canvas快取11項檢查含顧客ID／stage一致、完整狀態不變、24MiB上限及失效／釋放。公平同場滿座p95直接15.4／16.9ms，cache6.8／5.8ms。iPad1024×768主迴圈2×／4×滿座最終p95 14.4／13.9ms（原41.3／46.4ms），記錄profile-live-ipad-final.json。33.3ms為30fps繪圖預算，非實機Safarifps保證。證據production/verification/v0.7.1；方法design/performance-v0.7.1.md。失敗人物快取方案撤回，DEBUG_HANDOFF已更新。
 
 ## Documentation Impact
 
 - Decision: updated
-- Documents: design/mobile-interface-v0.7.md, design/gdd.md, docs/architecture/README.md, docs/github.md, production/timeline.md, production/session-state/active.md, CODEX_HANDOFF.md
-- Reason: 使用者批准的新介面及觸控正式接入，導航與施工入口變更；引擎／經濟／地圖／v2存檔保持。
+- Documents: design/performance-v0.7.1.md, design/gdd.md, docs/architecture/README.md, docs/github.md, production/timeline.md, production/session-state/active.md, CODEX_HANDOFF.md, DEBUG_HANDOFF.md
+- Reason: iPad營業卡頓修復涉及繪圖架構、記憶體預算、驗證及發布；記錄公平量測、失敗方案、保留玩法及實機限制。分類器未涵蓋prototypes/browser，這是手動browser擁有文件判斷，不以工具無功能路徑省略文檔。
 
 ## Release / recovery
 
-原jacobmaster-97/-lumen-cinema-repository main Pages，模組及CSS快取0.7.0。來源9bcbdb7dc2efb811dcae8e2ca34e586fbdaca911，測試43894336484及Pages43894335818均success。公開0.7.0／SHA一致，8項檢查通過，errors／failedRequests／runtimeArtRequests=[]；見deployment.json／public.json。後續[skip ci]驗證提交不改功能來源。發布前基準8d1b693，必要時revert功能提交再部署，不清玩家資料。未採用升級圖維持不加入runtime；歷史未追蹤美術／截圖及審閱稿不應blanket加入。
+原main Pages流程，0.7.1快取版號；CI／公開核對待完成，證據deployment.json／public.json。回退本輪功能提交再部署，保留玩家v2檔。歷史未追蹤美術不加入。
 
 ## Risks / next safe task
 
-真實手機、iOS／Android系統手勢、安全區／軟鍵盤、拇指舒適度與長時間耗電待試玩；模擬觸控不當成真機證據。公開版SHA及功能已核對，下一步讓使用者實機試玩。
+先完成公開同SHA核對，再請使用者iPad試玩2×及4×。Chromium模擬不能代表Safari／長時熱及耗電。

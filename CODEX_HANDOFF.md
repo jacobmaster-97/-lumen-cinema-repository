@@ -2,25 +2,25 @@
 
 ## Goal / phase
 
-使用者已確認手機橫向底部導覽、薄欄、觸控及文字精簡，最後要求「置中圖示按鈕也刪除，然後實裝」。審閱批准已完成，本輪正式接入並部署原GitHub Pages。基準8d1b693；v0.7.0已發布並公開核對。
+使用者回報iPad在2×／4×營業卡頓，要求解決。本輪基準6abf971；v0.7.1功能完成並通過本機驗證，待發布原GitHub Pages及同SHA公開核對。前版0.7.0來源9bcbdb7。
 
 ## Implemented
 
-- index／mobile.css：五入口、29／30px橫向欄及44px觸控範圍、工作分頁、即時地圖、區域按需詳情、真實分店／更多選單。直向重排，不縮字。
-- game：原施工移至投資；時間／票價／小食步進、影廳選項、原生表單與預測、刪除確認／取消保留草稿；全部事件、三種20秒小遊戲、保養、報表、兩店、物業、音效、存讀檔仍完整。
-- mobile-input／touch-map：pointerup啟動、防相容click及焦點覆蓋、長按放手／移出停止、標題滑走、8px點拖分流、短慣性、雙指中點縮放及取消。renderer用CSS↔canvas DPR adapter，保留即時人物與投映。
-- 移除置中按鈕、地圖所有區域文字／營業提示及四段指定說明。原地圖位置、洗手間朝東、PNG、180秒日長、引擎經濟與v2存檔不變。未採用升級美術不實裝。
+- render：當前scene／scale的靜態深度圖層顯示快取，最多24MiB；鏡頭穩定150ms後每次最多2層，4ms為層與層之間軟截止。超額／context不可用就原繪圖。平移重用；縮放、resize、換店、施工／容量變動及dispose釋放舊顯示canvas。人物／電影投映仍即時、原深度排序；高密度地圖約125萬像素預算、DPR1至2，CSS文字／觸控不變。
+- operations-world／world：按scene弱索引座位；Navigation快取拼接路徑。靜態診斷換scene才重建、營運快照及p95按需讀取，避免逐幀工作。
+- gameplay／財務引擎、實際顧客數、日長、地圖座標、東向洗手間、PNG、v2存檔與已確認手機UI保持；未採用升級圖不引用。人物預縮小兩種方案無可靠收益，已撤回，詳DEBUG_HANDOFF。
+- profile-cinema／profile-live-cinema／verify-render-cache提供可重跑量測及真實canvas驗證；cache版號0.7.1。
 
 ## Verification
 
-73／73 Node；11條真實Chromium流程與8尺寸無溢出；DPR2／深色／48px編輯控制通過。實際施工扣款、排片、價格、人手、保養、兩店、物業、原生多指、三種小遊戲、自然日結／翌日及舊v2存讀檔均已驗證。errors／failedRequests／runtimeArtRequests=[]。取樣p95 2.4ms、完整店快取52MiB，非手機效能。模板validate與diff檢查通過。證據production/verification/v0.7；設計契約design/mobile-interface-v0.7.md。
+75／75 Node。11條完整Chromium流程含自然4×日結／翌日、真實施工／財務／排片／保養／物業／兩店／三種小遊戲／舊v2，8尺寸、DPR2深色及原生多指通過。真實canvas快取上限、失效、釋放、顧客ID／stage相同、完整狀態不被render改寫通過。errors／failedRequests／runtimeArtRequests=[]。
 
-Node測試調整至新導航；修復舊置中網頁容器導致canvas零尺寸、讀檔後選單未收起。每項均有重現及一次根因修正，無反覆未解缺陷；DEBUG_HANDOFF無需建立。
+844×390／DPR2／CPU4倍節流，同場cached/direct/direct/cached滿座p95 6.8／15.4／16.9／5.8ms，約60%下降，30fps預算33.3ms。iPad1024×768主迴圈2×／4×滿座，最終p95 14.4／13.9ms（原41.3／46.4ms），高密度畫布像素預算是關鍵。最終重跑數字見production/verification/v0.7.1/profile-release.json及profile-live-ipad-final.json，方法與限制design/performance-v0.7.1.md。證據非Safari／實體iPad／長時熱與耗電。靜態像素最近鄰差異1.6%滿刻度，背景遮罩差0.066%，滿座截圖目視通過。
 
 ## Release / recovery
 
-https://jacobmaster-97.github.io/-lumen-cinema-repository/ ，main原workflow。功能來源9bcbdb7dc2efb811dcae8e2ca34e586fbdaca911；測試run43894336484與Pages run43894335818均success，公開version.json為0.7.0及同SHA。8項公開操作檢查通過，errors／failedRequests／runtimeArtRequests=[]，含真實施工、排片步進、保養退款、實際入場／評價／損耗及舊檔兩店。公開HTTPS由平台CA驗證後原樣轉交Chromium，未停用TLS或以本機檔案替代。證據deployment.json／public.json；0.7.0模組／CSS快取。後續[skip ci]驗證文件提交不改公開功能來源。必要時revert功能提交重新部署，不刪玩家v2存檔。前一公開來源7e570aef888892f7809b3a81f2f585acf378d1b3（v0.6.0）。歷史未追蹤美術及審閱稿非本輪正式發布檔案，避免blanket git add。
+原https://jacobmaster-97.github.io/-lumen-cinema-repository/，main既有Pages workflow。待CI／公開同SHA核對；證據production/verification/v0.7.1。回退本輪功能提交再部署，不清玩家v2資料。歷史未追蹤美術／審閱稿不加入本輪。模板context manifest需在更新設計／時間線後refresh-context再validate；docs-impact分類器不識別prototypes/browser，需手動記錄browser擁有文件。
 
 ## Risks / next safe task
 
-同SHA公開檢查已完成，讓使用者用真實手機試玩拇指、系統手勢、安全區／軟鍵盤及長時間效能。模擬器不等於真機。升級圖維持未採用。
+iPad Safari實際手感及長時間熱／記憶體表現待使用者試玩；不承諾實機fps。下一步完成原Pages發布及公開版本核對。
