@@ -171,7 +171,7 @@ export class CinemaRenderer {
     while(cursor<actors.length)actors[cursor++].draw();this.labels(branch,state);c.setTransform(1,0,0,1,0,0);
     this.warmLayerCache(cameraDirty);
     this.timings.push(performance.now()-start);if(this.timings.length>180)this.timings.shift();
-    if(this.diagnosticScene!==this.scene){this.diagnosticScene=this.scene;this.stats={...this.stats,version:'0.7.2',mapGrid:[56,56],mapBlocks:[7,7],floorBlocks:this.scene.layout.floorBlocks.length,builtRooms:this.scene.layout.built,roomRects:C.ROOMS.map(r=>({id:r.id,rect:r.rect,door:r.door})),objects:this.scene.props.length,seatCounts:[0,1].map(h=>sceneSeats(this.scene,h).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),pathsReachable:this.scene.routes.every((p,h)=>!C.hasRoom(branch,`hall${h+1}`)||!C.operational(branch)||p.length>0)};}
+    if(this.diagnosticScene!==this.scene){this.diagnosticScene=this.scene;this.stats={...this.stats,version:'0.7.3',mapGrid:[56,56],mapBlocks:[7,7],floorBlocks:this.scene.layout.floorBlocks.length,builtRooms:this.scene.layout.built,roomRects:C.ROOMS.map(r=>({id:r.id,rect:r.rect,door:r.door})),objects:this.scene.props.length,seatCounts:[0,1].map(h=>sceneSeats(this.scene,h).length),layers:this.scene.layers.length,cacheMiB:Math.round(this.scene.estimatedCacheBytes/1024/1024),pathsReachable:this.scene.routes.every((p,h)=>!C.hasRoom(branch,`hall${h+1}`)||!C.operational(branch)||p.length>0)};}
   }
   getDiagnostics(){
     const branch=this.state?.branches.find(b=>b.id===this.state.activeBranch)||this.state?.branches[0],sorted=[...this.timings].sort((a,b)=>a-b);

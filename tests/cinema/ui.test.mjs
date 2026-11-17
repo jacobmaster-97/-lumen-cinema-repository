@@ -139,6 +139,19 @@ test("UI integrates scheduling, food pricing, two-store investment, all minigame
       if(view==='overview')assert.ok(d.querySelector('#cinema'));else assert.ok(d.querySelector("#view-content").textContent.length > 30,view);
     }
     click('[data-view="schedule"]');
+    // Exercise the actual game wiring, including persistence and no edit-on-drop.
+    const originalPlan=save(),dragRoot=d.querySelector('.timeline-scroll'),dragTrack=d.querySelector('.timeline-track'),dragButton=d.querySelector('[data-schedule-drag]');
+    const box=(left,top,width,height)=>({left,top,right:left+width,bottom:top+height,width,height});
+    dragRoot.getBoundingClientRect=()=>box(0,0,1000,300);
+    dragTrack.getBoundingClientRect=()=>box(80,80,780,86);
+    dragButton.getBoundingClientRect=()=>box(95,84,118,74);
+    const pointer=(type,x)=>{const e=new w.MouseEvent(type,{bubbles:true,cancelable:true,button:0,clientX:x,clientY:121});Object.defineProperties(e,{pointerId:{value:1},pointerType:{value:'touch'},isPrimary:{value:true}});dragButton.dispatchEvent(e)};
+    pointer('pointerdown',154);pointer('pointermove',169);pointer('pointerup',169);
+    assert.equal(w.__lumen.getState().branches[0].programme[0].start,30);
+    assert.equal(JSON.parse(localStorage.getItem('lumen-cinema-v2')).state.branches[0].programme[0].start,30);
+    assert.equal(w.__lumen.getState().cash,originalPlan.cash);
+    assert.equal(d.querySelector('#modal').open,false);
+    restore(originalPlan);click('[data-view="schedule"]');
     click('[data-action="edit-show"]');
     d.querySelector('[name="price"]').value = "105";
     d.querySelector("#programme-form").dispatchEvent(

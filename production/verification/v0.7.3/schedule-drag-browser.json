@@ -1,0 +1,22 @@
+{
+  "url": "http://127.0.0.1:8351/pages/",
+  "checks": [
+    "touch tap opens the original editor exactly once",
+    "native touch drag snaps to five minutes, commits once, saves and refreshes forecast",
+    "vertical touch drag transfers a show to another built hall",
+    "overlap rejects the drop without changing plan, money or opening the editor",
+    "fifteen-minute cleaning buffer is enforced",
+    "native pointer cancellation restores the original bar and plan",
+    "second finger cancels the gesture without an accidental edit",
+    "maintenance conflict uses the authoritative schedule validation",
+    "drag cannot bypass construction requirements",
+    "mouse drag suppresses its compatibility click; keyboard editing remains available",
+    "holding near the viewport edge scrolls the timeline, cancellation leaves state intact",
+    "blank timeline space retains native horizontal swipe scrolling",
+    "valid edge-scroll drop preserves the scrolled view and does not open a modal",
+    "business hours keep the timetable locked"
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "status": "passed"
+}

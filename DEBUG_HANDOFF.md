@@ -38,3 +38,7 @@ iPad主迴圈2×／4×的p95由41.3／46.4ms降至14.4／13.9ms。像素預算�
 77 Node及8個真實存檔流程通過。調查測試曾因運行中loadGame回復paused後未取消暫停而無法日結、測試在離頁前直接注入錯誤檔會被既有合法頁面正常儲存取代，以及about:blank執行fixture初始化觸發Storage SecurityError；均修正測試情境（正式邏輯不繞過驗證）：明確resume、在下一頁初始化錯誤檔、fixture只在HTTP(S)注入。未反覆修改引擎或放寬檔案驗證。證據save-reopen.json、node-tests.txt。
 
 本次0.7.2已發布來源2434fcf437d5cd90180c9a457985c490ce61364c，兩workflow成功，公開9項常規及8項存檔流程通過。無已知未解JS錯誤；未讀取用戶iPad實際主檔，若已被覆蓋且沒有有效備份，不能憑空還原最後一刻進度。
+
+## v0.7.3 觸控時間表驗證
+
+新手勢原生測試：初次「未誤開表單」斷言使用form.count，但關閉dialog會保留其表單DOM，已改為檢查dialog.open；沒有為此修改正式邏輯。背景滑動測試起初從棒條旁3px空隙起手，elementFromPoint顯示track但Chromium觸控命中修正將pointerdown轉到鄰近session，預期被棒條拖動接管。記錄pointer target／preventDefault後確認根因；改用60px高時間軸空白區測試，原生橫捲通過，不全面攔截背景手勢。四項模組測試、正式game DOM接線及14條原生流程均通過；沒有尚未處理的拖曳缺陷，Safari實機手感仍待試玩。

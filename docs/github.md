@@ -85,3 +85,7 @@ build-pages.mjs 只複製最新需要的三張區域 PNG、目前預覽及工具
 原main Pages流程，0.7.2快取。修正boot尚未讀檔時pagehide儲存空白新局，加入較早備份預覽／確認恢復及重設前備份。77項Node及真實重開、載入中離頁／錯誤檔保留驗證；發布與公開同SHA證據production/verification/v0.7.2。回退revert功能提交，不刪任何玩家存檔／備份。
 
 0.7.2功能來源2434fcf437d5cd90180c9a457985c490ce61364c；測試44049651507及Pages44049651443均success。公開0.7.2／同SHA的9項常規及8項存檔恢復檢查通過；證據production/verification/v0.7.2。後續[skip ci]驗證提交不改功能來源。
+
+## v0.7.3 觸控排片
+
+沿用原main Pages，快取版號0.7.3；新schedule-drag模組與81項Node隨原CI測試。scripts/verify-schedule-drag.cjs提供原生觸控／滑鼠／鍵盤14流程及公開同SHA核對；證據production/verification/v0.7.3。回退本輪功能提交再部署，不清主存檔或備份。

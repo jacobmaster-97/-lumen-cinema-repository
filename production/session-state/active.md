@@ -2,26 +2,26 @@
 
 ## Current milestone
 
-save-reopen-072：使用者按繼續後需要重建。基準5c6a46c，已重現歡迎畫面重載會pagehide覆寫主檔；v0.7.2已發布並核對公開版本及同SHA。
+timetable-touch-073：使用者要求影片棒條觸控拖動。基準b6a8c62，實作與14個拖動流程／81 Node通過，待完整回歸與Pages公開核對。
 
 ## Implemented
 
-先還原再歡迎，讀取前／錯誤檔案禁止暫時新局自動寫入。明確新局及恢復前先備份；預覽較早備份後才確認恢復，取消／備份寫入失敗不改進度。引擎／v2／財務／地圖／PNG與0.7.1效能修正保持。Safari實際原檔未讀取。
+指針手勢模組擁有預覽與rAF，5分鐘吸附、跨廳、邊緣橫捲、取消與點按分流；game仍走原權威驗證／setProgramme，合法放手一次寫入、更新預測及保留視野。相容click僅抑制棒條，鍵盤／其他按鈕不攔截。營業／未建廳／衝突不能繞過；v2／財務／地圖／PNG、0.7.1效能及0.7.2讀檔保護保持，未採用升級圖不加入。
 
 ## Verification
 
-原版真實重現4區域→0、44792.04→68000、日期2→1，baseline.json。77項Node與8項存檔瀏覽器流程通過，完整／iPad觸控回歸、CI與公開結果見production/verification/v0.7.2。不是因為需每日重建，不推測沒有資料的最新進度。
+81 Node含preview零權威變更、取消、一次提交及正式DOM接線。原生觸控／滑鼠／鍵盤14條流程通過，包含640×320橫捲、時間表空白原生滑動、edge-drop保留視野及營業鎖定。截圖已核對，完整遊戲／DPR2／存檔回歸見production/verification/v0.7.3。
 
 ## Documentation Impact
 
 - Decision: updated
-- Documents: docs/save-recovery-v0.7.2.md, docs/architecture/README.md, docs/github.md, design/gdd.md, production/timeline.md, production/session-state/active.md, CODEX_HANDOFF.md, DEBUG_HANDOFF.md
-- Reason: 已確認瀏覽器啟動／離頁覆寫原存檔，新增安全讀取及明確較早備份恢復流程；記錄原始重現、資料保留界線及發布。工具分類器未涵蓋prototypes/browser，這是手動擁有文件判斷。
+- Documents: design/timetable-touch-v0.7.3.md, design/gdd.md, docs/architecture/README.md, docs/github.md, production/timeline.md, production/session-state/active.md, CODEX_HANDOFF.md, DEBUG_HANDOFF.md
+- Reason: 新觸控排片改變手勢分工及提交流程，需記錄吸附、原子驗證、資源釋放與公開驗證；分類器未涵蓋prototypes/browser，手動更新擁有文件。
 
 ## Release / recovery
 
-原main Pages，0.7.2快取版號，來源2434fcf437d5cd90180c9a457985c490ce61364c，測試44049651507及Pages44049651443成功。公開0.7.2／SHA一致，9項常規與8項存檔流程通過；HTTPS經平台CA驗證後原樣轉交Chromium，未停用TLS、未以本機替代。證據deployment.json／public.json／save-reopen-public.json。後續[skip ci]僅驗證與QA文件，不改公開功能來源。回退revert功能提交再發布，保留lumen-cinema-v2及所有備份。歷史未追蹤美術不加入。
+原main Pages，0.7.3模組快取；待CI／公開同SHA拖動核對。回退功能提交再部署，不清玩家v2或備份。歷史未追蹤美術不加入。
 
 ## Risks / next safe task
 
-公開存檔流程已核對，下一步用戶iPad試玩。使用者iPad既有資料是否已覆蓋未知，較早備份只能恢復該時間點；無有效備份不自動重建或補錢。
+完成公開核對後由使用者iPad Safari試玩；未宣稱真機、輔助閱讀器或商店測量。

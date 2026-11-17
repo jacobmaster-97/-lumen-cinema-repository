@@ -1,16 +1,17 @@
 import {stepper,installMobileInput} from './mobile-input.mjs';
+import {installScheduleDrag} from './schedule-drag.mjs';
 import * as E from "./engine.mjs";
 import * as C from "./construction.mjs";
 import {constructionSummary,constructionPanel,roomConstruction} from "./construction-ui.mjs";
 import {operationsPanel,forecastPanel,draftForecast} from './operations-ui.mjs';
 import {strategyView,reviewPanel,cashPanel,maintenanceForm} from './strategy-ui.mjs';
-import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.7.2";
+import { CinemaRenderer, drawPoster, setPosterAssets } from "./render.mjs?v=0.7.3";
 import { loadCinemaAssets } from "./assets.mjs";
 import { CinemaAudio } from "./audio.mjs";
 import { hallUnderRepair } from "./world.mjs";
 const audio=new CinemaAudio();
-installMobileInput(document);
-let strategySection="ratings",investmentSection="assets",mapBranch=null,savedCamera=null,deleteDraft=null;
+const mobileInput=installMobileInput(document);
+let strategySection="ratings",investmentSection="assets",mapBranch=null,savedCamera=null,deleteDraft=null,scheduleInput=null;
 const $ = (s) => document.querySelector(s),
   esc = (s) =>
     String(s ?? "").replace(
@@ -287,11 +288,11 @@ function schedule() {
   ]
     .map(
       (h) =>
-        `<div class="hall-row"><div class="hall-label">${h + 1} 號影廳<small>${v.seats[h]} 席 · 普通 2D</small></div><div class="timeline-track">${shows
+        `<div class="hall-row"><div class="hall-label">${h + 1} 號影廳<small>${v.seats[h]} 席 · 普通 2D</small></div><div class="timeline-track" data-hall="${h}">${shows
           .filter((p) => p.hall === h)
           .map(
             (p) =>
-              `<span class="clean-buffer" style="left:${((p.start + E.movie(p.movie).length) / E.DAY_MINUTES) * 100}%;width:${(15 / E.DAY_MINUTES) * 100}%"></span><button class="session ${p.cancelled ? "cancelled" : ""}" style="left:${(p.start / E.DAY_MINUTES) * 100}%;width:${(E.movie(p.movie).length / E.DAY_MINUTES) * 100}%;--movie-color:${E.movie(p.movie).color}" data-action="edit-show" data-id="${esc(p.id)}" title="${esc(E.movie(p.movie).title)} ${clock(p.start)} ${money(p.price)}"><small>${clock(p.start)}–${clock(p.start + E.movie(p.movie).length)}</small><b>${esc(E.movie(p.movie).title)}</b><span>${money(p.price)} · ${p.cancelled ? "已取消" : E.movie(p.movie).length + " 分鐘"}</span></button>`,
+              `<span class="clean-buffer" style="left:${((p.start + E.movie(p.movie).length) / E.DAY_MINUTES) * 100}%;width:${(15 / E.DAY_MINUTES) * 100}%"></span><button class="session ${p.cancelled ? "cancelled" : ""}" style="left:${(p.start / E.DAY_MINUTES) * 100}%;width:${(E.movie(p.movie).length / E.DAY_MINUTES) * 100}%;--movie-color:${E.movie(p.movie).color}" data-action="edit-show" data-id="${esc(p.id)}" ${planning()?'data-schedule-drag':''} data-length="${E.movie(p.movie).length}" aria-label="${esc(E.movie(p.movie).title)} ${clock(p.start)}${planning()?'，點按編輯或拖動調整場次':''}" title="${esc(E.movie(p.movie).title)} ${clock(p.start)} ${money(p.price)}"><small>${clock(p.start)}–${clock(p.start + E.movie(p.movie).length)}</small><b>${esc(E.movie(p.movie).title)}</b><span>${money(p.price)} · ${p.cancelled ? "已取消" : E.movie(p.movie).length + " 分鐘"}</span></button>`,
           )
           .join("")}</div></div>`,
     )
@@ -398,6 +399,7 @@ function workHeader(){const g=groupFor(view),sets={programme:[['schedule','時�
 function filterStrategy(){if(view!=='strategy')return;for(const el of $('#view-content').children){if(!el.matches('section'))continue;el.hidden=strategySection==='ratings'?el.matches('.strategy-cleaning,.equipment-panel,.strategy-forecast,.cash-planning'):el.matches('.strategy-profile,.review-panel');}}
 function navigate(target,section){view=target;if(view==='strategy')strategySection=section||'ratings';if(view==='investment')investmentSection=section||'assets';$('#utilities').hidden=true;$('#more-button').setAttribute('aria-expanded','false');render();}
 function render() {
+  scheduleInput?.destroy();scheduleInput=null;
   updateHeader();
   const [l, title, description] = labels[view];
   $("#page-eyebrow").textContent = l;
@@ -427,6 +429,21 @@ function render() {
   if(view==='investment'&&investmentSection==='assets')$('#view-content').insertAdjacentHTML('afterbegin',cashPanel(state));
   if(view==='report'&&state.history.length){const row=state.history[Math.min(reportIndex,state.history.length-1)].rows.find(r=>r.id===b().id);if(row?.review)$('#view-content').insertAdjacentHTML('beforeend',reviewPanel(row.review,'本日分項體驗'))}
   if(view==='schedule'&&planning())$('#view-content').insertAdjacentHTML('beforeend',forecastPanel(state,b()));
+  if(view==='schedule'&&planning()&&saveReady){
+    const root=$('.timeline-scroll'),branchId=b().id;
+    const plan=p=>b().programme.map(q=>q.id===p.id?p:q);
+    scheduleInput=installScheduleDrag(root,{
+      getShow:id=>saveReady&&planning()&&b().id===branchId?b().programme.find(p=>p.id===id):null,clock,
+      validate:p=>!C.hasRoom(b(),`hall${p.hall+1}`)?['這個影廳尚未建成']:E.validateProgramme(state,plan(p),branchId),
+      reject:message=>toast(message,true),suppressClick:()=>mobileInput.suppressClick(),
+      commit:p=>{if(!saveReady||!planning()||b().id!==branchId)return;const x=root.scrollLeft,y=$('#main-content').scrollTop;
+        if(result(E.setProgramme(state,branchId,plan(p)),'場次已移至 '+(p.hall+1)+' 號廳 '+clock(p.start)+'。')){
+          $('.timeline-scroll').scrollLeft=x;$('#main-content').scrollTop=y;
+          [...document.querySelectorAll('.session')].find(n=>n.dataset.id===p.id)?.focus({preventScroll:true});
+        }
+      }
+    });
+  }
   if (view === "overview" && atlas) {
     renderer = new CinemaRenderer($("#cinema"), atlas, images, {onSelect: selectZone, camera});
     mapBranch=state.activeBranch;renderer.selected=selectedZone;
